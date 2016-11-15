@@ -14,20 +14,12 @@ def _extract_year(year_list):
             yield int(elem)
 
 
-class IndexItem(scrapy.Item):
-    links = scrapy.Field()
-
-
-class VolumeItem(scrapy.Item):
-    links = scrapy.Field()
-
-
-class RulingsItem(scrapy.Item):
+class RulingItem(scrapy.Item):
     year = scrapy.Field(
         input_processor=_extract_year
     )
-    volume = scrapy.Field()
     bge_nr = scrapy.Field()
+    volume = scrapy.Field()
     ruling_nb = scrapy.Field()
-    link = scrapy.Field()
+    regeste = scrapy.Field()
     pass
