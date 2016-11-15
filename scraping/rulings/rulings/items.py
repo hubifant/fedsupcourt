@@ -13,6 +13,13 @@ def _extract_year(year_list):
         if elem.isdigit():
             yield int(elem)
 
+def _concat_regeste(regeste_tokens):
+    regeste = ''
+    # for t in regeste_tokens:
+    #     regeste += t
+    # return regeste
+    yield '\n'.join(regeste_tokens)
+
 
 class RulingItem(scrapy.Item):
     year = scrapy.Field(
@@ -21,5 +28,7 @@ class RulingItem(scrapy.Item):
     bge_nr = scrapy.Field()
     volume = scrapy.Field()
     ruling_nb = scrapy.Field()
-    regeste = scrapy.Field()
+    regeste = scrapy.Field(
+        input_processor=_concat_regeste
+    )
     pass
