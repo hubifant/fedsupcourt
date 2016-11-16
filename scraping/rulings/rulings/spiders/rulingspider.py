@@ -32,12 +32,18 @@ class RulingSpider(scrapy.Spider):
 
     def parse_ruling(self, response):
         bge_nb, volume, ruling_nb = response.meta['ruling_id'].split(' ')
+        ruling_id_dict = {
+            'bge_nb': int(bge_nb),
+            'volume': volume,
+            'ruling_nb': int(ruling_nb)
+        }
         l = ItemLoader(item=RulingItem(), response=response)
         # l.add_xpath('year', '//tr/td[@valign="top"]/text()')
         l.add_xpath('regeste', '//div[@id="regeste"]//text()')
-        l.add_value('bge_nb', int(bge_nb))
-        l.add_value('volume', volume)
-        l.add_value('ruling_nb', int(ruling_nb))
+        # l.add_value('bge_nb', int(bge_nb))
+        # l.add_value('volume', volume)
+        # l.add_value('ruling_nb', int(ruling_nb))
+        l.add_value('ruling_id', ruling_id_dict)
         yield l.load_item()
 
 
