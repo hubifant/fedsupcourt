@@ -16,21 +16,28 @@ class RulingSpider(scrapy.Spider):
             url = 'http://relevancy.bger.ch/' + link
             if url not in self.scraped_links and len(self.scraped_links) < 2:
                 self.scraped_links.append(url)
-                print('\n\n\n'+url+'\n\n\n')
-                yield scrapy.Request(url, self.parse)
+                yield scrapy.Request(url, self.parse_year)
 
-        ruling_links = response.xpath('//li/a/@href').extract()
-        for link in ruling_links:
+    def parse_year(self, response):
+        # get ruling links and corresponding ruling ids; process them (create new request)
+        rulings = response.xpath('//li/a/@href | //li/a[@href]/text()').extract()
+        for link, ruling_id in zip(*[iter(rulings)]*2):
             url = 'http://relevancy.bger.ch/' + link
+
             if url not in self.scraped_links and len(self.scraped_links) < 4:
                 self.scraped_links.append(url)
-                print('\n\n\n'+url+'\n\n\n')
-                yield scrapy.Request(url, self.parse)
+                request = scrapy.Request(url, self.parse_ruling)
+                request.meta['ruling_id'] = ruling_id
+                yield request
 
+    def parse_ruling(self, response):
+        bge_nb, volume, ruling_nb = response.meta['ruling_id'].split(' ')
         l = ItemLoader(item=RulingItem(), response=response)
         # l.add_xpath('year', '//tr/td[@valign="top"]/text()')
         l.add_xpath('regeste', '//div[@id="regeste"]//text()')
+        l.add_value('bge_nb', int(bge_nb))
+        l.add_value('volume', volume)
+        l.add_value('ruling_nb', int(ruling_nb))
         yield l.load_item()
-
 
 
