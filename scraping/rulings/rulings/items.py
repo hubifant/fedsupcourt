@@ -25,7 +25,7 @@ class RulingItem(scrapy.Item):
     year = scrapy.Field(
         input_processor=_extract_year
     )
-    bge_nr = scrapy.Field()
+    bge_nb = scrapy.Field()
     volume = scrapy.Field()
     ruling_nb = scrapy.Field()
     regeste = scrapy.Field(
