@@ -16,16 +16,23 @@ def _extract_year(year_list):
 
 
 def _concat_regeste(regeste_tokens):
-    regeste = ''
-    # for t in regeste_tokens:
-    #     regeste += t
-    # return regeste
+    # TODO: join text more nicely (span vs dict)
+    """
+    Joins tokens from regeste text.
+    :param regeste_tokens:
+    :type regeste_tokens:
+    :return:
+    """
     return '\n'.join(regeste_tokens)
 
 
 def _extract_ruling_id(ruling_id_string):
-    print(type(ruling_id_string))
-    print(ruling_id_string)
+    # TODO: checking if number is correct. (throw exception?)
+    """
+
+    :param ruling_id_string: list containing one single string of format '123 I 4', where 123 is the bge_nb, I is volume and 4 the ruling_nb
+    :return: dict containing bge_nb, volume and ruling_nb
+    """
     bge_nb, volume, ruling_nb = ruling_id_string.split(' ')
 
     ruling_id_dict = {
@@ -48,4 +55,9 @@ class RulingItem(scrapy.Item):
         input_processor=_concat_regeste,
         output_processor=TakeFirst()
     )
+    url = scrapy.Field(
+        output_processor=TakeFirst()
+    )
+    # references_fedcourt_roulings = scrapy.Field()
+    # references = scrapy.Field()
     pass
