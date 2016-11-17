@@ -37,7 +37,8 @@ class RulingSpider(scrapy.Spider):
         l.add_xpath('regeste', '//div[@id="regeste"]//text()')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
-        # l.add_xpath('references', '//div[@class="highlight_references"]/p[text()="BGE"]/a/text()')
+        l.add_xpath('bge_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"BGE:")]]//a/text()')
+        l.add_xpath('art_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"Artikel:")]]//text()')
         yield l.load_item()
 
 
