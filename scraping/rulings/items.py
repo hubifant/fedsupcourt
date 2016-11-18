@@ -103,6 +103,19 @@ def _extract_involved_parties(raw_parties):
     warnings.warn('Could not extract parties.')
 
 
+def _extract_language(raw_parties):
+    # language can be extracted if claimant and defendant can be extracted
+    for language, separator in party_separator.items():
+        start_claimant = raw_parties.find(separator['start'])
+        end_claimant = raw_parties.find(separator['end'])
+
+        # if claimant and defendant can be separated, language is known.
+        if start_claimant != -1 and end_claimant != -1:
+            return language
+
+    warnings.warn('Could not extract language.')
+
+
 def _concat_regeste(regeste_tokens):
     # TODO: join text more nicely (span vs dict)
     """
@@ -164,6 +177,10 @@ class RulingItem(scrapy.Item):
     )
     ruling_id = scrapy.Field(
         input_processor=MapCompose(_extract_ruling_id),
+        output_processor=TakeFirst()
+    )
+    language = scrapy.Field(
+        input_processor=MapCompose(_extract_language),
         output_processor=TakeFirst()
     )
     involved_parties = scrapy.Field(

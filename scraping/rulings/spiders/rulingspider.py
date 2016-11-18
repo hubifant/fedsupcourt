@@ -36,6 +36,7 @@ class RulingSpider(scrapy.Spider):
         # the date can be extracted from one of the first two 'paraatf' divs.
         l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
         l.add_xpath('involved_parties', '(//div[@class="paraatf"])[1]/text()')
+        l.add_xpath('language', '(//div[@class="paraatf"])[1]/text()')
         l.add_xpath('regeste', '//div[@id="regeste"]//text()')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
