@@ -25,6 +25,17 @@ months_it = [m.lower() for m in calendar.month_name]
 locale.setlocale(locale.LC_ALL, 'C')
 
 
+party_separator = {'de':
+                       {'start': 'i.S. ',
+                        'end': ' gegen '},
+                   'fr':
+                       {'start': 'dans la cause ',
+                        'end': ' contre '},
+                   'it':
+                       {'start': 'nella causa ',
+                        'end': ' contro '}
+                   }
+
 def _extract_date(raw_date):
     # match 4-digit number if preceded by '.' or ' '
     year_match = re.search(r'(?<=[\.,\s])\d{4}', raw_date)
@@ -69,8 +80,27 @@ def _extract_date(raw_date):
 
         return date
 
-    print('\n\nraw date: ' + raw_date)
 
+def _extract_involved_parties(raw_parties):
+    # extract claimant and defendant
+    for language, separator in party_separator.items():
+        start_claimant = raw_parties.find(separator['start'])
+        end_claimant = raw_parties.find(separator['end'])
+
+        # if claimant and defendant can be separated...
+        if start_claimant != -1 and end_claimant != -1:
+            start_claimant += len(separator['start'])
+            start_defendant = end_claimant + len(separator['end'])
+
+            # find the end of the defendant token (can end with '.' or '. (blabla)' or similarly)
+            end_defendant = re.search(r'([\W\s]*)(\(.+\))?$', raw_parties).span()[0]
+            parties = {
+                'claimant': raw_parties[start_claimant:end_claimant],
+                'defendant': raw_parties[start_defendant:end_defendant]
+            }
+            return parties
+
+    warnings.warn('Could not extract parties.')
 
 
 def _concat_regeste(regeste_tokens):
@@ -134,6 +164,10 @@ class RulingItem(scrapy.Item):
     )
     ruling_id = scrapy.Field(
         input_processor=MapCompose(_extract_ruling_id),
+        output_processor=TakeFirst()
+    )
+    involved_parties = scrapy.Field(
+        input_processor=MapCompose(_extract_involved_parties),
         output_processor=TakeFirst()
     )
     regeste = scrapy.Field(
