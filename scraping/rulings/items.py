@@ -5,15 +5,72 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
+import calendar
+from datetime import datetime
+import locale
 import re
 import scrapy
-from scrapy.loader.processors import MapCompose, TakeFirst, Join
+from scrapy.loader.processors import MapCompose, TakeFirst
+import warnings
 
 
-def _extract_year(year_list):
-    for elem in year_list:
-        if elem.isdigit():
-            return int(elem)
+# get lists of month names in german, french and italian.
+# names are normalised: lower case + accents removed
+locale.setlocale(locale.LC_ALL, 'de')
+months_de = [m.lower() for m in calendar.month_name]
+locale.setlocale(locale.LC_ALL, 'fr')
+months_fr = [m.lower().replace('é', 'e').replace('û', 'u') for m in calendar.month_name]
+locale.setlocale(locale.LC_ALL, 'it')
+months_it = [m.lower() for m in calendar.month_name]
+locale.setlocale(locale.LC_ALL, 'C')
+
+
+def _extract_date(raw_date):
+    # match 4-digit number if preceded by '.' or ' '
+    year_match = re.search(r'(?<=[\.,\s])\d{4}', raw_date)
+
+    # if year was found, look for day and month
+    if year_match is not None:
+        year = int(year_match.group())
+
+        # match one- or two-digit number preceded by ' ' and followed by '.' or ' '
+        day_match = re.search('(?<=\s)\d{1,2}(?=[\.,\s])', raw_date)
+        day = int(day_match.group())
+
+        # extract month (digit between 1 and 12)
+        # month token is between day and year token extracted above
+        month_start = day_match.span()[1] + 1
+        month_end = year_match.span()[0] - 1
+        month_raw = raw_date[month_start:month_end].replace(' ', '').replace('.', '')
+        month = None
+        # if month is represented as digit, we're done
+        if month_raw.isdigit():
+            month = int(month_raw)
+        # if month is represented as string, we need to find out, which month it is (german, french and italian)
+        else:
+            month_raw = month_raw.lower()
+
+            # if it's french, remove accents
+            month_raw = month_raw.replace('é', 'e').replace('û', 'u')
+
+            if month_raw in months_de:
+                month = months_de.index(month_raw)
+            elif month_raw in months_fr:
+                month = months_fr.index(month_raw)
+            elif month_raw in months_it:
+                month = months_it.index(month_raw)
+
+        if month is None:
+            warnings.warn('Could not extract month.')
+            date = datetime(year, 1, 1)
+            return date
+        else:
+            date = datetime(year, month, day)
+
+        return date
+
+    print('\n\nraw date: ' + raw_date)
+
 
 
 def _concat_regeste(regeste_tokens):
@@ -68,9 +125,12 @@ def _extract_art_refs(raw_art_refs):
     return raw_art_refs.split(',')
 
 
+
+
 class RulingItem(scrapy.Item):
-    year = scrapy.Field(
-        input_processor=_extract_year
+    date = scrapy.Field(
+        input_processor=MapCompose(_extract_date),
+        output_processor=TakeFirst()
     )
     ruling_id = scrapy.Field(
         input_processor=MapCompose(_extract_ruling_id),
@@ -91,4 +151,3 @@ class RulingItem(scrapy.Item):
         output_processor=MapCompose(_extract_art_refs)
     )
     pass
-

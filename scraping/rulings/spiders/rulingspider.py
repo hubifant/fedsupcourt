@@ -33,7 +33,8 @@ class RulingSpider(scrapy.Spider):
     def parse_ruling(self, response):
 
         l = ItemLoader(item=RulingItem(), response=response)
-        # l.add_xpath('year', '//tr/td[@valign="top"]/text()')
+        # the date can be extracted from one of the first two 'paraatf' divs.
+        l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
         l.add_xpath('regeste', '//div[@id="regeste"]//text()')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
