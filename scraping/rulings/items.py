@@ -37,7 +37,7 @@ party_separator = {'de':
                         'end': ' contro '}
                    }
 
-# init html2text class (make sure not to print random newlines and ignore links):
+# init html2text class (make sure not to print random newlines and to ignore links):
 html2text = HTML2Text()
 html2text.body_width = 0
 html2text.ignore_links = True
@@ -153,16 +153,15 @@ def _extract_art_refs(raw_art_refs):
     # remove newlines
     raw_art_refs = re.sub(r'\n', ' ', raw_art_refs)
 
-    # make sure that no comma is followed by a space
-    raw_art_refs.replace(', ', ',')
-
     # remove double-spaces
-    raw_art_refs = re.sub(r'\s{2,}', '', raw_art_refs)
+    raw_art_refs = re.sub(r'\s{2,}', ' ', raw_art_refs)
 
-    # split at ', ' and return list
-    return raw_art_refs.split(',')
+    # remove spaces at beginning and end
+    raw_art_refs = re.sub(r'^\s+', '', raw_art_refs)
+    raw_art_refs = re.sub(r'\s+$', '', raw_art_refs)
 
-
+    # split at each comma if followed by 'art' and return list
+    return re.split(r'\,\s?(?=[aA]rt)', raw_art_refs)
 
 
 class RulingItem(scrapy.Item):
@@ -190,6 +189,9 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(html2text.handle),
         output_processor=''.join
     )
+    statement_of_affairs = scrapy.Field(
+
+    )
     url = scrapy.Field(
         output_processor=TakeFirst()
     )
@@ -200,4 +202,3 @@ class RulingItem(scrapy.Item):
         input_processor=''.join,
         output_processor=MapCompose(_extract_art_refs)
     )
-    pass
