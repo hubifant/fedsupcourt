@@ -190,7 +190,8 @@ class RulingItem(scrapy.Item):
         output_processor=''.join
     )
     statement_of_affairs = scrapy.Field(
-
+        input_processor=MapCompose(html2text.handle),
+        output_processor=''.join
     )
     url = scrapy.Field(
         output_processor=TakeFirst()
