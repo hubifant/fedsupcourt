@@ -35,9 +35,13 @@ class RulingSpider(scrapy.Spider):
         l = ItemLoader(item=RulingItem(), response=response)
         # the date can be extracted from one of the first two 'paraatf' divs.
         l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
+        # rubrum is the text before 'regeste' paragraph.
+        l.add_xpath('rubrum', '//div[@class="content"]/div[@id="regeste"]/preceding-sibling::div[@class="paraatf"]')
         l.add_xpath('involved_parties', '(//div[@class="paraatf"])[1]/text()')
         l.add_xpath('language', '(//div[@class="paraatf"])[1]/text()')
-        l.add_xpath('regeste', '//div[@id="regeste"]//text()')
+
+        # regeste is contained in children of //div[@id="regeste"]
+        l.add_xpath('regeste', '//div[@id="regeste"]/child::*')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
         l.add_xpath('bge_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"BGE:")]]//a/text()')

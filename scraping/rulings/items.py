@@ -7,6 +7,7 @@
 
 import calendar
 from datetime import datetime
+from html2text import HTML2Text
 import locale
 import re
 import scrapy
@@ -35,6 +36,11 @@ party_separator = {'de':
                        {'start': 'nella causa ',
                         'end': ' contro '}
                    }
+
+# init html2text class (make sure not to print random newlines and ignore links):
+html2text = HTML2Text()
+html2text.body_width = 0
+html2text.ignore_links = True
 
 def _extract_date(raw_date):
     # match 4-digit number if preceded by '.' or ' '
@@ -116,17 +122,6 @@ def _extract_language(raw_parties):
     warnings.warn('Could not extract language.')
 
 
-def _concat_regeste(regeste_tokens):
-    # TODO: join text more nicely (span vs dict)
-    """
-    Joins tokens from regeste text.
-    :param regeste_tokens:
-    :type regeste_tokens:
-    :return:
-    """
-    return '\n'.join(regeste_tokens)
-
-
 def _extract_ruling_id(ruling_id_string):
     # TODO: checking if number is correct. (throw exception?)
     """
@@ -179,17 +174,21 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(_extract_ruling_id),
         output_processor=TakeFirst()
     )
-    language = scrapy.Field(
-        input_processor=MapCompose(_extract_language),
-        output_processor=TakeFirst()
-    )
     involved_parties = scrapy.Field(
         input_processor=MapCompose(_extract_involved_parties),
         output_processor=TakeFirst()
     )
-    regeste = scrapy.Field(
-        input_processor=_concat_regeste,
+    language = scrapy.Field(
+        input_processor=MapCompose(_extract_language),
         output_processor=TakeFirst()
+    )
+    rubrum = scrapy.Field(
+        input_processor=MapCompose(html2text.handle),
+        output_processor=''.join
+    )
+    regeste = scrapy.Field(
+        input_processor=MapCompose(html2text.handle),
+        output_processor=''.join
     )
     url = scrapy.Field(
         output_processor=TakeFirst()
