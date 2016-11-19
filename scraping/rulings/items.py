@@ -26,6 +26,7 @@ months_it = [m.lower() for m in calendar.month_name]
 locale.setlocale(locale.LC_ALL, 'C')
 
 
+# tokens for separating parties and detecting language
 party_separator = {'de':
                        {'start': 'i.S. ',
                         'end': ' gegen '},
@@ -164,6 +165,11 @@ def _extract_art_refs(raw_art_refs):
     return re.split(r'\,\s?(?=[aA]rt)', raw_art_refs)
 
 
+def filter_empty_a(html_string):
+    if re.search(r'^\<a[^\/]*name=\"idp\d+\"\><\/a>$', html_string) is None:
+        return html_string
+
+
 class RulingItem(scrapy.Item):
     date = scrapy.Field(
         input_processor=MapCompose(_extract_date),
@@ -173,6 +179,7 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(_extract_ruling_id),
         output_processor=TakeFirst()
     )
+    processing_number = scrapy.Field()
     involved_parties = scrapy.Field(
         input_processor=MapCompose(_extract_involved_parties),
         output_processor=TakeFirst()
@@ -182,15 +189,19 @@ class RulingItem(scrapy.Item):
         output_processor=TakeFirst()
     )
     rubrum = scrapy.Field(
-        input_processor=MapCompose(html2text.handle),
+        input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )
-    regeste = scrapy.Field(
-        input_processor=MapCompose(html2text.handle),
+    regesta = scrapy.Field(
+        input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )
     statement_of_affairs = scrapy.Field(
-        input_processor=MapCompose(html2text.handle),
+        input_processor=MapCompose(filter_empty_a, html2text.handle),
+        output_processor=''.join
+    )
+    consideration = scrapy.Field(
+        input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )
     url = scrapy.Field(

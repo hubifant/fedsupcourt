@@ -42,17 +42,23 @@ class RulingSpider(scrapy.Spider):
         l.add_xpath('language', '(//div[@class="paraatf"])[1]/text()')
 
         # regeste is contained in children of //div[@id="regeste"]
-        l.add_xpath('regeste', '//div[@id="regeste"]/child::*')
+        l.add_xpath('regesta', '//div[@id="regeste"]/child::*')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
 
         # statement_of_affairs
         l.add_xpath('statement_of_affairs',
-                    '//div[span[@id="sachverhalt"]]'                        # navigate to 'sachverhalt'
-                    '/following-sibling::div'                               # all following siblings
-                    '[following-sibling::div[span[@id="erwaegungen"]]]'     # they must be followed by 'erwägung'
-                    '/node()[not(@class="center pagebreak")'                # exclude pagebreak-<div>s
-                    '        and not(contains(@name, "page"))]')            # exclude pagebreaks-<a>s
+                    '//div[span[@id="sachverhalt"]]'                     # navigate to 'sachverhalt'
+                    '/following-sibling::div'                            # all following siblings
+                    '[following-sibling::div[span[@id="erwaegungen"]]]'  # they must be followed by 'erwägung'
+                    '/node()[not(@class="center pagebreak")'             # exclude pagebreak-<div>s
+                    '        and not(contains(@name, "page"))]')         # exclude pagebreaks-<a>s
+
+        l.add_xpath('consideration',
+                    '//div[span[@id="erwaegungen"]]'              # navigate to 'sachverhalt'
+                    '/following-sibling::div'                     # all following siblings
+                    '/node()[not(@class="center pagebreak")'      # exclude pagebreak-<div>s
+                    '        and not(contains(@name, "page"))]')  # exclude pagebreaks-<a>s
 
         # references
         l.add_xpath('bge_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"BGE:")]]//a/text()')
