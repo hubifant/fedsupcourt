@@ -35,6 +35,7 @@ class RulingSpider(scrapy.Spider):
         l = ItemLoader(item=RulingItem(), response=response)
         # the date can be extracted from one of the first two 'paraatf' divs.
         l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
+        l.add_xpath('dossier_number', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
 
         # rubrum is the text before 'regeste' paragraph.
         l.add_xpath('title_of_judgement', '//div[@class="content"]/div[@id="regeste"]/preceding-sibling::div[@class="paraatf"]')

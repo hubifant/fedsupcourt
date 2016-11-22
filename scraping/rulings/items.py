@@ -110,6 +110,15 @@ def _extract_involved_parties(raw_parties):
     warnings.warn('Could not extract parties.')
 
 
+def _extract_dossier_number(raw_dossier_number):
+    # extract 'Verfahrensnummer' (e.g. '5A_153/2009' or '4C.197/2003')
+    # http://www.bger.ch/uebersicht_numm_dossiers_internet_d_ab_2007.pdf
+    dnb_match = re.search('\d+\w+[\_\.]\d+\/\d{4}', raw_dossier_number)
+
+    if dnb_match is not None:
+        return dnb_match.group()
+
+
 def _extract_language(raw_parties):
     # language can be extracted if claimant and defendant can be extracted
     for language, separator in party_separator.items():
@@ -179,7 +188,10 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(_extract_ruling_id),
         output_processor=TakeFirst()
     )
-    processing_number = scrapy.Field()
+    dossier_number = scrapy.Field(
+        input_processor=MapCompose(_extract_dossier_number),
+        output_processor=TakeFirst()
+    )
     involved_parties = scrapy.Field(
         input_processor=MapCompose(_extract_involved_parties),
         output_processor=TakeFirst()
