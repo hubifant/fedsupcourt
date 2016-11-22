@@ -188,11 +188,11 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(_extract_language),
         output_processor=TakeFirst()
     )
-    rubrum = scrapy.Field(
+    title_of_judgement = scrapy.Field(
         input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )
-    regesta = scrapy.Field(
+    core_issue = scrapy.Field(
         input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )

@@ -37,12 +37,12 @@ class RulingSpider(scrapy.Spider):
         l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
 
         # rubrum is the text before 'regeste' paragraph.
-        l.add_xpath('rubrum', '//div[@class="content"]/div[@id="regeste"]/preceding-sibling::div[@class="paraatf"]')
+        l.add_xpath('title_of_judgement', '//div[@class="content"]/div[@id="regeste"]/preceding-sibling::div[@class="paraatf"]')
         l.add_xpath('involved_parties', '(//div[@class="paraatf"])[1]/text()')
         l.add_xpath('language', '(//div[@class="paraatf"])[1]/text()')
 
         # regeste is contained in children of //div[@id="regeste"]
-        l.add_xpath('regesta', '//div[@id="regeste"]/child::*')
+        l.add_xpath('core_issue', '//div[@id="regeste"]/child::*')
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
 
