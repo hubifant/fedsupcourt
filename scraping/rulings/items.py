@@ -25,6 +25,45 @@ locale.setlocale(locale.LC_ALL, 'it')
 months_it = [m.lower() for m in calendar.month_name]
 locale.setlocale(locale.LC_ALL, 'C')
 
+departments = {
+    '1st Public Law Department': {
+        'de': 'I. öffentlich-rechtliche Abteilung',
+        'fr': 'Iere Cour de Droit Public',
+        'it': 'I Corte di Diritto Pubblico'
+    },
+    '2nd Public Law Department': {
+        'de': 'II. öffentlich-rechtliche Abteilung',
+        'fr': 'IIe Cour de Droit Public',
+        'it': 'I Corte di Diritto Pubblico'
+    },
+    '1st Civil Law Department': {
+        'de': 'I. zivilrechtliche Abteilung',
+        'fr': 'Ie Cour de Droit Civil',
+        'it': 'I Corte di Diritto Civile'
+    },
+    '2nd Civil Law Department': {
+        'de': 'II. zivilrechtliche Abteilung',
+        'fr': 'IIe Cour de Droit Civil',
+        'it': 'II Corte di Diritto Civile'
+    },
+    'Penal Law Department': {
+        'de': 'Strafrechtliche Abteilung',
+        'fr': 'Cour de Droit Pénal',
+        'it': 'Corte di Diritto Penale'
+    },
+    '1st Social Law Department': {
+        'de': 'I. sozialrechtliche Abteilung',
+        'fr': 'Ire Cour de Droit Social',
+        'it': 'I Corte di Diritto Sociale'
+    },
+    '2nd Social Law Department': {
+        'de': 'II. sozialrechtliche Abteilung',
+        'fr': 'IIe Cour de Droit Social',
+        'it': 'II Corte di Diritto Sociale'
+    }
+
+
+}
 
 # tokens for separating parties and detecting language
 party_separator = {'de':
@@ -42,6 +81,7 @@ party_separator = {'de':
 html2text = HTML2Text()
 html2text.body_width = 0
 html2text.ignore_links = True
+
 
 def _extract_date(raw_date):
     # match 4-digit number if preceded by '.' or ' '
@@ -119,6 +159,15 @@ def _extract_dossier_number(raw_dossier_number):
         return dnb_match.group()
 
 
+def _extract_department(raw_department):
+    # TODO: sometimes department is mentioned, sometimes chamber. Multiple formats (e.g. 1999 vs. 2015)
+    # if the department name (in de, fr or it) occurs in the title of judgement, return the english department name
+    for dep_en, department_translations in departments.items():
+        for language, translation in department_translations:
+            if translation.lower() in raw_department.lower():
+                return dep_en
+
+
 def _extract_language(raw_parties):
     # language can be extracted if claimant and defendant can be extracted
     for language, separator in party_separator.items():
@@ -190,6 +239,10 @@ class RulingItem(scrapy.Item):
     )
     dossier_number = scrapy.Field(
         input_processor=MapCompose(_extract_dossier_number),
+        output_processor=TakeFirst()
+    )
+    department = scrapy.Field(
+        input_processor=MapCompose(_extract_department),
         output_processor=TakeFirst()
     )
     involved_parties = scrapy.Field(

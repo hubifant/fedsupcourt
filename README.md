@@ -6,3 +6,4 @@ For analysing the usage of international law at the _Federal Supreme Court of Sw
 - [Entscheidungen des Schweizerischen Bundesgerichts](https://de.wikipedia.org/wiki/Entscheidungen_des_Schweizerischen_Bundesgerichts)
 - [Nummerierung der Dossiers ab 2007 (BGG)](http://www.bger.ch/uebersicht_numm_dossiers_internet_d_ab_2007.pdf)
 - [Relevante Urteile des Bundesgerichts finden: Urteile mit Dossiernummer finden](www.eurospider.com/fileadmin/pdf/SucheMitDossierNummer.pdf)
+- [Court Organisation](http://www.bger.ch/gerichtsorganisation.pdf)
