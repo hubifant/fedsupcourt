@@ -6,7 +6,7 @@
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 import calendar
-from datetime import datetime
+# from datetime import datetime
 from html2text import HTML2Text
 import locale
 import re
@@ -120,11 +120,11 @@ def _extract_date(raw_date):
 
         if month is None:
             warnings.warn('Could not extract month.')
-            date = datetime(year, 1, 1)
-            return date
+            # date = datetime(year, 1, 1)
+            date = str(year)
         else:
-            date = datetime(year, month, day)
-
+            # date = datetime(year, month, day)
+            date = '%02d.%02d.%04d' % (day, month, year)
         return date
 
 
