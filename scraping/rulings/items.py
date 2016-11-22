@@ -111,7 +111,7 @@ def _extract_involved_parties(raw_parties):
 
 
 def _extract_dossier_number(raw_dossier_number):
-    # extract 'Verfahrensnummer' (e.g. '5A_153/2009' or '4C.197/2003')
+    # extract 'Dossiernummer' (e.g. '5A_153/2009' or '4C.197/2003')
     # http://www.bger.ch/uebersicht_numm_dossiers_internet_d_ab_2007.pdf
     dnb_match = re.search('\d+\w+[\_\.]\d+\/\d{4}', raw_dossier_number)
 
