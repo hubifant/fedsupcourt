@@ -11,6 +11,8 @@ def scrape_rulings():
     settings = get_project_settings()
     settings.set('LOG_FORMAT', '%(levelname)s | %(message)s')
     settings.set('ITEM_PIPELINES', {'rulings.pipelines.RulingsPipeline': '100'})
+    settings.set('COOKIES_ENABLED', False)
+    settings.set('DOWNLOAD_DELAY', 0.1)
     configure_logging()
 
     # start the crawler
