@@ -10,7 +10,10 @@ def scrape_rulings():
     # set the format of the logging messages and add pipeline(s)
     settings = get_project_settings()
     settings.set('LOG_FORMAT', '%(levelname)s | %(message)s')
-    settings.set('ITEM_PIPELINES', {'rulings.pipelines.RulingsPipeline': '100'})
+    settings.set('ITEM_PIPELINES', {
+        'rulings.pipelines.KeywordsExtractorPipeline': '100',
+        'rulings.pipelines.JsonWriterPipeline': '999'
+    })
     settings.set('COOKIES_ENABLED', False)
     settings.set('DOWNLOAD_DELAY', 0.1)
     configure_logging()
