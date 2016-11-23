@@ -261,7 +261,7 @@ class RulingItem(scrapy.Item):
         input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )
-    statement_of_affairs = scrapy.Field(
+    paragraph = scrapy.Field(
         input_processor=MapCompose(filter_empty_a, html2text.handle),
         output_processor=''.join
     )

@@ -25,7 +25,7 @@ class KeywordsExtractorPipeline(object):
 
         for pattern_language, pattern in self.patterns_international_treaties.items():
             keywords.extend(re.findall(pattern, item['core_issue'], re.IGNORECASE))
-            keywords.extend(re.findall(pattern, item['statement_of_affairs'], re.IGNORECASE))
+            keywords.extend(re.findall(pattern, item['paragraph'], re.IGNORECASE))
             keywords.extend(re.findall(pattern, item['consideration'], re.IGNORECASE))
 
         # count each keyword's number of occurences
@@ -43,12 +43,12 @@ class KeywordsExtractorPipeline(object):
 
                 # find sentences
                 sentences_in_ci = re.findall(sentence_pattern, item['core_issue'], re.IGNORECASE)
-                sentences_in_soa = re.findall(sentence_pattern, item['statement_of_affairs'], re.IGNORECASE)
+                sentences_in_p = re.findall(sentence_pattern, item['paragraph'], re.IGNORECASE)
                 sentences_in_c = re.findall(sentence_pattern, item['consideration'], re.IGNORECASE)
 
                 # save entire context
                 contexts.extend([{'chapter': 'Core Issue', 'sentence': sentence} for sentence in sentences_in_ci])
-                contexts.extend([{'chapter': 'Statement of Affairs', 'sentence': sentence} for sentence in sentences_in_soa])
+                contexts.extend([{'chapter': 'Paragraph', 'sentence': sentence} for sentence in sentences_in_p])
                 contexts.extend([{'chapter': 'Consideration', 'sentence': sentence} for sentence in sentences_in_c])
 
             print(keywords_and_counts)
