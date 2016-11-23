@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
+from collections import Counter
 import json
 import re
 
@@ -12,34 +13,53 @@ import re
 class KeywordsExtractorPipeline(object):
 
     patterns_international_treaties = {
-        'de': r'(?:international|völkerrecht)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr)\w*',
+        'de': r'(?:international|völkerrecht)\w*[\s\-]?(?:abkommen|p[aä]kt|\w*recht|übereinkommen|vertr)\w*',
         'fr': r'(?:accord|contrat|convention|pacte|trait[eé])\w*[\s\-]internationa\w*',
         'it': r'(?:accord|convenzion|patt|trattat)\w*[\s\-]internazional\w*'
     }
 
     def process_item(self, item, spider):
         # find out, if ruling mentions international law
-        matches = []
-        occurences = []
+        keywords = []
+        contexts = []
 
         for pattern_language, pattern in self.patterns_international_treaties.items():
-            matches.extend(re.findall(pattern, item['core_issue'], re.IGNORECASE))
-            matches.extend(re.findall(pattern, item['statement_of_affairs'], re.IGNORECASE))
-            matches.extend(re.findall(pattern, item['consideration'], re.IGNORECASE))
+            keywords.extend(re.findall(pattern, item['core_issue'], re.IGNORECASE))
+            keywords.extend(re.findall(pattern, item['statement_of_affairs'], re.IGNORECASE))
+            keywords.extend(re.findall(pattern, item['consideration'], re.IGNORECASE))
 
-            # if matches have been found, extract the entire sentence in which the match occurs.
-            if len(matches) > 0:
-                sentence_pattern = r'(^|(?<=\.|\n|\t))[^\.\n\t]*'    # start of a sentence
-                sentence_pattern += pattern                          # the keyword
+        # count each keyword's number of occurences
+        keywords_and_counts = dict(Counter(keywords))
+
+        # if keywords have been found, extract the entire sentences in which they occur.
+        if len(keywords) > 0:
+            print('INTERNATIONAL TREATY DETECTED :-D')
+
+            for kw in set(keywords):
+                # build regex
+                sentence_pattern = r'(?:^|(?<=\.|\n|\t))[^\.\n\t]*'  # start of a sentence
+                sentence_pattern += re.escape(kw)                    # the keyword
                 sentence_pattern += r'[^\.\n\t]*(?:\.|$|(?=\n|\t))'  # end of a sentence
-                occurences.extend(re.findall(sentence_pattern, item['core_issue'], re.IGNORECASE))
-                occurences.extend(re.findall(sentence_pattern, item['statement_of_affairs'], re.IGNORECASE))
-                occurences.extend(re.findall(sentence_pattern, item['consideration'], re.IGNORECASE))
 
-                print('WOOHOOOOOOOOOOOOOOOOO :-D')
-                print(matches)
-                print(occurences)
-                print('\n\n===================================================================================================')
+                # find sentences
+                sentences_in_ci = re.findall(sentence_pattern, item['core_issue'], re.IGNORECASE)
+                sentences_in_soa = re.findall(sentence_pattern, item['statement_of_affairs'], re.IGNORECASE)
+                sentences_in_c = re.findall(sentence_pattern, item['consideration'], re.IGNORECASE)
+
+                # save entire context
+                contexts.extend([{'chapter': 'Core Issue', 'sentence': sentence} for sentence in sentences_in_ci])
+                contexts.extend([{'chapter': 'Statement of Affairs', 'sentence': sentence} for sentence in sentences_in_soa])
+                contexts.extend([{'chapter': 'Consideration', 'sentence': sentence} for sentence in sentences_in_c])
+
+            print(keywords_and_counts)
+            print(contexts)
+            print('\n\n===================================================================================================')
+
+            item['international_law'] = {
+                'keywords': keywords_and_counts,
+                'contexts': contexts
+            }
+
         return item
 
 

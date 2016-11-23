@@ -279,3 +279,4 @@ class RulingItem(scrapy.Item):
         input_processor=''.join,
         output_processor=MapCompose(_extract_art_refs)
     )
+    international_law = scrapy.Field()
