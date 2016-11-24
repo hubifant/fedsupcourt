@@ -11,7 +11,8 @@ def scrape_rulings():
     settings = get_project_settings()
     settings.set('LOG_FORMAT', '%(levelname)s | %(message)s')
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.KeywordExtractorPipeline': '100',
+        'rulings.pipelines.TextCleanerPipeline': '100,',
+        'rulings.pipelines.KeywordExtractorPipeline': '200',
         'rulings.pipelines.JsonWriterPipeline': '999'
     })
     settings.set('COOKIES_ENABLED', False)
