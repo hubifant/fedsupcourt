@@ -35,20 +35,12 @@ class RulingSpider(scrapy.Spider):
     def parse_ruling(self, response):
 
         l = ItemLoader(item=RulingItem(), response=response)
-        # the date can be extracted from one of the first two 'paraatf' divs.
-        l.add_xpath('date', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
-        l.add_xpath('dossier_number', '(//div[@class="paraatf"])[position()=1 or position()=2]/text()')
 
         # title_of_judgement is the text before 'regeste' paragraph.
         l.add_xpath('title_of_judgement', '//div[@class="content"]/div[@id="regeste"]/preceding-sibling::div[@class="paraatf"]')
-        l.add_xpath('involved_parties', '(//div[@class="paraatf"])[1]/text()')
-        l.add_xpath('department', '(//div[@class="paraatf"])[1]/text()')
-        l.add_xpath('language', '(//div[@class="paraatf"])[1]/text()')
 
-        # regeste is contained in children of //div[@id="regeste"]
+        # regeste is contained in //div[@id="regeste"]
         l.add_xpath('core_issue', '//div[@id="regeste"]/child::*')
-        l.add_value('ruling_id', response.meta['ruling_id'])
-        l.add_value('url', response.url)
 
         # statement of affairs (= 'Sachverhalt')
         l.add_xpath('statement_of_affairs',
@@ -60,7 +52,7 @@ class RulingSpider(scrapy.Spider):
 
         # paragraph (= 'Erwägungen')
         l.add_xpath('paragraph',
-                    '//div[span[@id="erwaegungen"]]'              # navigate to 'sachverhalt'
+                    '//div[span[@id="erwaegungen"]]'              # navigate to 'erwaegungen'
                     '/following-sibling::div'                     # all following siblings
                     '/node()[not(@class="center pagebreak")'      # exclude pagebreak-<div>s
                     '        and not(contains(@name, "page"))]')  # exclude pagebreaks-<a>s
@@ -68,6 +60,10 @@ class RulingSpider(scrapy.Spider):
         # references
         l.add_xpath('bge_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"BGE:")]]//a/text()')
         l.add_xpath('art_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"Artikel:")]]//text()')
+
+        # values that have been crawled on previous level
+        l.add_value('ruling_id', response.meta['ruling_id'])
+        l.add_value('url', response.url)
 
         yield l.load_item()
 
