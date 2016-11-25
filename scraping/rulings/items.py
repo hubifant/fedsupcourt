@@ -99,4 +99,5 @@ class RulingItem(scrapy.Item):
     department = scrapy.Field()
     involved_parties = scrapy.Field()
     language = scrapy.Field()
-    international_law = scrapy.Field()
+    international_treaties = scrapy.Field()
+    customary_international_law = scrapy.Field()
