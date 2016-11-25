@@ -18,6 +18,11 @@ class KeywordExtractorPipeline(object):
                '(?: (?:d\'|di |(?:de|su)(?:lla|l|i|gli)? |per (?:il|la|gli|i) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))']
     }
 
+    sentence_pattern = r'(?:^|(?<=\. )[A-Z]|(?<=\n|\t))'    # Go to the beginning of a sentence
+    sentence_pattern += r'(?:.(?!\. [A-Z]))*'               # anyrything that is not followed by beginning of a sentence
+    sentence_pattern += r'%s'                               # place holder for keyword
+    sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # end of a sentence
+
     def process_item(self, ruling, spider):
         # find out, if ruling mentions international law
         extracted_keywords = []
@@ -41,16 +46,12 @@ class KeywordExtractorPipeline(object):
             print('INTERNATIONAL TREATY DETECTED :-D')
 
             for keyword in keywords_and_counts.keys():
-                # build regex
-                # todo improve regex
-                sentence_pattern = r'(?:^|(?<=\.|\n|\t))[^\.\n\t]*'  # start of a sentence
-                sentence_pattern += re.escape(keyword)               # the keyword
-                sentence_pattern += r'[^\.\n\t]*(?:\.|$|(?=\n|\t))'  # end of a sentence
+                keyword_context_pattern = self.sentence_pattern % re.escape(keyword)
 
                 # find and save contexts
                 for chapter in chapters:
                     if chapter in ruling:
-                        sentences = re.findall(sentence_pattern, ruling[chapter], re.IGNORECASE)
+                        sentences = re.findall(keyword_context_pattern, ruling[chapter])  # don't IGNORECASE here!
                         contexts.extend([{'chapter': chapter, 'sentence': sentence} for sentence in sentences])
 
             print(keywords_and_counts)

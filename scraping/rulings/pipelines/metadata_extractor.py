@@ -21,39 +21,39 @@ class MetadataExtractorPipeline(object):
     # departments of the Federal Supreme Court
     departments = {
         '1st Public Law Department': {
-            'de': 'I. öffentlich-rechtliche Abteilung',
-            'fr': 'Iere Cour de Droit Public',
-            'it': 'I Corte di Diritto Pubblico'
+            'de': ['I. öffentlich-rechtliche Abteilung'],
+            'fr': ['Iere Cour de Droit Public'],
+            'it': ['I Corte di Diritto Pubblico']
         },
         '2nd Public Law Department': {
-            'de': 'II. öffentlich-rechtliche Abteilung',
-            'fr': 'IIe Cour de Droit Public',
-            'it': 'I Corte di Diritto Pubblico'
+            'de': ['II. öffentlich-rechtliche Abteilung'],
+            'fr': ['IIe Cour de Droit Public'],
+            'it': ['I Corte di Diritto Pubblico']
         },
         '1st Civil Law Department': {
-            'de': 'I. zivilrechtliche Abteilung',
-            'fr': 'Ie Cour de Droit Civil',
-            'it': 'I Corte di Diritto Civile'
+            'de': ['I. zivilrechtliche Abteilung'],
+            'fr': ['Ie Cour de Droit Civil'],
+            'it': ['I Corte di Diritto Civile']
         },
         '2nd Civil Law Department': {
-            'de': 'II. zivilrechtliche Abteilung',
-            'fr': 'IIe Cour de Droit Civil',
-            'it': 'II Corte di Diritto Civile'
+            'de': ['II. zivilrechtliche Abteilung'],
+            'fr': ['IIe Cour de Droit Civil'],
+            'it': ['II Corte di Diritto Civile']
         },
         'Penal Law Department': {
-            'de': 'Strafrechtliche Abteilung',
-            'fr': 'Cour de Droit Pénal',
-            'it': 'Corte di Diritto Penale'
+            'de': ['strafrechtliche Abteilung', 'Kassationshof'],
+            'fr': ['Cour de Droit Pénal', 'Cour de Cassation Pénale'],
+            'it': ['Corte di Diritto Penale', 'Corte di Cassazione Penale']
         },
         '1st Social Law Department': {
-            'de': 'I. sozialrechtliche Abteilung',
-            'fr': 'Ire Cour de Droit Social',
-            'it': 'I Corte di Diritto Sociale'
+            'de': ['I. sozialrechtliche Abteilung'],
+            'fr': ['Ire Cour de Droit Social'],
+            'it': ['I Corte di Diritto Sociale']
         },
         '2nd Social Law Department': {
-            'de': 'II. sozialrechtliche Abteilung',
-            'fr': 'IIe Cour de Droit Social',
-            'it': 'II Corte di Diritto Sociale'
+            'de': ['II. sozialrechtliche Abteilung'],
+            'fr': ['IIe Cour de Droit Social'],
+            'it': ['II Corte di Diritto Sociale']
         }
     }
 
@@ -158,9 +158,10 @@ class MetadataExtractorPipeline(object):
         # TODO: sometimes department is mentioned, sometimes chamber.
         # if the department name (in de, fr or it) occurs in the title of judgement, return the english department name
         for dep_en, department_translations in self.departments.items():
-            for language, translation in department_translations.items():
-                if translation.lower() in raw_department.lower():
-                    return dep_en
+            for language, translations in department_translations.items():
+                for translation in translations:
+                    if translation.lower() in raw_department.lower():
+                        return dep_en
 
     def _extract_language(self, raw_parties):
         # language can be extracted if claimant and defendant can be extracted
