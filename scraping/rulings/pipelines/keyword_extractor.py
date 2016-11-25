@@ -18,48 +18,50 @@ class KeywordExtractorPipeline(object):
                '(?: (?:d\'|di |(?:de|su)(?:lla|l|i|gli)? |per (?:il|la|gli|i) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))']
     }
 
-    sentence_pattern = r'(?:^|(?<=\. )[A-Z]|(?<=\n|\t))'    # Go to the beginning of a sentence
-    sentence_pattern += r'(?:.(?!\. [A-Z]))*'               # anyrything that is not followed by beginning of a sentence
-    sentence_pattern += r'%s'                               # place holder for keyword
-    sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # end of a sentence
+    sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'   # Go to the beginning of a sentence
+    sentence_pattern += r'(?:.(?!\. [A-Z]))*'                  # anyrything that is not followed by beginning of a sentence
+    sentence_pattern += r'%s'                                  # place holder for keyword
+    sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'     # end of a sentence
 
     def process_item(self, ruling, spider):
-        # find out, if ruling mentions international law
+
+        # find keywords associated to international treaties
         extracted_keywords = []
+        keywords_with_counts = {}
         contexts = []
 
         # ruling chapters from which keywords will be extracted:
-        chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
+        ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
 
-        for pattern_language, patterns in self.patterns_international_treaties.items():
-            for pattern in patterns:
-                for chapter in chapters:
-                    if chapter in ruling:
+        # go through all ruling chapters and extract keywords
+        for chapter in ruling_chapters:
+            if chapter in ruling:
+                for pattern_language, patterns in self.patterns_international_treaties.items():
+                    for pattern in patterns:
                         extracted_keywords.extend(re.findall(pattern, ruling[chapter], re.IGNORECASE))
 
-        # count each keyword's number of occurences
-        # todo: counts can be wrong if same word is detected multiple times
-        keywords_and_counts = dict(Counter(extracted_keywords))
-
-        # if keywords have been found, extract the entire sentences in which they occur.
+        # if keywords have been found, extract the entire sentences in which they occur
         if len(extracted_keywords) > 0:
-            print('INTERNATIONAL TREATY DETECTED :-D')
+            for keyword in set(extracted_keywords):
 
-            for keyword in keywords_and_counts.keys():
+                # pattern matches sentences containing the keyword
                 keyword_context_pattern = self.sentence_pattern % re.escape(keyword)
 
-                # find and save contexts
-                for chapter in chapters:
+                # find and save contexts in each chapter
+                for chapter in ruling_chapters:
                     if chapter in ruling:
                         sentences = re.findall(keyword_context_pattern, ruling[chapter])  # don't IGNORECASE here!
-                        contexts.extend([{'chapter': chapter, 'sentence': sentence} for sentence in sentences])
 
-            print(keywords_and_counts)
-            print(contexts)
-            print('\n\n===================================================================================================')
+                        # update contexts list with each extracted sentence
+                        contexts.extend(
+                            [{'keyword': keyword, 'chapter': chapter, 'sentence': sentence} for sentence in sentences]
+                        )
+
+                        # update keyword count (difficult to do this nicer before)
+                        keywords_with_counts[keyword] = keywords_with_counts.get(keyword, 0) + len(sentences)
 
             ruling['international_treaties'] = {
-                'keywords': keywords_and_counts,
+                'keywords': keywords_with_counts,
                 'contexts': contexts
             }
 
