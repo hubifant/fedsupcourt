@@ -1,8 +1,10 @@
 # pycharm testing tuto: https://confluence.jetbrains.com/display/PYH/Creating+and+running+a+Python+unit+test
 
 import unittest
-from scraping.rulings.pipelines import InternationalTreatyExtractor, InternationalCustomaryLawExtractor
-from testing.dummy_data import case_incomplete, case_completeness_int_treaties, case_completeness_customary_int_law
+from scraping.rulings.pipelines import InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
+    GeneralInternationalLawExtractor
+from testing.dummy_data import case_incomplete, case_completeness_int_treaties, case_completeness_customary_int_law, \
+    case_completeness_int_law_in_general
 
 
 class TestGeneralKeywordExtractor(unittest.TestCase):
@@ -38,7 +40,6 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
 
 
 class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
-
     def _test_completeness(self, keyword_type, keyword_extractor, test_data):
         """
         Asserts that all expected keywords are extracted
@@ -69,6 +70,14 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
 
         keyword_extractor = InternationalCustomaryLawExtractor()
         self._test_completeness('international_customary_law', keyword_extractor, case_completeness_customary_int_law)
+
+    def test_completeness_int_law_in_general(self):
+        """
+        Asserts that all expected keywords related to international law in general are extracted
+        """
+
+        keyword_extractor = GeneralInternationalLawExtractor()
+        self._test_completeness('international_law_in_general', keyword_extractor, case_completeness_int_law_in_general)
 
 
 if __name__ == '__main__':

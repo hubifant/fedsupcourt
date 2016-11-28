@@ -27,7 +27,7 @@ case_incomplete['expected_output']['keywords'] = {
     }
 }
 
-# case_keyword_completeness: for testing if all expected keywords related with international law are extracted.
+# case_keyword_completeness: for testing if all expected keywords related with international treaties are extracted.
 case_completeness_int_treaties = {'input_item': RulingItem(), 'expected_output': RulingItem()}
 case_completeness_int_treaties['input_item']['core_issue'] = '''
     Völkerrechtliches Abkommen
@@ -155,7 +155,7 @@ case_completeness_int_treaties['expected_output'] = [
     'Doppelbesteuerungsabkommens', 'convenzione sulla doppia', 'patto di non'
 ]
 
-# case_keyword_completeness: for testing if all expected keywords related with international law are extracted.
+# keyword_completeness: for testing if all expected keywords related with international customary law are extracted.
 case_completeness_customary_int_law = {'input_item': RulingItem(), 'expected_output': RulingItem()}
 case_completeness_customary_int_law['input_item']['core_issue'] = '''
     Droit international coutumier
@@ -189,7 +189,6 @@ case_completeness_customary_int_law['input_item']['core_issue'] = '''
     consuetudinario (too broad)
     consuetudine internazionale
 '''
-
 case_completeness_customary_int_law['expected_output'] = [
     'Droit international coutumier', 'Droit coutumier international', 'Coutumier', 'Coutume internationale',
     'Völkergewohnheitsrecht', 'Völkergewohnheitsrechts', 'internationales Gewohnheitsrecht',
@@ -200,4 +199,34 @@ case_completeness_customary_int_law['expected_output'] = [
     'gewohnheitsrechtlichem Völkerrecht', 'gewohnheitsrechtlich', 'ius gentium', 'droit des gens', 'opinio juris',
     'opinio iuris', 'diritto consuetudinario', 'diritto internazionale consuetudinario',
     'diritto consuetudinario internazionale', 'consuetudinario', 'consuetudine internazionale'
+]
+
+# keyword completeness: for testing if all expected keywords related with international law in general are extracted.
+case_completeness_int_law_in_general = {'input_item': RulingItem(), 'expected_output': RulingItem()}
+case_completeness_int_law_in_general['input_item']['core_issue'] = '''
+    Völkerrecht
+    Völkerrechts
+    Völkerrechtlich
+    Völkerrechtliche
+    Völkerrechtlichen
+    Völkerrechtliches
+    Internationales Recht
+    Internationale Recht
+    Internationalen Rechts
+    Internationalem Recht
+    Droit international
+    Droit international public
+    Droit international privé
+    Droits internationaux
+    Diritto internazionale
+    Diritto internazionale pubblico
+    Diritto internazionale private
+    Diritti internazionali
+'''
+case_completeness_int_law_in_general['expected_output'] = [
+    'Völkerrecht', 'Völkerrechts', 'Völkerrechtlich', 'Völkerrechtliche', 'Völkerrechtlichen', 'Völkerrechtliches',
+    'Internationales Recht', 'Internationale Recht', 'Internationalen Rechts', 'Internationalem Recht',
+    'Droit international', 'Droit international public', 'Droit international privé', 'Droits internationaux',
+    'Diritto internazionale', 'Diritto internazionale pubblico', 'Diritto internazionale private',
+    'Diritti internazionali'
 ]

@@ -73,7 +73,7 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
 
     def __init__(self):
         patterns_international_treaties = {
-            'de': [r'(?:international)\w*[\s\-]?(?:abkommen|p[aä]kt|\w*recht|übereinkommen|vertr[aä]g)\w*',
+            'de': [r'(?:international)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
                    r'(?:völkerrecht|staat)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
                    r'(?:[^\s\(\)\,\.]+ |[^\s\(\)\,\.]+)?(?:abkommen|pakt|übereinkommen|vertr[aä]g)\w*'],
             'fr': [r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
@@ -103,3 +103,19 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
 
         super(InternationalCustomaryLawExtractor, self).__init__('international_customary_law',
                                                                  patterns_international_customary_law)
+
+
+class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
+    """
+    Implements KeywordExtractorPipeline for keywords indicating the use of international law in general.
+    """
+
+    def __init__(self):
+        patterns_international_law_in_general = {
+            'de': [r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'],
+            'fr': [r'(?:droits? internationa(?:l|ux)(?: \w+)?)'],
+            'it': [r'(?:diritt[oi] internazional[ei](?: \w+)?)']
+        }
+
+        super(GeneralInternationalLawExtractor, self).__init__('international_law_in_general',
+                                                               patterns_international_law_in_general)
