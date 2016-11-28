@@ -14,7 +14,7 @@ from scrapy.loader.processors import MapCompose, TakeFirst
 # init html2text class (make sure not to print random newlines and to ignore links):
 html2text = HTML2Text()
 html2text.body_width = 0  # make sure not to insert newlines every X letters
-# html2text.ignore_links = True  # links are represented as '(LINKTEXT)[URL]' if set to False; otherwise just 'LINKTEXT'
+html2text.ignore_links = True  # links are represented as '(LINKTEXT)[URL]' if set to False; otherwise just 'LINKTEXT'
 
 
 def _extract_ruling_id(ruling_id_string):
