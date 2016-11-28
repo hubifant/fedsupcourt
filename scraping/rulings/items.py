@@ -94,9 +94,12 @@ class RulingItem(scrapy.Item):
         input_processor=''.join,
         output_processor=MapCompose(_extract_art_refs)
     )
+
+    # the following fields are extracted in the pipeline.
     date = scrapy.Field()
     dossier_number = scrapy.Field()
     department = scrapy.Field()
+    type_of_proceeding = scrapy.Field()
     involved_parties = scrapy.Field()
     language = scrapy.Field()
     international_treaties = scrapy.Field()

@@ -25,6 +25,9 @@ class MetadataExtractorPipeline(object):
         'it': r'(?<=della )(?!sentenza).*?(?= nella)'
     }
 
+    # type of proceeding: in title of judgement; starts with '(', ends with ')' and does not contain any '(...)'
+    type_of_proceeding_pattern = r'(?<=\().*?(?!.*\(.*\))(?=\))'
+
     # tokens for separating parties (also used for detecting the ruling's language)
     party_separator = {
         'de': {
@@ -47,6 +50,7 @@ class MetadataExtractorPipeline(object):
         item['department'] = self._extract_department(item['title_of_judgement'])
         item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'])
         item['language'] = self._extract_language(item['title_of_judgement'])
+        item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'])
         return item
 
     def _extract_date(self, raw_date):
@@ -129,6 +133,12 @@ class MetadataExtractorPipeline(object):
             if department_match is not None:
                 return department_match.group()
         warnings.warn('Could not extract responsible department.')
+
+    def _extract_type_of_proceeding(self, raw_type_of_proceeding):
+        proceeding_match = re.search(self.type_of_proceeding_pattern, raw_type_of_proceeding)
+        if proceeding_match is not None:
+            return proceeding_match.group()
+        warnings.warn('Could not extract the type of the proceeding.')
 
     def _extract_language(self, raw_parties):
         # language can be extracted if claimant and defendant can be extracted
