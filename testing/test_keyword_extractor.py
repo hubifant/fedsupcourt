@@ -29,11 +29,11 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
 
         field_to_test = 'international_treaties'
 
-        self.assertEqual(computed_output[field_to_test]['keywords'],
-                         case_incomplete['expected_output'][field_to_test]['keywords'],
+        self.assertEqual(computed_output['keywords'][field_to_test]['keywords'],
+                         case_incomplete['expected_output']['keywords'][field_to_test]['keywords'],
                          "Assertion failed in test_simple_extraction")
-        self.assertEqual(computed_output[field_to_test]['contexts'],
-                         case_incomplete['expected_output'][field_to_test]['contexts'],
+        self.assertEqual(computed_output['keywords'][field_to_test]['contexts'],
+                         case_incomplete['expected_output']['keywords'][field_to_test]['contexts'],
                          "Assertion failed in test_simple_extraction")
 
 
@@ -46,7 +46,7 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
 
         keyword_extractor = InternationalTreatyExtractor()
         computed_output = keyword_extractor.process_item(case_completeness_int_treaties['input_item'], None)
-        computed_keywords = computed_output['international_treaties']['keywords'].keys()
+        computed_keywords = computed_output['keywords']['international_treaties']['keywords'].keys()
 
         for keyword in case_completeness_int_treaties['expected_output']:
             self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
@@ -58,7 +58,7 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
 
         keyword_extractor = InternationalCustomaryLawExtractor()
         computed_output = keyword_extractor.process_item(case_completeness_customary_int_law['input_item'], None)
-        computed_keywords = computed_output['international_treaties']['keywords'].keys()
+        computed_keywords = computed_output['keywords']['international_customary_law']['keywords'].keys()
 
         for keyword in case_completeness_customary_int_law['expected_output']:
             self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')

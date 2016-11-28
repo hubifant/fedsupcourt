@@ -4,13 +4,14 @@ import re
 
 
 class _KeywordExtractorPipeline:
-    def __init__(self, keyword_patterns):
+    def __init__(self, keyword_type, keyword_patterns):
         """
         :param keyword_patterns: dict of format {'<LANGUAGE>': [r'<PATTERN_1>', r'<PATTERN_2>']}
         :type keyword_patterns: dict
         """
 
         self.keyword_patterns = keyword_patterns
+        self.keyword_type = keyword_type
 
         # regex for extracting a keyword's context
         self.sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
@@ -55,9 +56,11 @@ class _KeywordExtractorPipeline:
                         # update keyword count (difficult to do this nicer before)
                         keywords_with_counts[keyword] = keywords_with_counts.get(keyword, 0) + len(sentences)
 
-            ruling['international_treaties'] = {
-                'keywords': keywords_with_counts,
-                'contexts': contexts
+            ruling['keywords'] = {
+                self.keyword_type: {
+                    'keywords': keywords_with_counts,
+                    'contexts': contexts
+                }
             }
 
         return ruling
@@ -81,7 +84,7 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
                    '(?: (?:d\'|di |(?:de|su)(?:lla|l|i|gli)? |per (?:il|la|gli|i) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))']
         }
 
-        super(InternationalTreatyExtractor, self).__init__(patterns_international_treaties)
+        super(InternationalTreatyExtractor, self).__init__('international_treaties', patterns_international_treaties)
 
 
 class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
@@ -98,4 +101,5 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
             'lat': [r'(?:ius gentium|opinio [ij]uris)']
         }
 
-        super(InternationalCustomaryLawExtractor, self).__init__(patterns_international_customary_law)
+        super(InternationalCustomaryLawExtractor, self).__init__('international_customary_law',
+                                                                 patterns_international_customary_law)

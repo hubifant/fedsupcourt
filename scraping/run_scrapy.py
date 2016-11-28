@@ -13,7 +13,8 @@ def scrape_rulings():
     settings.set('ITEM_PIPELINES', {
         'rulings.pipelines.TextCleanerPipeline': '100,',
         'rulings.pipelines.MetadataExtractorPipeline': '200',
-        'rulings.pipelines.KeywordExtractorPipeline': '300',
+        'rulings.pipelines.InternationalTreatyExtractor': '300',
+        'rulings.pipelines.InternationalCustomaryLawExtractor': '300',
         'rulings.pipelines.JsonWriterPipeline': '999'
     })
     settings.set('COOKIES_ENABLED', False)
