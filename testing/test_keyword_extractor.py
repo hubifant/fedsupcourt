@@ -31,11 +31,11 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
 
         field_to_test = 'international_treaties'
 
-        self.assertEqual(computed_output['keywords'][field_to_test]['keywords'],
-                         case_incomplete['expected_output']['keywords'][field_to_test]['keywords'],
+        self.assertEqual(computed_output[field_to_test]['keywords'],
+                         case_incomplete['expected_output'][field_to_test]['keywords'],
                          "Assertion failed in test_simple_extraction")
-        self.assertEqual(computed_output['keywords'][field_to_test]['contexts'],
-                         case_incomplete['expected_output']['keywords'][field_to_test]['contexts'],
+        self.assertEqual(computed_output[field_to_test]['contexts'],
+                         case_incomplete['expected_output'][field_to_test]['contexts'],
                          "Assertion failed in test_simple_extraction")
 
 
@@ -50,7 +50,7 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         :type test_data: dict
         """
         computed_output = keyword_extractor.process_item(test_data['input_item'], None)
-        computed_keywords = computed_output['keywords'][keyword_type]['keywords'].keys()
+        computed_keywords = computed_output[keyword_type]['keywords'].keys()
 
         for keyword in test_data['expected_output']:
             self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')

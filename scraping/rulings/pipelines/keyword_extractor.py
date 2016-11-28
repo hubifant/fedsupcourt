@@ -56,11 +56,9 @@ class _KeywordExtractorPipeline:
                         # update keyword count (difficult to do this nicer before)
                         keywords_with_counts[keyword] = keywords_with_counts.get(keyword, 0) + len(sentences)
 
-            ruling['keywords'] = {
-                self.keyword_type: {
-                    'keywords': keywords_with_counts,
-                    'contexts': contexts
-                }
+            ruling[self.keyword_type] = {
+                'keywords': keywords_with_counts,
+                'contexts': contexts
             }
 
         return ruling
