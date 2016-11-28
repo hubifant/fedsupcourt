@@ -1,7 +1,7 @@
 # pycharm testing tuto: https://confluence.jetbrains.com/display/PYH/Creating+and+running+a+Python+unit+test
 
 import unittest
-from scraping.rulings.pipelines import KeywordExtractorPipeline
+from scraping.rulings.pipelines import InternationalTreatyExtractor
 from testing.dummy_data import case_incomplete, case_keyword_completeness
 
 
@@ -11,7 +11,7 @@ class TestKeywordExtractorPipeline(unittest.TestCase):
         Asserts that no exception is raised if the inputted item does not contain all chapters.
         """
 
-        keyword_extractor = KeywordExtractorPipeline()
+        keyword_extractor = InternationalTreatyExtractor()
 
         try:
             keyword_extractor.process_item(case_incomplete['input_item'], None)
@@ -24,7 +24,7 @@ class TestKeywordExtractorPipeline(unittest.TestCase):
         Asserts that simple keyword is detected.
         """
 
-        keyword_extractor = KeywordExtractorPipeline()
+        keyword_extractor = InternationalTreatyExtractor()
         computed_output = keyword_extractor.process_item(case_incomplete['input_item'], None)
 
         field_to_test = 'international_treaties'
@@ -41,7 +41,7 @@ class TestKeywordExtractorPipeline(unittest.TestCase):
         Asserts that all expected keywords are extracted
         """
 
-        keyword_extractor = KeywordExtractorPipeline()
+        keyword_extractor = InternationalTreatyExtractor()
         computed_output = keyword_extractor.process_item(case_keyword_completeness['input_item'], None)
         computed_keywords = computed_output['international_treaties']['keywords'].keys()
 
