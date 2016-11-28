@@ -18,43 +18,11 @@ class MetadataExtractorPipeline(object):
     months_it = [m.lower() for m in calendar.month_name]
     locale.setlocale(locale.LC_ALL, 'C')
 
-    # departments of the Federal Supreme Court
-    departments = {
-        '1st Public Law Department': {
-            'de': ['I. öffentlich-rechtliche Abteilung'],
-            'fr': ['Iere Cour de Droit Public'],
-            'it': ['I Corte di Diritto Pubblico']
-        },
-        '2nd Public Law Department': {
-            'de': ['II. öffentlich-rechtliche Abteilung'],
-            'fr': ['IIe Cour de Droit Public'],
-            'it': ['I Corte di Diritto Pubblico']
-        },
-        '1st Civil Law Department': {
-            'de': ['I. zivilrechtliche Abteilung'],
-            'fr': ['Ie Cour de Droit Civil'],
-            'it': ['I Corte di Diritto Civile']
-        },
-        '2nd Civil Law Department': {
-            'de': ['II. zivilrechtliche Abteilung'],
-            'fr': ['IIe Cour de Droit Civil'],
-            'it': ['II Corte di Diritto Civile']
-        },
-        'Penal Law Department': {
-            'de': ['strafrechtliche Abteilung', 'Kassationshof'],
-            'fr': ['Cour de Droit Pénal', 'Cour de Cassation Pénale'],
-            'it': ['Corte di Diritto Penale', 'Corte di Cassazione Penale']
-        },
-        '1st Social Law Department': {
-            'de': ['I. sozialrechtliche Abteilung'],
-            'fr': ['Ire Cour de Droit Social'],
-            'it': ['I Corte di Diritto Sociale']
-        },
-        '2nd Social Law Department': {
-            'de': ['II. sozialrechtliche Abteilung'],
-            'fr': ['IIe Cour de Droit Social'],
-            'it': ['II Corte di Diritto Sociale']
-        }
+    # for extracting the responsible department of the Federal Supreme Court
+    department_patterns = {
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )).*?(?= i.S.| vom \d)',
+        'fr': r'(?<=arrêt de ).*?(?= dans la cause| du \d)',
+        'it': r'(?<=della )(?!sentenza).*?(?= nella)'
     }
 
     # tokens for separating parties (also used for detecting the ruling's language)
@@ -155,13 +123,12 @@ class MetadataExtractorPipeline(object):
             return dnb_match.group()
 
     def _extract_department(self, raw_department):
-        # TODO: sometimes department is mentioned, sometimes chamber.
-        # if the department name (in de, fr or it) occurs in the title of judgement, return the english department name
-        for dep_en, department_translations in self.departments.items():
-            for language, translations in department_translations.items():
-                for translation in translations:
-                    if translation.lower() in raw_department.lower():
-                        return dep_en
+        # extract the responsible department if possible.
+        for language, department_pattern in self.department_patterns.items():
+            department_match = re.search(department_pattern, raw_department, re.IGNORECASE)
+            if department_match is not None:
+                return department_match.group()
+        warnings.warn('Could not extract responsible department.')
 
     def _extract_language(self, raw_parties):
         # language can be extracted if claimant and defendant can be extracted
