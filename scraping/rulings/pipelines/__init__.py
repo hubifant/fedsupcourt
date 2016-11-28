@@ -1,4 +1,4 @@
 from .json_writer import JsonWriterPipeline
-from .keyword_extractor import InternationalTreatyExtractor
+from .keyword_extractor import InternationalTreatyExtractor, InternationalCustomaryLawExtractor
 from .metadata_extractor import MetadataExtractorPipeline
 from .text_cleaner import TextCleanerPipeline

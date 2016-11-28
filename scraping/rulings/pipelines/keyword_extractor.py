@@ -4,7 +4,6 @@ import re
 
 
 class _KeywordExtractorPipeline:
-
     def __init__(self, keyword_patterns):
         """
         :param keyword_patterns: dict of format {'<LANGUAGE>': [r'<PATTERN_1>', r'<PATTERN_2>']}
@@ -14,10 +13,10 @@ class _KeywordExtractorPipeline:
         self.keyword_patterns = keyword_patterns
 
         # regex for extracting a keyword's context
-        self.sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'   # beginning of a sentence
-        self.sentence_pattern += r'(?:.(?!\. [A-Z]))*'                  # anything NOT followed by beginning of sentence
-        self.sentence_pattern += r'%s'                                  # keyword
-        self.sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'     # anything until end of sentence
+        self.sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
+        self.sentence_pattern += r'(?:.(?!\. [A-Z]))*'  # anything NOT followed by beginning of sentence
+        self.sentence_pattern += r'%s'  # keyword
+        self.sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # anything until end of sentence
 
         # ruling chapters from which keywords will be extracted:
         self.ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
@@ -68,6 +67,7 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
     """
     Implements KeywordExtractorPipeline for keywords indicating the use of international treaties.
     """
+
     def __init__(self):
         patterns_international_treaties = {
             'de': [r'(?:international)\w*[\s\-]?(?:abkommen|p[aä]kt|\w*recht|übereinkommen|vertr[aä]g)\w*',
@@ -82,3 +82,20 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
         }
 
         super(InternationalTreatyExtractor, self).__init__(patterns_international_treaties)
+
+
+class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
+    """
+    Implements KeywordExtractorPipeline for keywords indicating the use of international customary law.
+    """
+
+    def __init__(self):
+        patterns_international_customary_law = {
+            'de': [r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w?)',
+                   r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)?)'],
+            'fr': [r'(?:(?:droit )?(?:des gens|international coutumier|coutumi?er?(?: internationale?)?))'],
+            'it': [r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)?|internazionale consuetudinario))'],
+            'lat': [r'(?:ius gentium|opinio [ij]uris)']
+        }
+
+        super(InternationalCustomaryLawExtractor, self).__init__(patterns_international_customary_law)

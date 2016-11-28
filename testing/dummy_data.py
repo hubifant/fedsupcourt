@@ -25,9 +25,9 @@ case_incomplete['expected_output']['international_treaties'] = {
     'keywords': {'sed Abkommen': 1}
 }
 
-# case_keyword_completeness: for testing if all expected keywords are extracted.
-case_keyword_completeness = {'input_item': RulingItem(), 'expected_output': RulingItem()}
-case_keyword_completeness['input_item']['core_issue'] = '''
+# case_keyword_completeness: for testing if all expected keywords related with international law are extracted.
+case_completeness_int_treaties = {'input_item': RulingItem(), 'expected_output': RulingItem()}
+case_completeness_int_treaties['input_item']['core_issue'] = '''
     Völkerrechtliches Abkommen
     Völkerrechtliche Abkommen
     Völkerrechtlichen Abkommen
@@ -125,7 +125,7 @@ Updatevorschläge Nicolas
     convenzione sulla doppia imposizione
     patto di non aggressione
 '''
-case_keyword_completeness['expected_output'] = [
+case_completeness_int_treaties['expected_output'] = [
     'Völkerrechtliches Abkommen', 'Völkerrechtliche Abkommen', 'Völkerrechtlichen Abkommen',
     'Völkerrechtlichen Abkommens', 'Völkerrechtlicher Abkommen', 'Internationales Abkommen', 'Internationale Abkommen',
     'Internationalen Abkommen', 'Internationalen Abkommens', 'Internationaler Abkommen',
@@ -151,4 +151,51 @@ case_keyword_completeness['expected_output'] = [
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages', 'Doppelbesteuerungsabkommen',
     'Doppelbesteuerungsabkommens', 'convenzione sulla doppia', 'patto di non'
+]
+
+# case_keyword_completeness: for testing if all expected keywords related with international law are extracted.
+case_completeness_customary_int_law = {'input_item': RulingItem(), 'expected_output': RulingItem()}
+case_completeness_customary_int_law['input_item']['core_issue'] = '''
+    Droit international coutumier
+    Droit coutumier international
+    Coutumier (too broad)
+    Coutume internationale
+    Völkergewohnheitsrecht
+    Völkergewohnheitsrechts
+    internationales Gewohnheitsrecht
+    internationale Gewohnheitsrecht
+    internationalen Gewohnheitsrecht
+    internationalen Gewohnheitsrechts
+    internationalem Gewohnheitsrecht
+    völkerrechtliches Gewohnheitsrecht
+    völkerrechtliche Gewohnheitsrecht
+    völkerrechtlichen Gewohnheitsrechts
+    völkerrechtlichem Gewohnheitsrecht
+    gewohnheitsrechtliches Völkerrecht
+    gewohnheitsrechtliche Völkerrecht
+    gewohnheitsrechtlichen Völkerrecht
+    gewohnheitsrechtlichen Völkerrechts
+    gewohnheitsrechtlichem Völkerrecht
+    gewohnheitsrechtlich (too broad)
+    ius gentium
+    droit des gens (too broad, I think, judging from a past research project)
+    opinio juris
+    opinio iuris
+    diritto consuetudinario
+    diritto internazionale consuetudinario
+    diritto consuetudinario internazionale
+    consuetudinario (too broad)
+    consuetudine internazionale
+'''
+
+case_completeness_customary_int_law['expected_output'] = [
+    'Droit international coutumier', 'Droit coutumier international', 'Coutumier', 'Coutume internationale',
+    'Völkergewohnheitsrecht', 'Völkergewohnheitsrechts', 'internationales Gewohnheitsrecht',
+    'internationale Gewohnheitsrecht', 'internationalen Gewohnheitsrecht', 'internationalen Gewohnheitsrechts',
+    'internationalem Gewohnheitsrecht', 'völkerrechtliches Gewohnheitsrecht', 'völkerrechtliche Gewohnheitsrecht',
+    'völkerrechtlichen Gewohnheitsrechts', 'völkerrechtlichem Gewohnheitsrecht', 'gewohnheitsrechtliches Völkerrecht',
+    'gewohnheitsrechtliche Völkerrecht', 'gewohnheitsrechtlichen Völkerrecht', 'gewohnheitsrechtlichen Völkerrechts',
+    'gewohnheitsrechtlichem Völkerrecht', 'gewohnheitsrechtlich', 'ius gentium', 'droit des gens', 'opinio juris',
+    'opinio iuris', 'diritto consuetudinario', 'diritto internazionale consuetudinario',
+    'diritto consuetudinario internazionale', 'consuetudinario', 'consuetudine internazionale'
 ]
