@@ -39,17 +39,28 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
 
 class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
 
+    def _test_completeness(self, keyword_type, keyword_extractor, test_data):
+        """
+        Asserts that all expected keywords are extracted
+        :param keyword_type: specifies the keyword type
+        :type keyword_type: string
+        :param keyword_extractor: KeywordExtractorPipeline object
+        :type keyword_extractor: KeywordExtractorPipeline
+        :type test_data: dict
+        """
+        computed_output = keyword_extractor.process_item(test_data['input_item'], None)
+        computed_keywords = computed_output['keywords'][keyword_type]['keywords'].keys()
+
+        for keyword in test_data['expected_output']:
+            self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
+
     def test_completeness_international_treaties(self):
         """
         Asserts that all expected keywords related to international treaties are extracted
         """
 
         keyword_extractor = InternationalTreatyExtractor()
-        computed_output = keyword_extractor.process_item(case_completeness_int_treaties['input_item'], None)
-        computed_keywords = computed_output['keywords']['international_treaties']['keywords'].keys()
-
-        for keyword in case_completeness_int_treaties['expected_output']:
-            self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
+        self._test_completeness('international_treaties', keyword_extractor, case_completeness_int_treaties)
 
     def test_completeness_int_customary_law(self):
         """
@@ -57,11 +68,7 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         """
 
         keyword_extractor = InternationalCustomaryLawExtractor()
-        computed_output = keyword_extractor.process_item(case_completeness_customary_int_law['input_item'], None)
-        computed_keywords = computed_output['keywords']['international_customary_law']['keywords'].keys()
-
-        for keyword in case_completeness_customary_int_law['expected_output']:
-            self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
+        self._test_completeness('international_customary_law', keyword_extractor, case_completeness_customary_int_law)
 
 
 if __name__ == '__main__':
