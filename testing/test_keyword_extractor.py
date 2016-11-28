@@ -2,7 +2,7 @@
 
 import unittest
 from scraping.rulings.pipelines import KeywordExtractorPipeline
-from testing.dummy_data import case_incomplete
+from testing.dummy_data import case_incomplete, case_keyword_completeness
 
 
 class TestKeywordExtractorPipeline(unittest.TestCase):
@@ -35,6 +35,18 @@ class TestKeywordExtractorPipeline(unittest.TestCase):
         self.assertEqual(computed_output[field_to_test]['contexts'],
                          case_incomplete['expected_output'][field_to_test]['contexts'],
                          "Assertion failed in test_simple_extraction")
+
+    def test_completeness(self):
+        """
+        Asserts that all expected keywords are extracted
+        """
+
+        keyword_extractor = KeywordExtractorPipeline()
+        computed_output = keyword_extractor.process_item(case_keyword_completeness['input_item'], None)
+        computed_keywords = computed_output['international_treaties']['keywords'].keys()
+
+        for keyword in case_keyword_completeness['expected_output']:
+            self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
 
 
 if __name__ == '__main__':
