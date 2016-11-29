@@ -61,8 +61,8 @@ class MetadataExtractorPipeline(object):
         if year_match is not None:
             year = int(year_match.group())
 
-            # match one- or two-digit number preceded by ' ' and followed by '.' or ' '
-            day_match = re.search('(?<=\s)\d{1,2}(?=[\.,\s])', raw_date)
+            # match one- or two-digit number preceded by ' ' and followed by '.' or ' ' or 'er' (-> premier)
+            day_match = re.search('(?<=\s)\d{1,2}(?=\.|\s|er)', raw_date)
             day = int(day_match.group())
 
             # extract month (digit between 1 and 12)

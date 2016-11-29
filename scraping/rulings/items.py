@@ -18,9 +18,7 @@ html2text.ignore_links = True  # links are represented as '(LINKTEXT)[URL]' if s
 
 
 def _extract_ruling_id(ruling_id_string):
-    # TODO: checki if number is correct. (throw exception?)
     """
-
     :param ruling_id_string: list containing one single string of format '123 I 4', where 123 is the bge_nb, I is volume and 4 the ruling_nb
     :return: dict containing bge_nb, volume and ruling_nb
     """

@@ -10,15 +10,15 @@ class RulingSpider(scrapy.Spider):
     allowed_domains =["relevancy.bger.ch"]
 
     def parse(self, response):
-        # todo: actual function is commented for testing purposes.
-        yield scrapy.Request("http://relevancy.bger.ch/cgi-bin/IndexCGI?year=80&volume=I&lang=de&zoom=&system=", self.parse_year)
+        # for testing purposes...
+        # yield scrapy.Request("http://relevancy.bger.ch/cgi-bin/IndexCGI?year=80&volume=I&lang=de&zoom=&system=", self.parse_year)
 
-        # volume_links = response.xpath("//tr/td/a[text()[contains(., 'I')]]/@href").extract()
-        # for link in volume_links:
-        #     url = 'http://relevancy.bger.ch/' + link
-        #     if url not in self.scraped_links and len(self.scraped_links) < 2:
-        #         self.scraped_links.append(url)
-        #         yield scrapy.Request(url, self.parse_year)
+        volume_links = response.xpath("//tr/td/a[text()[contains(., 'I')]]/@href").extract()
+        for link in volume_links:
+            url = 'http://relevancy.bger.ch/' + link
+            if url not in self.scraped_links and len(self.scraped_links) < 2:
+                self.scraped_links.append(url)
+                yield scrapy.Request(url, self.parse_year)
 
     def parse_year(self, response):
         # get ruling links and corresponding ruling ids; process them (create new request)
@@ -26,7 +26,7 @@ class RulingSpider(scrapy.Spider):
         for link, ruling_id in zip(*[iter(rulings)]*2):
             url = 'http://relevancy.bger.ch/' + link
 
-            if url not in self.scraped_links and len(self.scraped_links) < 35:
+            if url not in self.scraped_links and len(self.scraped_links) < 11:
                 self.scraped_links.append(url)
                 request = scrapy.Request(url, self.parse_ruling)
                 request.meta['ruling_id'] = ruling_id
