@@ -10,11 +10,11 @@ class MetadataExtractorPipeline(object):
 
     # get lists of month names in german, french and italian.
     # names are normalised: lower case + accents removed
-    locale.setlocale(locale.LC_ALL, 'de')
+    locale.setlocale(locale.LC_ALL, 'de_CH.utf8')  # todo: make sure that locale exists!
     months_de = [m.lower() for m in calendar.month_name]
-    locale.setlocale(locale.LC_ALL, 'fr')
+    locale.setlocale(locale.LC_ALL, 'fr_CH.utf8')
     months_fr = [m.lower().replace('é', 'e').replace('û', 'u') for m in calendar.month_name]
-    locale.setlocale(locale.LC_ALL, 'it')
+    locale.setlocale(locale.LC_ALL, 'it_CH.utf8')
     months_it = [m.lower() for m in calendar.month_name]
     locale.setlocale(locale.LC_ALL, 'C')
 

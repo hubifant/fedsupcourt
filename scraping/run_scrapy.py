@@ -7,23 +7,31 @@ from scrapy.utils.project import get_project_settings
 
 def scrape_rulings():
 
+    # don't show too many messages
+    #  --> log levels: CRITICAL > ERROR > WARNING > INFO > DEBUG
+    configure_logging({
+        'LOG_LEVEL': 'INFO',
+        'LOG_FORMAT': '%(levelname)s \t| %(asctime)s \t| %(message)s',
+        # 'LOG_FILE': 'crawler.log'
+    })
+
     # set the format of the logging messages and add pipeline(s)
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.TextCleanerPipeline': '100,',
-        'rulings.pipelines.MetadataExtractorPipeline': '200',
-        'rulings.pipelines.InternationalTreatyExtractor': '300',
-        'rulings.pipelines.InternationalCustomaryLawExtractor': '301',
-        'rulings.pipelines.GeneralInternationalLawExtractor': '302',
-        'rulings.pipelines.JsonWriterPipeline': '999'
+        'rulings.pipelines.TextCleanerPipeline': 100,
+        'rulings.pipelines.MetadataExtractorPipeline': 200,
+        'rulings.pipelines.InternationalTreatyExtractor': 300,
+        'rulings.pipelines.InternationalCustomaryLawExtractor': 301,
+        'rulings.pipelines.GeneralInternationalLawExtractor': 302,
+        'rulings.pipelines.JsonWriterPipeline': 999
     })
 
     # Turn off the built-in UserAgentMiddleware and add RandomUserAgentMiddleware.
     #  --> https://github.com/alecxe/scrapy-fake-useragent
     settings.set('DOWNLOADER_MIDDLEWARES', {
         'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-        'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+        'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,  # todo: don't forget to install!
     })
 
     # turn off cookies
@@ -32,16 +40,9 @@ def scrape_rulings():
     # set a download delay of 0.2sec (2sec is recommended)
     settings.set('DOWNLOAD_DELAY', 0.2)
 
-    # don't show too many messages
-    #  --> log levels: CRITICAL > ERROR > WARNING > INFO > DEBUG
-    configure_logging({
-        'LOG_LEVEL': 'INFO',
-        'LOG_FORMAT': '%(levelname)s \t| %(asctime)s \t| %(message)s',
-        'LOG_FILE': 'crawler.log'
-    })
+    runner = CrawlerRunner(settings)
 
     # start the crawler
-    runner = CrawlerRunner(settings)
     d = runner.crawl(RulingSpider)
 
     # add callback that stops the reactor after RulingSpider has finished running
