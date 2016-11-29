@@ -9,7 +9,7 @@ def scrape_rulings():
 
     # set the format of the logging messages and add pipeline(s)
     settings = get_project_settings()
-    settings.set('LOG_FORMAT', '%(levelname)s | %(message)s')
+
     settings.set('ITEM_PIPELINES', {
         'rulings.pipelines.TextCleanerPipeline': '100,',
         'rulings.pipelines.MetadataExtractorPipeline': '200',
@@ -18,9 +18,27 @@ def scrape_rulings():
         'rulings.pipelines.GeneralInternationalLawExtractor': '302',
         'rulings.pipelines.JsonWriterPipeline': '999'
     })
+
+    # Turn off the built-in UserAgentMiddleware and add RandomUserAgentMiddleware.
+    #  --> https://github.com/alecxe/scrapy-fake-useragent
+    settings.set('DOWNLOADER_MIDDLEWARES', {
+        'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+        'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+    })
+
+    # turn off cookies
     settings.set('COOKIES_ENABLED', False)
-    settings.set('DOWNLOAD_DELAY', 0.1)
-    configure_logging()
+
+    # set a download delay of 0.2sec (2sec is recommended)
+    settings.set('DOWNLOAD_DELAY', 0.2)
+
+    # don't show too many messages
+    #  --> log levels: CRITICAL > ERROR > WARNING > INFO > DEBUG
+    configure_logging({
+        'LOG_LEVEL': 'INFO',
+        'LOG_FORMAT': '%(levelname)s \t| %(asctime)s \t| %(message)s',
+        'LOG_FILE': 'crawler.log'
+    })
 
     # start the crawler
     runner = CrawlerRunner(settings)

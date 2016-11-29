@@ -3,3 +3,6 @@
 
 # crawled data
 .data/
+
+# scrapy log
+crawler.log
