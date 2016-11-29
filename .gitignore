@@ -6,3 +6,6 @@
 
 # scrapy log
 crawler.log
+
+# json files
+*.json
