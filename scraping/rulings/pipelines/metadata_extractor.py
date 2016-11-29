@@ -62,12 +62,12 @@ class MetadataExtractorPipeline(object):
             year = int(year_match.group())
 
             # match one- or two-digit number preceded by ' ' and followed by '.' or ' ' or 'er' (-> premier)
-            day_match = re.search('(?<=\s)\d{1,2}(?=\.|\s|er)', raw_date)
-            day = int(day_match.group())
+            day_match = re.search(r'(?<=\s)(\d{1,2})(\.|\s|\w+ )', raw_date)
+            day = int(day_match.group(1))
 
             # extract month (digit between 1 and 12)
             # month token is between day and year token extracted above
-            month_start = day_match.span()[1] + 1
+            month_start = day_match.span()[1]
             month_end = year_match.span()[0] - 1
             month_raw = raw_date[month_start:month_end].replace(' ', '').replace('.', '')
             month = None

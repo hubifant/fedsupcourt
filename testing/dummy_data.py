@@ -229,34 +229,33 @@ case_completeness_int_law_in_general['expected_output'] = [
     'Diritti internazionali'
 ]
 
-title_of_judgement_examples = """
-88. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 18. November 1998 i.S. F. (Beschwerde)
-46. Auszug aus dem Urteil der I. Zivilabteilung vom 6. Mai 1998 i.S. X. gegen Y. GmbH (Berufung)
-23. Auszug aus dem Urteil des Kassationshofes i.S. X. gegen Staatsanwaltschaft des Kantons Zürich und Y.
-14. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 27. Januar 1988 i.S. B. (Rekurs) (Nichtigkeitsbeschwerde)
-6S.681/2001 vom 2. Juli 2002
-1. Extrait de l'arrêt de la IIe Cour de droit public dans la cause X. contre Service de la population du canton de Vaud (recours en matière de droit public)
-2C_460/2009 du 4 novembre 2009
-7. Auszug aus dem Urteil der II. öffentlich-rechtlichen Abteilung i.S. A. und Mitb. gegen Sicherheitsdirektion und Regierungsrat des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)
-2C_269/2009 vom 5. Januar 2010
-10. Auszug aus dem Entscheid der Schuldbetreibungs- und Konkurskammer vom 15. Januar 1988 i.S. V. (Rekurs)
-52. Auszug aus dem Urteil vom 26. Oktober 2000 i.S. S. gegen VERA Sammelstiftung in Liquidation, Olten, und Verwaltungsgericht des Kantons Bern
 
+case_metadata_extraction = {'title_of_judgement': [], 'date': []}
 
+case_metadata_extraction['title_of_judgement'] = ['88. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 18. November 1998 i.S. F. (Beschwerde)',
+'46. Auszug aus dem Urteil der I. Zivilabteilung vom 6. Mai 1998 i.S. X. gegen Y. GmbH (Berufung)',
+# '23. Auszug aus dem Urteil des Kassationshofes i.S. X. gegen Staatsanwaltschaft des Kantons Zürich und Y.',
+# '14. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 27. Januar 1988 i.S. B. (Rekurs) (Nichtigkeitsbeschwerde)\n6S.681/2001 vom 2. Juli 2002',
+# "1. Extrait de l'arrêt de la IIe Cour de droit public dans la cause X. contre Service de la population du canton de Vaud (recours en matière de droit public)\n2C_460/2009 du 4 novembre 2009",
+# '7. Auszug aus dem Urteil der II. öffentlich-rechtlichen Abteilung i.S. A. und Mitb. gegen Sicherheitsdirektion und Regierungsrat des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\n2C_269/2009 vom 5. Januar 2010',
+# '10. Auszug aus dem Entscheid der Schuldbetreibungs- und Konkurskammer vom 15. Januar 1988 i.S. V. (Rekurs)',
+# '52. Auszug aus dem Urteil vom 26. Oktober 2000 i.S. S. gegen VERA Sammelstiftung in Liquidation, Olten, und Verwaltungsgericht des Kantons Bern',
 
+"89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
+# '9. Arrêt de la Cour de cassation pénale dans la cause Union Démocratique du Centre du Canton de Genève contre Procureur général du canton de Genève (pourvoi en nullité)\n6S.625/2001 du 4 décembre 2001',
+# "13. Extrait de l'arrêt de la Chambre des poursuites et des faillites du 15 février 1988 dans la cause F. (recours LP)",
+# "51. Extrait de l'arrêt du 26 septembre 2000 dans la cause I. contre 1. Fondation collective LPP de la Ticino Vie, 2. Fondation institution supplétive LPP et Tribunal des assurances du canton de Vaud",
+# '32. Arrêt de la Ire Cour de droit social dans la cause T. contre Corps de Police de la République et canton de Genève (recours constitutionnel subsidiaire)\n8D_8/2009 du 16 août 2010',
+"9. Extrait de l'arrêt de la IIe Cour de droit public dans la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
 
-89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)
-9. Arrêt de la Cour de cassation pénale dans la cause Union Démocratique du Centre du Canton de Genève contre Procureur général du canton de Genève (pourvoi en nullité)
-6S.625/2001 du 4 décembre 2001
-13. Extrait de l'arrêt de la Chambre des poursuites et des faillites du 15 février 1988 dans la cause F. (recours LP)
-51. Extrait de l'arrêt du 26 septembre 2000 dans la cause I. contre 1. Fondation collective LPP de la Ticino Vie, 2. Fondation institution supplétive LPP et Tribunal des assurances du canton de Vaud
-32. Arrêt de la Ire Cour de droit social dans la cause T. contre Corps de Police de la République et canton de Genève (recours constitutionnel subsidiaire)
-8D_8/2009 du 16 août 2010
+'11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)',
+'68. Estratto della sentenza 4 dicembre 1974 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
+'73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.']
 
-
-
-
-11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)
-68. Estratto della sentenza 4 dicembre 1974 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.
-73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.
-"""
+case_metadata_extraction['date'] = ['18.11.1998',
+                                    '06.05.1998',
+                                    '13.11.1998',
+                                    '01.10.2009',
+                                    '10.06.1988',
+                                    '04.12.1974',
+                                    '11.11.1955']
