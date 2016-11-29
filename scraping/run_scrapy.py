@@ -12,7 +12,7 @@ def scrape_rulings():
     configure_logging({
         'LOG_LEVEL': 'INFO',
         'LOG_FORMAT': '%(levelname)s \t| %(asctime)s \t| %(message)s',
-        # 'LOG_FILE': 'crawler.log'
+        'LOG_FILE': '../crawler.log'
     })
 
     # set the format of the logging messages and add pipeline(s)
@@ -24,8 +24,12 @@ def scrape_rulings():
         'rulings.pipelines.InternationalTreatyExtractor': 300,
         'rulings.pipelines.InternationalCustomaryLawExtractor': 301,
         'rulings.pipelines.GeneralInternationalLawExtractor': 302,
-        'rulings.pipelines.JsonWriterPipeline': 999
+        'rulings.pipelines.MongoSaverPipeline': 999
     })
+
+    settings.set('MONGO_URI', 'mongodb://localhost:27017')
+    settings.set('MONGO_DATABASE', 'fedsupcourt')
+
 
     # Turn off the built-in UserAgentMiddleware and add RandomUserAgentMiddleware.
     #  --> https://github.com/alecxe/scrapy-fake-useragent
