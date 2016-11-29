@@ -1,6 +1,10 @@
 # fedsupcourt
 For analysing the usage of international law at the _Federal Supreme Court of Switzerland_.
 
+## Conda Environment
+ 1. For creating the environment, navigate to the project directory and execute `conda env create -f environment.yml`.
+ 2. Activate it: `source activate fedsupcourt_env`.
+
 ## Links
 - [Index of all rulings of the Federal Supreme Court](http://relevancy.bger.ch/cgi-bin/IndexCGI?lang=de)
 - [Entscheidungen des Schweizerischen Bundesgerichts](https://de.wikipedia.org/wiki/Entscheidungen_des_Schweizerischen_Bundesgerichts)
