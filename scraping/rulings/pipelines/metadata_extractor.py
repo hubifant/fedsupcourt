@@ -17,12 +17,12 @@ class MetadataExtractorPipeline(object):
     locale.setlocale(locale.LC_ALL, 'it_CH.utf8')
     months_it = [m.lower() for m in calendar.month_name]
     locale.setlocale(locale.LC_ALL, 'C')
-    months_rr = ['schaner', 'favrer', 'mars', 'avrigl', 'matg', 'zercladur', 'fanadur', 'avust', 'settember', 'october',
+    months_rr = ['', 'schaner', 'favrer', 'mars', 'avrigl', 'matg', 'zercladur', 'fanadur', 'avust', 'settember', 'october',
                  'november', 'december']
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )).*?(?= i.S.| vom \d)',
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )).*?(?= i\.\s?S\.?| vom \d)',
         'fr': r'(?<=arrêt de ).*?(?= dans (?:la cause|les causes)| du \d)',
         'it': r'(?<=della )(?!sentenza).*?(?= nella)',
         'rr': r'(?<=da la ).*?(?=concernent il cas)'
@@ -34,7 +34,7 @@ class MetadataExtractorPipeline(object):
     # tokens for separating parties (also used for detecting the ruling's language)
     party_separator = {
         'de': {
-            'start': r'i\.\s?S\. ',
+            'start': r'i\.\s?S\.? ',
             'end': r' gegen '
         },
         'fr': {
@@ -75,6 +75,7 @@ class MetadataExtractorPipeline(object):
             raw_date = date_match.group()
 
             # simplify date splitting by removing 'da ' (if title of judgement is in Rhaeto-Romance)
+            # --> relevancy.bger.ch/php/clir/http/index.php?lang=de&zoom=&type=show_document&highlight_docid=atf%3A%2F%2F139-II-145%3Ade
             raw_date = raw_date.replace(' da ', ' ')
 
             # match 4-digit number at the end of the string
