@@ -1,6 +1,7 @@
 import scrapy
 from scrapy.loader import ItemLoader
 from ..items import RulingItem
+from datetime import datetime
 
 
 class RulingSpider(scrapy.Spider):
@@ -8,6 +9,7 @@ class RulingSpider(scrapy.Spider):
     start_urls = ["http://relevancy.bger.ch/cgi-bin/IndexCGI?lang=de"]
     scraped_links = []
     allowed_domains =["relevancy.bger.ch"]
+    counter = 0
 
     def parse(self, response):
         # for testing purposes...
@@ -16,7 +18,7 @@ class RulingSpider(scrapy.Spider):
         volume_links = response.xpath("//tr/td/a[text()[contains(., 'I')]]/@href").extract()
         for link in volume_links:
             url = 'http://relevancy.bger.ch/' + link
-            if url not in self.scraped_links and len(self.scraped_links) < 2:
+            if url not in self.scraped_links:  # and len(self.scraped_links) < 2:
                 self.scraped_links.append(url)
                 yield scrapy.Request(url, self.parse_year)
 
@@ -26,7 +28,7 @@ class RulingSpider(scrapy.Spider):
         for link, ruling_id in zip(*[iter(rulings)]*2):
             url = 'http://relevancy.bger.ch/' + link
 
-            if url not in self.scraped_links and len(self.scraped_links) < 11:
+            if url not in self.scraped_links:  # and len(self.scraped_links) < 50:
                 self.scraped_links.append(url)
                 request = scrapy.Request(url, self.parse_ruling)
                 request.meta['ruling_id'] = ruling_id
@@ -64,6 +66,10 @@ class RulingSpider(scrapy.Spider):
         # values that have been crawled on previous level
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
+
+        self.counter += 1
+        if self.counter % 100 == 0:
+            print('%s ¦ Crawled %d rulings. ' % (datetime.now().strftime('%H:%M:%S'), self.counter))
 
         yield l.load_item()
 

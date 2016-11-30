@@ -26,7 +26,7 @@ class _KeywordExtractorPipeline:
 
         # find keywords associated to international treaties
         extracted_keywords = []
-        keywords_with_counts = {}
+        keyword_counts = {}
         contexts = []
 
         # go through all ruling chapters and extract keywords
@@ -53,11 +53,12 @@ class _KeywordExtractorPipeline:
                             [{'keyword': keyword, 'chapter': chapter, 'sentence': sentence} for sentence in sentences]
                         )
 
-                        # update keyword count (difficult to do this nicer before)
-                        keywords_with_counts[keyword] = keywords_with_counts.get(keyword, 0) + len(sentences)
+                        # update keyword count (difficult to do this more elegantly above)
+                        keyword_counts[keyword] = keyword_counts.get(keyword, 0) + len(sentences)
 
+            # keywords and counts are saved in a format that is easier to access in mongodb
             ruling[self.keyword_type] = {
-                'keywords': keywords_with_counts,
+                'keywords': [{'keyword': kw, 'count': cnt} for kw, cnt in keyword_counts.items()],
                 'contexts': contexts
             }
 
