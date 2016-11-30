@@ -14,6 +14,7 @@ class TestMetadataExtractor(unittest.TestCase):
         """
         for i, title_of_judgement in enumerate(case_metadata_extraction['title_of_judgement']):
             extracted_date = self.metadata_extractor._extract_date(title_of_judgement)
+            print(extracted_date + ": \n" + title_of_judgement)
             self.assertEqual(extracted_date, case_metadata_extraction['date'][i])
 
 
