@@ -22,7 +22,7 @@ class MetadataExtractorPipeline(object):
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )).*?(?= i\.\s?S\.?| vom \d)',
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )).*?(?= i\.\s?S\.?| vom \d)',
         'fr': r'(?<=arrêt de ).*?(?= dans (?:la cause|les causes)| du \d)',
         'it': r'(?<=della )(?!sentenza).*?(?= nella)',
         'rr': r'(?<=da la ).*?(?=concernent il cas)'
@@ -57,19 +57,20 @@ class MetadataExtractorPipeline(object):
     end_party_pattern += r'|(?=\n|$))'                  # stop at newline at latest.
 
     def process_item(self, item, spider):
-        url = item['url']
-        item['date'] = self._extract_date(item['title_of_judgement'], url)
-        item['dossier_number'] = self._extract_dossier_number(item['title_of_judgement'], url)
-        item['department'] = self._extract_department(item['title_of_judgement'], url)
-        item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'], url)
-        item['language'] = self._extract_language(item['title_of_judgement'], url)
-        item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'], url)
+        if 'title_of_judgement' in item:
+            url = item['url']
+            item['date'] = self._extract_date(item['title_of_judgement'], url)
+            item['dossier_number'] = self._extract_dossier_number(item['title_of_judgement'], url)
+            item['department'] = self._extract_department(item['title_of_judgement'], url)
+            item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'], url)
+            item['language'] = self._extract_language(item['title_of_judgement'], url)
+            item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'], url)
         return item
 
     def _extract_date(self, title_of_judgement, url):
 
         # first, try to match the date in the title of judgement
-        date_match = re.search(r'\b\d{1,2}(?:\.\s?|er | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
+        date_match = re.search(r'\b\d{1,2}(?:\.\s?|\s?er |o | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
 
         if date_match is not None:
             raw_date = date_match.group()

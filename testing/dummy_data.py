@@ -235,15 +235,16 @@ case_metadata_extraction = {'title_of_judgement': [], 'date': []}
 case_metadata_extraction['title_of_judgement'] = [
     '88. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 18. November 1998 i.S. F. (Beschwerde)',
     '26\\. Kreisschreiben, Circulaire, Circolare. (11.12.1959)',
-    "9. Auszug aus dem Urteil der I. öffentlich-rechtlichen Abteilung i. S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
+    "9. Beschluss der I. öffentlich-rechtlichen Abteilung i. S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
     "21. Entscheid vom 30. August 1957 i.S. Hächler.",
+    "7. Auszug aus dem Urteil der I. sozialrechtlichen Abteilung i.S A. gegen Sozialversicherungsgericht des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\n8C_310/2014 vom 31. März 2015",
 
     "89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
     "9. Extrait de l'arrêt de la IIe Cour de droit public en la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
     "10. Extrait de l'arrêt de la Ire Cour de droit civil dans les causes X. SA contre Y. et Z. (recours en matière civile)\n4A_489/2011 / 4A_491/2011 du 10 janvier 2012",
 
     '11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)',
-    '68. Estratto della sentenza 4 dicembre 1974 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
+    '68. Estratto della sentenza 1o luglio 1955 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
     '73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.',
     "62\\. Estratto della sentenza della II Corte di diritto sociale nella causa Allianz Suisse Società di Assicurazioni sulla Vita SA contro K. (ricorso in materia di diritto pubblico)\n9C_680/2011 dell'11 maggio 2012",
 
@@ -254,13 +255,14 @@ case_metadata_extraction['date'] = ['18.11.1998',
                                     '11.12.1959',
                                     '09.12.2011',
                                     '30.08.1957',
+                                    '31.03.2015',
 
                                     '13.11.1998',
                                     '01.10.2009',
                                     '10.01.2012',
 
                                     '10.06.1988',
-                                    '04.12.1974',
+                                    '01.07.1955',
                                     '11.11.1955',
                                     '11.05.2012',
 
@@ -271,6 +273,7 @@ case_metadata_extraction['parties'] = [
     {'claimant': 'Flughafen Zürich AG und Kanton Zürich',
      'defendant': 'X. und Eidgenössische Schätzungskommission Kreis 10'},
     {'claimant': 'Hächler'},
+    {'claimant': 'A.', 'defendant': 'Sozialversicherungsgericht des Kantons Zürich'},
 
     {'claimant': 'Banque Audi (Suisse) S.A.', 'defendant': 'Volkswagen Bank GmbH'},
     {'claimant': 'X. SàrL', 'defendant': 'Administration fiscale cantonale genevoise'},
