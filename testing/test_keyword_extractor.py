@@ -50,7 +50,8 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         :type test_data: dict
         """
         computed_output = keyword_extractor.process_item(test_data['input_item'], None)
-        computed_keywords = computed_output[keyword_type]['keywords'].keys()
+        computed_keywords_and_counts = computed_output[keyword_type]['keywords']
+        computed_keywords = [kw_c['keyword'] for kw_c in computed_keywords_and_counts]
 
         for keyword in test_data['expected_output']:
             self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')

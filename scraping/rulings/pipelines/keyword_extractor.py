@@ -15,9 +15,9 @@ class _KeywordExtractorPipeline:
 
         # regex for extracting a keyword's context
         self.sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
-        self.sentence_pattern += r'(?:.(?!\. [A-Z]))*'  # anything NOT followed by beginning of sentence
-        self.sentence_pattern += r'%s'  # keyword
-        self.sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # anything until end of sentence
+        self.sentence_pattern += r'(?:.(?!\. [A-Z]))*'                 # anything NOT followed by beginning of sentence
+        self.sentence_pattern += r'%s'                                 # keyword
+        self.sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'    # anything until end of sentence
 
         # ruling chapters from which keywords will be extracted:
         self.ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
@@ -74,7 +74,7 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
         patterns_international_treaties = {
             'de': [r'(?:international)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
                    r'(?:völkerrecht|staat)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
-                   r'(?:[^\s\(\)\,\.]+ |[^\s\(\)\,\.]+)?(?:abkommen|pakt|übereinkommen|vertr[aä]g)\w*'],
+                   r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'],
             'fr': [r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
                    r'(?:accord|convention|pacte|traité)(?:s|es)?'
                    '(?: (?:d\'|de la |de |des |sur (?:le|la|les) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))'],
