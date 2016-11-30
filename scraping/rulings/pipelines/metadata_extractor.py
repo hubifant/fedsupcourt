@@ -184,7 +184,7 @@ class MetadataExtractorPipeline(object):
             start_claimant = re.search(separator['start'], raw_parties)
 
             # if claimant and defendant can be separated, language is known.
-            if start_claimant != -1:
+            if start_claimant is not None:
                 return language
 
         warnings.warn('Could not extract language. \nRuling: ' + url)
