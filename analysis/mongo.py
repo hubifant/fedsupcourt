@@ -49,6 +49,21 @@ print(count_language('it'))
 print(count_language('rr'))
 print('===============================================')
 
+print('Department                                                                       | Count')
+print('---------------------------------------------------------------------------------+------')
+result = collection.aggregate([
+    {'$group': {
+        '_id': "$department",
+        'count': {'$sum': 1}}
+    },
+    {'$sort': {'_id': 1}}
+])
+
+for keyword in result:
+    international_treaties.append(keyword)
+    print('%-80s | %5d' % (keyword['_id'], keyword['count']))
+
+
 result = collection.find({'ruling_id.bge_nb': 95, 'ruling_id.volume': 'III', 'ruling_id.ruling_nb': 76},
                          {'title_of_judgement': 1, 'date': 1, 'type_of_proceeding': 1, 'language': 1, 'department': 1,
                           'dossier_number': 1, 'involved_parties': 1, 'url': 1})
