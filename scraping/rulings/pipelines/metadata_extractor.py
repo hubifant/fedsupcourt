@@ -17,12 +17,15 @@ class MetadataExtractorPipeline(object):
     locale.setlocale(locale.LC_ALL, 'it_CH.utf8')
     months_it = [m.lower() for m in calendar.month_name]
     locale.setlocale(locale.LC_ALL, 'C')
+    months_rr = ['schaner', 'favrer', 'mars', 'avrigl', 'matg', 'zercladur', 'fanadur', 'avust', 'settember', 'october',
+                 'november', 'december']
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
         'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )).*?(?= i.S.| vom \d)',
-        'fr': r'(?<=arrêt de ).*?(?= dans la cause| du \d)',
-        'it': r'(?<=della )(?!sentenza).*?(?= nella)'
+        'fr': r'(?<=arrêt de ).*?(?= dans (?:la cause|les causes)| du \d)',
+        'it': r'(?<=della )(?!sentenza).*?(?= nella)',
+        'rr': r'(?<=da la ).*?(?=concernent il cas)'
     }
 
     # type of proceeding: in title of judgement; starts with '(', ends with ')' and does not contain any '(...)'
@@ -35,12 +38,16 @@ class MetadataExtractorPipeline(object):
             'end': r' gegen '
         },
         'fr': {
-            'start': r'(?:dans|en) la cause ',
+            'start': r'(?:dans|en) (?:la cause|les causes) ',
             'end': r' contre '
         },
         'it': {
             'start': r'nella causa ',
             'end': r' contro '
+        },
+        'rr': {
+            'start': r'concernent il cas ',
+            'end': r' cunter '
         }
     }
     end_party_pattern = r'%s.*?'                        # starts after a party_separator (see above)
@@ -62,10 +69,13 @@ class MetadataExtractorPipeline(object):
     def _extract_date(self, title_of_judgement, url):
 
         # first, try to match the date in the title of judgement
-        date_match = re.search(r'\b\d{1,2}(?:\.\s?|er | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
+        date_match = re.search(r'\b\d{1,2}(?:\.\s?|er | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
 
         if date_match is not None:
             raw_date = date_match.group()
+
+            # simplify date splitting by removing 'da ' (if title of judgement is in Rhaeto-Romance)
+            raw_date = raw_date.replace(' da ', ' ')
 
             # match 4-digit number at the end of the string
             year_match = re.search(r'\d{4}$', raw_date)
@@ -95,6 +105,8 @@ class MetadataExtractorPipeline(object):
                     month = self.months_fr.index(month_raw)
                 elif month_raw in self.months_it:
                     month = self.months_it.index(month_raw)
+                elif month_raw in self.months_rr:
+                    month = self.months_rr.index(month_raw)
 
             if month is None:
                 warnings.warn("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
@@ -105,7 +117,7 @@ class MetadataExtractorPipeline(object):
                 date = '%02d.%02d.%04d' % (day, month, year)
             return date
 
-        warnings.warn('Could not extract date. \Ruling: ' + url)
+        warnings.warn('Could not extract date. \nRuling: ' + url)
 
     def _extract_involved_parties(self, raw_parties, url):
         # extract claimant and defendant

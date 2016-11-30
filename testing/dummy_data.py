@@ -239,16 +239,15 @@ case_metadata_extraction['title_of_judgement'] = [
     "21. Entscheid vom 30. August 1957 i.S. Hächler.",
 
     "89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
-    # '9. Arrêt de la Cour de cassation pénale dans la cause Union Démocratique du Centre du Canton de Genève contre Procureur général du canton de Genève (pourvoi en nullité)\n6S.625/2001 du 4 décembre 2001',
-    # "13. Extrait de l'arrêt de la Chambre des poursuites et des faillites du 15 février 1988 dans la cause F. (recours LP)",
-    # "51. Extrait de l'arrêt du 26 septembre 2000 dans la cause I. contre 1. Fondation collective LPP de la Ticino Vie, 2. Fondation institution supplétive LPP et Tribunal des assurances du canton de Vaud",
-    # '32. Arrêt de la Ire Cour de droit social dans la cause T. contre Corps de Police de la République et canton de Genève (recours constitutionnel subsidiaire)\n8D_8/2009 du 16 août 2010',
     "9. Extrait de l'arrêt de la IIe Cour de droit public en la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
+    "10. Extrait de l'arrêt de la Ire Cour de droit civil dans les causes X. SA contre Y. et Z. (recours en matière civile)\n4A_489/2011 / 4A_491/2011 du 10 janvier 2012",
 
     '11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)',
     '68. Estratto della sentenza 4 dicembre 1974 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
     '73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.',
     "62\\. Estratto della sentenza della II Corte di diritto sociale nella causa Allianz Suisse Società di Assicurazioni sulla Vita SA contro K. (ricorso in materia di diritto pubblico)\n9C_680/2011 dell'11 maggio 2012"
+
+    "12. Extract da la sentenzia da la I. partiziun da dretg public concernent il cas Touring Club Svizra cunter A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun (recurs da dretg public)\n1C_160/2012 dals 10 da december 2012"
 ]
 
 case_metadata_extraction['date'] = ['18.11.1998',
@@ -257,6 +256,7 @@ case_metadata_extraction['date'] = ['18.11.1998',
                                     '30.08.1957',
                                     '13.11.1998',
                                     '01.10.2009',
+                                    '10.01.2012',
                                     '10.06.1988',
                                     '04.12.1974',
                                     '11.11.1955',
@@ -269,6 +269,7 @@ case_metadata_extraction['parties'] = [
     {'claimant': 'Hächler'},
     {'claimant': 'Banque Audi (Suisse) S.A.', 'defendant': 'Volkswagen Bank GmbH'},
     {'claimant': 'X. SàrL', 'defendant': 'Administration fiscale cantonale genevoise'},
+    {'claimant': 'X. SA' , 'defendant': 'Y. et Z.'},
     {'claimant': 'X.', 'defendant': 'Y. e Ufficio esecuzione e fallimenti di Lugano'},
     {'claimant': 'X e Y', 'defendant': 'Procuratore pubblico sottocenerino'},
     {'claimant': 'Intervisa SA e Visafin SA', 'defendant': 'Visa SA, in liquidazione concordataria'},
