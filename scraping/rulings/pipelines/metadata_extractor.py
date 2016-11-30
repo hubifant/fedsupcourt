@@ -43,17 +43,23 @@ class MetadataExtractorPipeline(object):
             'end': ' contro '
         }
     }
+    end_party_pattern = r'(?<=%s).*?'                  # starts after a party_separator (see above)
+    end_party_pattern += r'(?:[^A-Z](?=\.\s?(?:\n|$))'  # if end of the sentence: don't include '.'
+    end_party_pattern += r'|[A-Z]\.(?=\n|$)'            # if ending with abbr: include '.'
+    end_party_pattern += r'|(?= \([^()]+\)(?:\n|$))'    # if ending with '(...)', don't include it (= proceeding type)
+    end_party_pattern += r'|(?=\n|$))'                  # stop at newline at latest.
 
     def process_item(self, item, spider):
-        item['date'] = self._extract_date(item['title_of_judgement'])
-        item['dossier_number'] = self._extract_dossier_number(item['title_of_judgement'])
-        item['department'] = self._extract_department(item['title_of_judgement'])
-        item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'])
-        item['language'] = self._extract_language(item['title_of_judgement'])
-        item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'])
+        url = item['url']
+        item['date'] = self._extract_date(item['title_of_judgement'], url)
+        item['dossier_number'] = self._extract_dossier_number(item['title_of_judgement'], url)
+        item['department'] = self._extract_department(item['title_of_judgement'], url)
+        item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'], url)
+        item['language'] = self._extract_language(item['title_of_judgement'], url)
+        item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'], url)
         return item
 
-    def _extract_date(self, raw_date):
+    def _extract_date(self, raw_date, url):
         # match 4-digit number if preceded by '.' or ' '
         year_match = re.search(r'(?<=[\.\s])\d{4}', raw_date)
 
@@ -62,7 +68,7 @@ class MetadataExtractorPipeline(object):
             year = int(year_match.group())
 
             # match one- or two-digit number preceded by ' ' and followed by '.' or ' ' or 'er' (-> premier)
-            day_match = re.search(r'(?<=[\s\(\'])(\d{1,2})(\.|\s|\w+ )', raw_date)
+            day_match = re.search(r'(?<=[\s\(\'])(\d{1,2})(\.\s?|\s|\w+ )', raw_date)
             day = int(day_match.group(1))
 
             # extract month (digit between 1 and 12)
@@ -89,7 +95,7 @@ class MetadataExtractorPipeline(object):
                     month = self.months_it.index(month_raw)
 
             if month is None:
-                warnings.warn('Could not extract month.')
+                warnings.warn('Could not extract month. \nRuling: ' + url)
                 # date = datetime(year, 1, 1)
                 date = str(year)
             else:
@@ -97,28 +103,38 @@ class MetadataExtractorPipeline(object):
                 date = '%02d.%02d.%04d' % (day, month, year)
             return date
 
-    def _extract_involved_parties(self, raw_parties):
+    def _extract_involved_parties(self, raw_parties, url):
         # extract claimant and defendant
         for language, separator in self.party_separator.items():
             start_claimant = raw_parties.find(separator['start'])
-            end_claimant = raw_parties.find(separator['end'])
 
-            # if claimant and defendant can be separated...
-            if start_claimant != -1 and end_claimant != -1:
+            # if claimant indicator has been found...
+            if start_claimant != -1:
                 start_claimant += len(separator['start'])
-                start_defendant = end_claimant + len(separator['end'])
 
-                # find the end of the defendant token (can end with '.' or '. (blabla)' or similarly)
-                end_defendant = re.search(r'([\W\s]*)(\(.+\))?$', raw_parties).span()[0]
-                parties = {
-                    'claimant': raw_parties[start_claimant:end_claimant],
-                    'defendant': raw_parties[start_defendant:end_defendant]
-                }
+                end_claimant = raw_parties.find(separator['end'])
+
+                # if claimant and defendant can be separated...
+                if end_claimant != -1:
+
+                    # use end_party_pattern for extracting defendant
+                    defendant = re.search(self.end_party_pattern % separator['end'], raw_parties).group()
+                    parties = {
+                        'claimant': raw_parties[start_claimant:end_claimant],
+                        'defendant': defendant
+                    }
+
+                # otherwise there is only a claimant.
+                else:
+                    # use end_party_pattern for extracting claimant
+                    claimant = re.search(self.end_party_pattern % separator['start'], raw_parties).group()
+                    parties = {'claimant': claimant}
+
                 return parties
 
-        warnings.warn('Could not extract parties.')
+        warnings.warn('Could not extract parties. \nRuling: ' + url)
 
-    def _extract_dossier_number(self, raw_dossier_number):
+    def _extract_dossier_number(self, raw_dossier_number, url):
         # extract 'Dossiernummer' (e.g. '5A_153/2009' or '4C.197/2003')
         # http://www.bger.ch/uebersicht_numm_dossiers_internet_d_ab_2007.pdf
         dnb_match = re.search('\d+\w+[\_\.]\d+\/\d{4}', raw_dossier_number)
@@ -126,21 +142,21 @@ class MetadataExtractorPipeline(object):
         if dnb_match is not None:
             return dnb_match.group()
 
-    def _extract_department(self, raw_department):
+    def _extract_department(self, raw_department, url):
         # extract the responsible department if possible.
         for language, department_pattern in self.department_patterns.items():
             department_match = re.search(department_pattern, raw_department, re.IGNORECASE)
             if department_match is not None:
                 return department_match.group()
-        warnings.warn('Could not extract responsible department.')
+        warnings.warn('Could not extract responsible department. \nRuling: ' + url)
 
-    def _extract_type_of_proceeding(self, raw_type_of_proceeding):
+    def _extract_type_of_proceeding(self, raw_type_of_proceeding, url):
         proceeding_match = re.search(self.type_of_proceeding_pattern, raw_type_of_proceeding)
         if proceeding_match is not None:
             return proceeding_match.group()
-        warnings.warn('Could not extract the type of the proceeding.')
+        warnings.warn('Could not extract the type of the proceeding. \nRuling: ' + url)
 
-    def _extract_language(self, raw_parties):
+    def _extract_language(self, raw_parties, url):
         # language can be extracted if claimant and defendant can be extracted
         for language, separator in self.party_separator.items():
             start_claimant = raw_parties.find(separator['start'])
@@ -150,4 +166,4 @@ class MetadataExtractorPipeline(object):
             if start_claimant != -1 and end_claimant != -1:
                 return language
 
-        warnings.warn('Could not extract language.')
+        warnings.warn('Could not extract language. \nRuling: ' + url)

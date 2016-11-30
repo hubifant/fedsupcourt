@@ -235,13 +235,8 @@ case_metadata_extraction = {'title_of_judgement': [], 'date': []}
 case_metadata_extraction['title_of_judgement'] = [
     '88. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 18. November 1998 i.S. F. (Beschwerde)',
     '26\\. Kreisschreiben, Circulaire, Circolare. (11.12.1959)',
-    # '46. Auszug aus dem Urteil der I. Zivilabteilung vom 6. Mai 1998 i.S. X. gegen Y. GmbH (Berufung)',
-    # '23. Auszug aus dem Urteil des Kassationshofes i.S. X. gegen Staatsanwaltschaft des Kantons Zürich und Y.',
-    # '14. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 27. Januar 1988 i.S. B. (Rekurs) (Nichtigkeitsbeschwerde)\n6S.681/2001 vom 2. Juli 2002',
-    # "1. Extrait de l'arrêt de la IIe Cour de droit public dans la cause X. contre Service de la population du canton de Vaud (recours en matière de droit public)\n2C_460/2009 du 4 novembre 2009",
-    # '7. Auszug aus dem Urteil der II. öffentlich-rechtlichen Abteilung i.S. A. und Mitb. gegen Sicherheitsdirektion und Regierungsrat des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\n2C_269/2009 vom 5. Januar 2010',
-    # '10. Auszug aus dem Entscheid der Schuldbetreibungs- und Konkurskammer vom 15. Januar 1988 i.S. V. (Rekurs)',
-    # '52. Auszug aus dem Urteil vom 26. Oktober 2000 i.S. S. gegen VERA Sammelstiftung in Liquidation, Olten, und Verwaltungsgericht des Kantons Bern',
+    "9. Auszug aus dem Urteil der I. öffentlich-rechtlichen Abteilung i.S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
+    "21. Entscheid vom 30. August 1957 i.S. Hächler.",
 
     "89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
     # '9. Arrêt de la Cour de cassation pénale dans la cause Union Démocratique du Centre du Canton de Genève contre Procureur général du canton de Genève (pourvoi en nullité)\n6S.625/2001 du 4 décembre 2001',
@@ -258,9 +253,24 @@ case_metadata_extraction['title_of_judgement'] = [
 
 case_metadata_extraction['date'] = ['18.11.1998',
                                     '11.12.1959',
+                                    '09.12.2011',
+                                    '30.08.1957',
                                     '13.11.1998',
                                     '01.10.2009',
                                     '10.06.1988',
                                     '04.12.1974',
                                     '11.11.1955',
                                     '11.05.2012']
+case_metadata_extraction['parties'] = [
+    {'claimant': 'F.'},
+    None,
+    {'claimant': 'Flughafen Zürich AG und Kanton Zürich',
+     'defendant': 'X. und Eidgenössische Schätzungskommission Kreis 10'},
+    {'claimant': 'Hächler'},
+    {'claimant': 'Banque Audi (Suisse) S.A.', 'defendant': 'Volkswagen Bank GmbH'},
+    {'claimant': 'X. SàrL', 'defendant': 'Administration fiscale cantonale genevoise'},
+    {'claimant': 'X.', 'defendant': 'Y. e Ufficio esecuzione e fallimenti di Lugano'},
+    {'claimant': 'X e Y', 'defendant': 'Procuratore pubblico sottocenerino'},
+    {'claimant': 'Intervisa SA e Visafin SA', 'defendant': 'Visa SA, in liquidazione concordataria'},
+    {'claimant': 'Allianz Suisse Società di Assicurazioni sulla Vita SA','defendant': 'K.'}
+]
