@@ -22,9 +22,9 @@ class MetadataExtractorPipeline(object):
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )).*?(?= i\.\s?S\.?| vom \d)',
-        'fr': r'(?<=arrêt de ).*?(?= dans (?:la cause|les causes)| du \d)',
-        'it': r'(?<=della )(?!sentenza).*?(?= nella)',
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )).*?(?= i\.\s?S\.?| in Sachen| in S\.| vom \d)',
+        'fr': r'(?:(?<=arrêt de )|(?<=arrêt rendu par )).*?(?= dans (?:la cause|les causes)| du \d)',
+        'it': r'(?<=della )(?!sentenza).*?(?= nell[ae]| sul ricorso|in re)',
         'rr': r'(?<=da la ).*?(?=concernent il cas)'
     }
 
@@ -34,15 +34,15 @@ class MetadataExtractorPipeline(object):
     # tokens for separating parties (also used for detecting the ruling's language)
     party_separator = {
         'de': {
-            'start': r'i\.\s?S\.? ',
+            'start': r'(?:i\.\s?S\.?|in Sachen|in S\.)\s?',
             'end': r' gegen '
         },
         'fr': {
-            'start': r'(?:dans|en) (?:la cause|les causes) ',
+            'start': r'(?:dans|en|contre) (?:la cause|les causes) ',
             'end': r' contre '
         },
         'it': {
-            'start': r'nella causa ',
+            'start': r'(?:nell[ae] caus[ae]|nella pratica|sul ricorso|in re) ',
             'end': r' contro '
         },
         'rr': {
@@ -162,6 +162,7 @@ class MetadataExtractorPipeline(object):
 
         if dnb_match is not None:
             return dnb_match.group()
+        # warnings.warn('Could not extract dossier number. \nRuling: ' + url)
 
     def _extract_department(self, raw_department, url):
         # extract the responsible department if possible.
@@ -175,7 +176,7 @@ class MetadataExtractorPipeline(object):
         proceeding_match = re.search(self.type_of_proceeding_pattern, raw_type_of_proceeding)
         if proceeding_match is not None:
             return proceeding_match.group()
-        warnings.warn('Could not extract the type of the proceeding. \nRuling: ' + url)
+        # warnings.warn('Could not extract the type of the proceeding. \nRuling: ' + url)
 
     def _extract_language(self, raw_parties, url):
         # language can be extracted if claimant and defendant can be extracted

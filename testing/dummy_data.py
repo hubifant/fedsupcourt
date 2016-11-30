@@ -237,7 +237,7 @@ case_metadata_extraction['title_of_judgement'] = [
     '26\\. Kreisschreiben, Circulaire, Circolare. (11.12.1959)',
     "9. Beschluss der I. öffentlich-rechtlichen Abteilung i. S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
     "21. Entscheid vom 30. August 1957 i.S. Hächler.",
-    "7. Auszug aus dem Urteil der I. sozialrechtlichen Abteilung i.S A. gegen Sozialversicherungsgericht des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\n8C_310/2014 vom 31. März 2015",
+    "7. Auszug aus dem Urteil der I. sozialrechtlichen Abteilung in Sachen A. gegen Sozialversicherungsgericht des Kantons Zürich (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\n8C_310/2014 vom 31. März 2015",
 
     "89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
     "9. Extrait de l'arrêt de la IIe Cour de droit public en la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
@@ -247,6 +247,7 @@ case_metadata_extraction['title_of_judgement'] = [
     '68. Estratto della sentenza 1o luglio 1955 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
     '73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.',
     "62\\. Estratto della sentenza della II Corte di diritto sociale nella causa Allianz Suisse Società di Assicurazioni sulla Vita SA contro K. (ricorso in materia di diritto pubblico)\n9C_680/2011 dell'11 maggio 2012",
+    "24. Estratto della sentenza 29 gennaio 1963 della I Camera civile nelle cause vertenti fra J. R. Geigy SA Basilea e 1) Istituto De Angeli S.p.A. Milano, 2) Unipharma SA Lugano, 3) Diasan SA Basilea.",
 
     "12. Extract da la sentenzia da la I. partiziun da dretg public concernent il cas Touring Club Svizra cunter A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun (recurs da dretg public)\n1C_160/2012 dals 10 da december 2012"
 ]
@@ -265,6 +266,7 @@ case_metadata_extraction['date'] = ['18.11.1998',
                                     '01.07.1955',
                                     '11.11.1955',
                                     '11.05.2012',
+                                    '29.01.1963',
 
                                     '10.12.2012']
 case_metadata_extraction['parties'] = [
@@ -277,12 +279,13 @@ case_metadata_extraction['parties'] = [
 
     {'claimant': 'Banque Audi (Suisse) S.A.', 'defendant': 'Volkswagen Bank GmbH'},
     {'claimant': 'X. SàrL', 'defendant': 'Administration fiscale cantonale genevoise'},
-    {'claimant': 'X. SA' , 'defendant': 'Y. et Z.'},
+    {'claimant': 'X. SA', 'defendant': 'Y. et Z.'},
 
     {'claimant': 'X.', 'defendant': 'Y. e Ufficio esecuzione e fallimenti di Lugano'},
     {'claimant': 'X e Y', 'defendant': 'Procuratore pubblico sottocenerino'},
     {'claimant': 'Intervisa SA e Visafin SA', 'defendant': 'Visa SA, in liquidazione concordataria'},
     {'claimant': 'Allianz Suisse Società di Assicurazioni sulla Vita SA', 'defendant': 'K.'},
+    {'claimant': 'vertenti fra J. R. Geigy SA Basilea e 1) Istituto De Angeli S.p.A. Milano, 2) Unipharma SA Lugano, 3) Diasan SA Basilea'},
 
     {'claimant': 'Touring Club Svizra',
      'defendant': 'A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun'}
