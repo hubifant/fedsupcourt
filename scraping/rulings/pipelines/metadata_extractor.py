@@ -164,10 +164,9 @@ class MetadataExtractorPipeline(object):
         # language can be extracted if claimant and defendant can be extracted
         for language, separator in self.party_separator.items():
             start_claimant = raw_parties.find(separator['start'])
-            end_claimant = raw_parties.find(separator['end'])
 
             # if claimant and defendant can be separated, language is known.
-            if start_claimant != -1 and end_claimant != -1:
+            if start_claimant != -1:
                 return language
 
         warnings.warn('Could not extract language. \nRuling: ' + url)
