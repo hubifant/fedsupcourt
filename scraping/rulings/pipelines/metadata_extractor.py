@@ -59,24 +59,26 @@ class MetadataExtractorPipeline(object):
         item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'], url)
         return item
 
-    def _extract_date(self, raw_date, url):
-        # match 4-digit number if preceded by '.' or ' '
-        year_match = re.search(r'(?<=[\.\s])\d{4}', raw_date)
+    def _extract_date(self, title_of_judgement, url):
 
-        # if year was found, look for day and month
-        if year_match is not None:
+        # first, try to match the date in the title of judgement
+        date_match = re.search(r'\b\d{1,2}(?:\.\s?|er | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
+
+        if date_match is not None:
+            raw_date = date_match.group()
+
+            # match 4-digit number at the end of the string
+            year_match = re.search(r'\d{4}$', raw_date)
             year = int(year_match.group())
 
-            # match one- or two-digit number preceded by ' ' and followed by '.' or ' ' or 'er' (-> premier)
-            day_match = re.search(r'(?<=[\s\(\'])(\d{1,2})(\.\s?|\s|\w+ )', raw_date)
-            day = int(day_match.group(1))
+            # match number at the beginning of the string:
+            day_match = re.search(r'^\d+', raw_date)
+            day = int(day_match.group())
 
-            # extract month (digit between 1 and 12)
-            # month token is between day and year token extracted above
-            month_start = day_match.span()[1]
-            month_end = year_match.span()[0] - 1
-            month_raw = raw_date[month_start:month_end].replace(' ', '').replace('.', '')
+            # extract month
+            month_raw = re.search(r'(?<=\.| )(?:\d{1,2}|\w+)', raw_date).group()
             month = None
+
             # if month is represented as digit, we're done
             if month_raw.isdigit():
                 month = int(month_raw)
@@ -95,13 +97,15 @@ class MetadataExtractorPipeline(object):
                     month = self.months_it.index(month_raw)
 
             if month is None:
-                warnings.warn('Could not extract month. \nRuling: ' + url)
+                warnings.warn("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
                 # date = datetime(year, 1, 1)
                 date = str(year)
             else:
                 # date = datetime(year, month, day)
                 date = '%02d.%02d.%04d' % (day, month, year)
             return date
+
+        warnings.warn('Could not extract date. \Ruling: ' + url)
 
     def _extract_involved_parties(self, raw_parties, url):
         # extract claimant and defendant
