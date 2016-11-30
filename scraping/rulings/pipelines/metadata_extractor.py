@@ -20,7 +20,7 @@ class MetadataExtractorPipeline(object):
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )).*?(?= i.S.| vom \d)',
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )).*?(?= i.S.| vom \d)',
         'fr': r'(?<=arrêt de ).*?(?= dans la cause| du \d)',
         'it': r'(?<=della )(?!sentenza).*?(?= nella)'
     }
@@ -35,7 +35,7 @@ class MetadataExtractorPipeline(object):
             'end': r' gegen '
         },
         'fr': {
-            'start': r'dans la cause ',
+            'start': r'(?:dans|en) la cause ',
             'end': r' contre '
         },
         'it': {

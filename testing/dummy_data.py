@@ -243,7 +243,7 @@ case_metadata_extraction['title_of_judgement'] = [
     # "13. Extrait de l'arrêt de la Chambre des poursuites et des faillites du 15 février 1988 dans la cause F. (recours LP)",
     # "51. Extrait de l'arrêt du 26 septembre 2000 dans la cause I. contre 1. Fondation collective LPP de la Ticino Vie, 2. Fondation institution supplétive LPP et Tribunal des assurances du canton de Vaud",
     # '32. Arrêt de la Ire Cour de droit social dans la cause T. contre Corps de Police de la République et canton de Genève (recours constitutionnel subsidiaire)\n8D_8/2009 du 16 août 2010',
-    "9. Extrait de l'arrêt de la IIe Cour de droit public dans la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
+    "9. Extrait de l'arrêt de la IIe Cour de droit public en la cause X. SàrL contre Administration fiscale cantonale genevoise (recours en matière de droit public)\n2C_897/2008 du 1er octobre 2009",
 
     '11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)',
     '68. Estratto della sentenza 4 dicembre 1974 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
