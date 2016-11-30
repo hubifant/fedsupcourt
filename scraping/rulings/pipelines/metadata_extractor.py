@@ -31,19 +31,19 @@ class MetadataExtractorPipeline(object):
     # tokens for separating parties (also used for detecting the ruling's language)
     party_separator = {
         'de': {
-            'start': 'i.S. ',
-            'end': ' gegen '
+            'start': r'i\.\s?S\. ',
+            'end': r' gegen '
         },
         'fr': {
-            'start': 'dans la cause ',
-            'end': ' contre '
+            'start': r'dans la cause ',
+            'end': r' contre '
         },
         'it': {
-            'start': 'nella causa ',
-            'end': ' contro '
+            'start': r'nella causa ',
+            'end': r' contro '
         }
     }
-    end_party_pattern = r'(?<=%s).*?'                  # starts after a party_separator (see above)
+    end_party_pattern = r'%s.*?'                        # starts after a party_separator (see above)
     end_party_pattern += r'(?:[^A-Z](?=\.\s?(?:\n|$))'  # if end of the sentence: don't include '.'
     end_party_pattern += r'|[A-Z]\.(?=\n|$)'            # if ending with abbr: include '.'
     end_party_pattern += r'|(?= \([^()]+\)(?:\n|$))'    # if ending with '(...)', don't include it (= proceeding type)
@@ -110,19 +110,21 @@ class MetadataExtractorPipeline(object):
     def _extract_involved_parties(self, raw_parties, url):
         # extract claimant and defendant
         for language, separator in self.party_separator.items():
-            start_claimant = raw_parties.find(separator['start'])
+            start_claimant_match = re.search(separator['start'], raw_parties)
 
             # if claimant indicator has been found...
-            if start_claimant != -1:
-                start_claimant += len(separator['start'])
+            if start_claimant_match is not None:
+                start_claimant = start_claimant_match.span()[1]
 
-                end_claimant = raw_parties.find(separator['end'])
+                end_claimant_pattern = re.search(separator['end'], raw_parties)
 
                 # if claimant and defendant can be separated...
-                if end_claimant != -1:
+                if end_claimant_pattern is not None:
+                    end_claimant = end_claimant_pattern.span()[0]
 
                     # use end_party_pattern for extracting defendant
                     defendant = re.search(self.end_party_pattern % separator['end'], raw_parties).group()
+                    defendant = re.sub(separator['end'], '', defendant)
                     parties = {
                         'claimant': raw_parties[start_claimant:end_claimant],
                         'defendant': defendant
@@ -132,6 +134,7 @@ class MetadataExtractorPipeline(object):
                 else:
                     # use end_party_pattern for extracting claimant
                     claimant = re.search(self.end_party_pattern % separator['start'], raw_parties).group()
+                    claimant = re.sub(separator['start'], '', claimant)
                     parties = {'claimant': claimant}
 
                 return parties
@@ -163,7 +166,7 @@ class MetadataExtractorPipeline(object):
     def _extract_language(self, raw_parties, url):
         # language can be extracted if claimant and defendant can be extracted
         for language, separator in self.party_separator.items():
-            start_claimant = raw_parties.find(separator['start'])
+            start_claimant = re.search(separator['start'], raw_parties)
 
             # if claimant and defendant can be separated, language is known.
             if start_claimant != -1:

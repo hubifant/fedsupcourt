@@ -235,7 +235,7 @@ case_metadata_extraction = {'title_of_judgement': [], 'date': []}
 case_metadata_extraction['title_of_judgement'] = [
     '88. Auszug aus dem Urteil der Schuldbetreibungs- und Konkurskammer vom 18. November 1998 i.S. F. (Beschwerde)',
     '26\\. Kreisschreiben, Circulaire, Circolare. (11.12.1959)',
-    "9. Auszug aus dem Urteil der I. öffentlich-rechtlichen Abteilung i.S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
+    "9. Auszug aus dem Urteil der I. öffentlich-rechtlichen Abteilung i. S. Flughafen Zürich AG und Kanton Zürich gegen X. und Eidgenössische Schätzungskommission Kreis 10 (Beschwerde in öffentlich-rechtlichen Angelegenheiten)\nC_100/2011 / 1C_102/2011 vom 9. Dezember 2011",
     "21. Entscheid vom 30. August 1957 i.S. Hächler.",
 
     "89. Extrait de l'arrêt de la Ire Cour civile du 13 novembre 1998 dans la cause Banque Audi (Suisse) S.A. contre Volkswagen Bank GmbH (recours en réforme)",
