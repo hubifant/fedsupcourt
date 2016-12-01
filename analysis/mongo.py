@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import csv
 import pymongo
 from pprint import pprint
 
@@ -14,22 +15,40 @@ collection = db[collection_name]
 
 print(collection.count())
 
-result = collection.aggregate([
-    {'$project': {'kw': '$international_treaties.keywords.keyword'}},
-    {'$unwind': '$kw'},
-    {'$group': {
-        '_id': "$kw",
-        'count': {'$sum': 1}}
-    },
-    {'$sort': {'_id': 1}}
-])
 
-international_treaties = []
+def save_keyword_list(keyword_type, path='.'):
+    file_path = path + '/' + keyword_type + '.csv'
+    result = collection.aggregate([
+        {'$project': {'kw': '$' + keyword_type + '.keywords.keyword'}},
+        {'$unwind': '$kw'},
+        {
+            '$group': {
+                '_id': {
+                    '$toLower': "$kw"
+                },
+                'occurrences': {
+                    '$sum': 1
+                }
+            }
+        },
+        {'$sort': {'_id': 1}}
+    ])
 
-for keyword in result:
-    international_treaties.append(keyword)
-    print('%-50s | %3d' % (keyword['_id'], keyword['count']))
+    keyword_list = []
+    with open(file_path, 'w') as csv_file:
+        keyword_writer = csv.DictWriter(csv_file, fieldnames=["Keyword", "Occurrences"])
+        keyword_writer.writeheader()
 
+        for row in result:
+            keyword_list.append(row)
+            keyword_writer.writerow({"Keyword": row['_id'], "Occurrences": row["occurrences"]})
+            print('%-50s | %3d' % (row['_id'], row['occurrences']))
+
+    return keyword_list
+
+international_treaties = save_keyword_list('international_treaties')
+save_keyword_list('international_law_in_general')
+save_keyword_list('international_customary_law')
 print(len(international_treaties))
 
 
