@@ -3,7 +3,7 @@
 import calendar
 import locale
 import re
-import warnings
+import logging
 
 
 class MetadataExtractorPipeline(object):
@@ -121,7 +121,7 @@ class MetadataExtractorPipeline(object):
                     month = self.months_rr.index(month_raw)
 
             if month is None:
-                warnings.warn("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
+                logging.warning("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
                 # date = datetime(year, 1, 1)
                 date = str(year)
             else:
@@ -129,7 +129,7 @@ class MetadataExtractorPipeline(object):
                 date = '%02d.%02d.%04d' % (day, month, year)
             return date
 
-        warnings.warn('Could not extract date. \nRuling: ' + url)
+        logging.warning('Could not extract date. \nRuling: ' + url)
 
     def _extract_involved_parties(self, raw_parties, url):
         # extract claimant and defendant
@@ -163,7 +163,7 @@ class MetadataExtractorPipeline(object):
 
                 return parties
 
-        warnings.warn('Could not extract parties. \nRuling: ' + url)
+        logging.warning('Could not extract parties. \nRuling: ' + url)
 
     def _extract_dossier_number(self, raw_dossier_number, url):
         # extract 'Dossiernummer' (e.g. '5A_153/2009' or '4C.197/2003')
@@ -172,7 +172,7 @@ class MetadataExtractorPipeline(object):
 
         if dnb_match is not None:
             return dnb_match.group()
-        # warnings.warn('Could not extract dossier number. \nRuling: ' + url)
+        # logging.warning('Could not extract dossier number. \nRuling: ' + url)
 
     def _extract_department(self, raw_department, url):
         # extract the responsible department if possible.
@@ -180,13 +180,13 @@ class MetadataExtractorPipeline(object):
             department_match = re.search(department_pattern, raw_department, re.IGNORECASE)
             if department_match is not None:
                 return department_match.group()
-        warnings.warn('Could not extract responsible department. \nRuling: ' + url)
+        logging.warning('Could not extract responsible department. \nRuling: ' + url)
 
     def _extract_type_of_proceeding(self, raw_type_of_proceeding, url):
         proceeding_match = re.search(self.type_of_proceeding_pattern, raw_type_of_proceeding)
         if proceeding_match is not None:
             return proceeding_match.group()
-        # warnings.warn('Could not extract the type of the proceeding. \nRuling: ' + url)
+        # logging.warning('Could not extract the type of the proceeding. \nRuling: ' + url)
 
     def _extract_language(self, raw_parties, url):
         # language can be extracted if claimant and defendant can be extracted
@@ -197,4 +197,4 @@ class MetadataExtractorPipeline(object):
             if start_claimant is not None:
                 return language
 
-        warnings.warn('Could not extract language. \nRuling: ' + url)
+        logging.warning('Could not extract language. \nRuling: ' + url)

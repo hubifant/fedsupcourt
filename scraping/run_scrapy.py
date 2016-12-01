@@ -11,7 +11,9 @@ def scrape_rulings():
     #  --> log levels: CRITICAL > ERROR > WARNING > INFO > DEBUG
     configure_logging({
         'LOG_LEVEL': 'INFO',
-        'LOG_FORMAT': '%(levelname)s \t| %(asctime)s \t| %(message)s',
+        'LOG_FORMAT': '%8s | %s | %s\n'% ('%(levelname)s',
+                                          '%(asctime)s',
+                                          '%(message)s'),
         'LOG_FILE': '../crawler.log'
     })
 
@@ -42,7 +44,7 @@ def scrape_rulings():
     settings.set('COOKIES_ENABLED', False)
 
     # set a download delay of 0.2sec (2sec is recommended)
-    settings.set('DOWNLOAD_DELAY', 0.2)
+    # settings.set('DOWNLOAD_DELAY', 0.2)
 
     runner = CrawlerRunner(settings)
 

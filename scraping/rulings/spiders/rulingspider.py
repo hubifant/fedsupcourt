@@ -17,7 +17,8 @@ class RulingSpider(scrapy.Spider):
 
         volume_links = response.xpath("//tr/td/a[text()[contains(., 'I') or contains(., 'V')]]/@href").extract()
 
-        logging.info('%d BGE volumes will be extracted.\n=============================================================='
+        logging.info('%d BGE volumes will be extracted.\n'
+                     '=============================================================================================\n\n'
                      % len(volume_links))
 
         for link in volume_links:
