@@ -77,18 +77,20 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
                    r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'],
             'fr': [r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
                    r'(?:accord|convention|pacte|traité)(?:s|es)?'
-                   '(?: (?:à|aux?|avec|dans|d|de(?: ce(?:tte)?| la|s| double| libre)?|dont|du|en|entre|es?t'
-                   '|(?:pour|sur) (?:le|la|les)(?: double| libre)?|entre (?:\w+\s){1,4}'
+                   '(?: (?:à|aux?|dans|d|de(?: ce(?:tte)?| la|s| double| libre)?|dont|du|en|entre|es?t'
+                   '|(?:pour|sur|avec) (?:le|la|les)(?: double| libre)?|entre (?:\w+\s){1,4}'
                    ')[\'\s][^\s\(\)\,\.]+[\w\d]'
-                   '| [^\s\(\)\,\.]+[\w\d]'     # todo: just leave it?
                    '| (?=n\'|ne )'
                    '| (?=qu[ei\'])'             # indicates start of subclause -> doesn't make sense to match next word
                    '| (?=l(?:\'|e |eurs? |a |es ))'
+                   '| [^\s\(\)\,\.]+[\w\d]'     # todo: just leave it?
                    '|(?=\W))'],
             'it': [r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
                    r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])'
-                   '(?: (?:all[ao]?|d|di|(?:de|da|su)(?:lla|lle|ll|l|i|gli)?|nella'
-                   '|per (?:il|la|gli|i)|[ft]ra (?:\w+\s){1,4}'
+                   '(?: (?:all[ao]?|d|di'
+                   '|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
+                   '|per (?:il|la|gli|i)'
+                   '|[ft]ra (?:\w+\s){1,4}'
                    ')(?: doppia)?[\'\s][^\s\(\)\,\.]*[\w\d]'
                    '| [^\s\(\)\,\.]*[\w\d]|(?=\W))']
         }
