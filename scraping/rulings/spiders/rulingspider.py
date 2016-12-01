@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from ..items import RulingItem
 from datetime import datetime
-
+import logging
 
 class RulingSpider(scrapy.Spider):
     name = 'rulings'
@@ -15,7 +15,12 @@ class RulingSpider(scrapy.Spider):
         # for testing purposes...
         # yield scrapy.Request("http://relevancy.bger.ch/cgi-bin/IndexCGI?year=80&volume=I&lang=de&zoom=&system=", self.parse_year)
 
-        volume_links = response.xpath("//tr/td/a[text()[contains(., 'I')]]/@href").extract()
+        volume_links = response.xpath("//tr/td/a[text()[contains(., 'I') or contains(., 'V')]]/@href").extract()
+
+        logging.info('%d BGE volumes will be extracted.\n'
+                     '=============================================================================================\n\n'
+                     % len(volume_links))
+
         for link in volume_links:
             url = 'http://relevancy.bger.ch/' + link
             if url not in self.scraped_links:  # and len(self.scraped_links) < 2:

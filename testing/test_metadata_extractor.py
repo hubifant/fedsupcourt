@@ -20,10 +20,10 @@ class TestMetadataExtractor(unittest.TestCase):
 
     def test_party_extraction(self):
         for i, title_of_judgement in enumerate(case_metadata_extraction['title_of_judgement']):
-            extracted_parties = self.metadata_extractor._extract_involved_parties(title_of_judgement, 'no url')
+            try:
+                extracted_parties = self.metadata_extractor._extract_involved_parties(title_of_judgement, 'no url')
 
-            if case_metadata_extraction['parties'][i] is not None:
-                try:
+                if case_metadata_extraction['parties'][i] is not None:
                     if 'claimant' in case_metadata_extraction['parties'][i]:
                         self.assertEqual(extracted_parties['claimant'], case_metadata_extraction['parties'][i]['claimant'],
                                          'Could not correctly extract claimant from\n"%s"' % title_of_judgement)
@@ -31,12 +31,28 @@ class TestMetadataExtractor(unittest.TestCase):
                     if 'defendant' in case_metadata_extraction['parties'][i]:
                         self.assertEqual(extracted_parties['defendant'], case_metadata_extraction['parties'][i]['defendant'],
                                          'Could not correctly extract defendant from\n"%s"' % title_of_judgement)
-                except:
-                    self.fail('Party extraction failed:\n"%s"' % title_of_judgement)
-            else:
-                if extracted_parties is not None:
-                    self.fail('Extracted party even though this should not be possible from\n"%s"' % title_of_judgement)
+                else:
+                    if extracted_parties is not None:
+                        self.fail('Extracted party even though this should not be possible from\n"%s"' % title_of_judgement)
 
+            except Exception as e:
+                self.fail('Party extraction from "%s" failed with exception:\n%s' % (title_of_judgement, e))
+
+    def test_department_extraction(self):
+        for i, title_of_judgement in enumerate(case_metadata_extraction['title_of_judgement']):
+            try:
+                extracted_department = self.metadata_extractor._extract_department(title_of_judgement, 'no url')
+
+                if case_metadata_extraction['departments'][i] is not None:
+                    self.assertEqual(extracted_department, case_metadata_extraction['departments'][i],
+                                     'Could not correctly extract claimant from\n"%s"' % title_of_judgement)
+
+                else:
+                    if extracted_department is not None:
+                        self.fail('Extracted department even though this should not be possible from\n"%s"'
+                                  % title_of_judgement)
+            except Exception as e:
+                self.fail('Department extraction from "%s" failed with exception:\n%s' % (title_of_judgement, e))
 
 if __name__ == '__main__':
     unittest.main()
