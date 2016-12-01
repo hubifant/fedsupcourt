@@ -101,6 +101,7 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     Trattati internazionali
     Trattato di stato
     Trattati di stato
+    Convenzione
     Convenzione internazionale
     Convenzioni internazionali
     Accordo internazionale
@@ -145,12 +146,12 @@ case_completeness_int_treaties['expected_output'] = [
     'Accords internationaux', 'Accord', 'Convention internationale', 'Conventions internationales',
     'Convention', 'Conventions', 'Contrat international', 'Contrats internationaux',
     'Pacte international', 'Pactes internationaux', 'Pacte', 'Trattato internazionale',
-    'Trattati internazionali', 'Trattato di stato', 'Trattati di stato', 'Convenzione internazionale',
+    'Trattati internazionali', 'Trattato di stato', 'Trattati di stato', 'Convenzione', 'Convenzione internazionale',
     'Convenzioni internazionali', 'Accordo internazionale', 'Accordi internazionali', 'Patto internazionale',
     'Patti internazionali', 'Patto', 'Patti', 'Internationales Vertragsrecht', 'Internationale Vertragsrecht',
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages', 'Doppelbesteuerungsabkommen',
-    'Doppelbesteuerungsabkommens', 'convenzione sulla doppia', 'patto di non'
+    'Doppelbesteuerungsabkommens', 'convenzione sulla doppia imposizione', 'patto di non'
 ]
 
 # keyword_completeness: for testing if all expected keywords related with international customary law are extracted.
