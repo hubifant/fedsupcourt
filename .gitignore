@@ -9,3 +9,6 @@ crawler.log
 
 # json files
 *.json
+
+# csv files
+*.csv
