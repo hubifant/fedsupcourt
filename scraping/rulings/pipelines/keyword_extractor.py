@@ -77,10 +77,17 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
                    r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'],
             'fr': [r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
                    r'(?:accord|convention|pacte|traité)(?:s|es)?'
-                   '(?: (?:d\'|de la |de |des |sur (?:le|la|les) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))'],
+                   '(?: (?:à|aux?|avec|dans|d|de(?: ce(?:tte)?| la|s| double| libre)?|dont|du|en|entre|es?t'
+                   '|(?:pour|sur) (?:le|la|les)(?: double| libre)?'
+                   ')[\'\s]?[^\s\(\)\,\.]+[\w\d]'
+                   '| [^\s\(\)\,\.]+[\w\d]'     # todo: just leave it?
+                   '| (?=n\'|ne )'
+                   '| (?=qu[ei\'])'             # indicates start of subclause -> doesn't make sense to match next word
+                   '| (?=l(?:\'|e |eurs? |a |es ))'
+                   '|(?=\W))'],
             'it': [r'(?:accord|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
                    r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])'
-                   '(?: (?:d\'|di |(?:de|su)(?:lla|l|i|gli)? |per (?:il|la|gli|i) )[^\s\(\)\,\.]+| [^\s\(\)\,\.]+|(?=\W))']
+                   '(?: (?:d\'|di |(?:de|su)(?:lla|l|i|gli)? |per (?:il|la|gli|i) )[^\s\(\)\,\.]*[\w\d]| [^\s\(\)\,\.]*[\w\d]|(?=\W))']
         }
 
         super(InternationalTreatyExtractor, self).__init__('international_treaties', patterns_international_treaties)
