@@ -20,12 +20,22 @@ class MetadataExtractorPipeline(object):
     months_rr = ['', 'schaner', 'favrer', 'mars', 'avrigl', 'matg', 'zercladur', 'fanadur', 'avust', 'settember', 'october',
                  'november', 'december']
 
+    date_pattern = r'\b\d{1,2}(?:\.\s?|\s?er |o | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}'
+
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )).*?(?= i\.\s?S\.?| in Sachen| in S\.| vom \d)',
-        'fr': r'(?:(?<=arrêt de )|(?<=arrêt rendu par )).*?(?= dans (?:la cause|les causes)| du \d)',
-        'it': r'(?<=della )(?!sentenza).*?(?= nell[ae]| sul ricorso|in re)',
-        'rr': r'(?<=da la ).*?(?=concernent il cas)'
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w ))'  # before dep
+              r'.*?\w'                                                                                 # dep name
+              r'(?= i\.\s?S\.?| in Sachen| in S\.| (?:\w{3}\s?)?\d{1,2})',                             # after dep
+        'fr': r'(?:(?<=arrêt de )|(?<=arrêt rendu par ))'
+              r'.*?\w'
+              r'(?= (?:dans|en) (?:la cause|les causes)| (?:du|le)?\s?\d{1,2})',
+        'it': r'(?<=della )(?!sentenza|decisione)'
+              r'.*?\w'
+              r'(?= nell[ae]| sul ricorso| in re| (?:del(?:la|l\')?\s?)?\d{1,2})',
+        'rr': r'(?<=sentenzia da la )'
+              r'.*?\w'
+              r'(?= concernent il cas)'
     }
 
     # type of proceeding: in title of judgement; starts with '(', ends with ')' and does not contain any '(...)'
@@ -70,7 +80,7 @@ class MetadataExtractorPipeline(object):
     def _extract_date(self, title_of_judgement, url):
 
         # first, try to match the date in the title of judgement
-        date_match = re.search(r'\b\d{1,2}(?:\.\s?|\s?er |o | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}', title_of_judgement)
+        date_match = re.search(self.date_pattern, title_of_judgement)
 
         if date_match is not None:
             raw_date = date_match.group()

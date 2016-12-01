@@ -245,7 +245,7 @@ case_metadata_extraction['title_of_judgement'] = [
 
     '11. Estratto della sentenza 10 giugno 1988 della Camera delle esecuzioni e dei fallimenti nella causa X. contro Y. e Ufficio esecuzione e fallimenti di Lugano (ricorso)',
     '68. Estratto della sentenza 1o luglio 1955 della Corte di Cassazione penale nella causa X e Y contro Procuratore pubblico sottocenerino.',
-    '73. Sentenza 11 novembre 1955 della II Corte civile nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.',
+    '73. Sentenza della II Corte civile del 11 novembre 1955 nella causa Intervisa SA e Visafin SA contro Visa SA, in liquidazione concordataria.',
     "62\\. Estratto della sentenza della II Corte di diritto sociale nella causa Allianz Suisse Società di Assicurazioni sulla Vita SA contro K. (ricorso in materia di diritto pubblico)\n9C_680/2011 dell'11 maggio 2012",
     "24. Estratto della sentenza 29 gennaio 1963 della I Camera civile nelle cause vertenti fra J. R. Geigy SA Basilea e 1) Istituto De Angeli S.p.A. Milano, 2) Unipharma SA Lugano, 3) Diasan SA Basilea.",
 
@@ -289,4 +289,23 @@ case_metadata_extraction['parties'] = [
 
     {'claimant': 'Touring Club Svizra',
      'defendant': 'A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun'}
+]
+case_metadata_extraction['departments'] = [
+    'Schuldbetreibungs- und Konkurskammer',
+    None,
+    'I. öffentlich-rechtlichen Abteilung',
+    None,
+    'I. sozialrechtlichen Abteilung',
+
+    'la Ire Cour civile',
+    'la IIe Cour de droit public',
+    'la Ire Cour de droit civil',
+
+    'Camera delle esecuzioni e dei fallimenti',
+    'Corte di Cassazione penale',
+    'II Corte civile',
+    'II Corte di diritto sociale',
+    'I Camera civile',
+
+    'I. partiziun da dretg public'
 ]
