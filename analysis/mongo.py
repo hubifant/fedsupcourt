@@ -36,7 +36,7 @@ def save_keyword_list(keyword_type, path='.'):
 
     keyword_list = []
     with open(file_path, 'w') as csv_file:
-        keyword_writer = csv.DictWriter(csv_file, fieldnames=["Keyword", "Occurrences"])
+        keyword_writer = csv.DictWriter(csv_file, quoting=csv.QUOTE_NONNUMERIC, fieldnames=["Keyword", "Occurrences"])
         keyword_writer.writeheader()
 
         for row in result:
