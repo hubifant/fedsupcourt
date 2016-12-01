@@ -24,7 +24,7 @@ class MetadataExtractorPipeline(object):
 
     # for extracting the responsible department of the Federal Supreme Court
     department_patterns = {
-        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w ))'  # before dep
+        'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )|(?<=Präsidenten de\w))'  # before dep
               r'.*?\w'                                                                                 # dep name
               r'(?= i\.\s?S\.?| in Sachen| in S\.| (?:\w{3}\s?)?\d{1,2})',                             # after dep
         'fr': r'(?:(?<=arrêt de )|(?<=arrêt rendu par ))'
