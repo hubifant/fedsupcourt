@@ -2,7 +2,6 @@
 
 import csv
 import pymongo
-from pprint import pprint
 
 
 mongo_uri = 'mongodb://localhost:27017'
@@ -42,7 +41,7 @@ def save_keyword_list(keyword_type, path='.'):
         for row in result:
             keyword_list.append(row)
             keyword_writer.writerow({"Keyword": row['_id'], "Occurrences": row["occurrences"]})
-            print('%-50s | %3d' % (row['_id'], row['occurrences']))
+            # print('%-50s | %3d' % (row['_id'], row['occurrences']))
 
     return keyword_list
 
@@ -68,27 +67,50 @@ print(count_language('it'))
 print(count_language('rr'))
 print('===============================================')
 
+
 print('Department                                                                       | Count')
 print('---------------------------------------------------------------------------------+------')
-result = collection.aggregate([
-    {'$group': {
-        '_id': "$department",
-        'count': {'$sum': 1}}
-    },
-    {'$sort': {'_id': 1}}
-])
-
-for keyword in result:
-    international_treaties.append(keyword)
-    print('%-80s | %5d' % (keyword['_id'], keyword['count']))
 
 
-result = collection.find({'ruling_id.bge_nb': 95, 'ruling_id.volume': 'III', 'ruling_id.ruling_nb': 76},
-                         {'title_of_judgement': 1, 'date': 1, 'type_of_proceeding': 1, 'language': 1, 'department': 1,
-                          'dossier_number': 1, 'involved_parties': 1, 'url': 1})
-print(result.count())
-for i, r in enumerate(result):
-    pprint(r, width=300)
-    if i > 1:
-        break
+def save_departments(path='.'):
+    departments = collection.aggregate([
+        {'$group': {
+            '_id': "$department",
+            'count': {'$sum': 1}}
+        },
+        {'$sort': {'_id': 1}}
+    ])
+
+    department_list = []
+
+    with open(path + '/departments.csv', 'w') as csv_file:
+        department_writer = csv.DictWriter(csv_file,
+                                           quoting=csv.QUOTE_NONNUMERIC,
+                                           fieldnames=["Department", "Occurrences"])
+        department_writer.writeheader()
+
+        for dep in departments:
+            if dep['_id'] is None:
+                dep['_id'] = 'Department not extractable'
+            department_writer.writerow({'Department': dep['_id'], 'Occurrences': dep['count']})
+            department_list.append(dep)
+            print('%-80s | %5d' % (dep['_id'], dep['count']))
+
+    return department_list
+
+save_departments()
+
+
+# result = collection.find({'ruling_id.bge_nb': 95, 'ruling_id.volume': 'III', 'ruling_id.ruling_nb': 76},
+#                          {'title_of_judgement': 1, 'date': 1, 'type_of_proceeding': 1, 'language': 1, 'department': 1,
+#                           'dossier_number': 1, 'involved_parties': 1, 'url': 1})
+# print(result.count())
+# for i, r in enumerate(result):
+#     pprint(r, width=300)
+#     if i > 1:
+#         break
+
+
+
+
 client.close()
