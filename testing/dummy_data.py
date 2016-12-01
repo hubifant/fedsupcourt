@@ -123,8 +123,11 @@ Updatevorschläge Nicolas
     Staatsvertrages
     Doppelbesteuerungsabkommen (Bsp für einen bestimmten Vertrag)
     Doppelbesteuerungsabkommens
+    pacte entre la Suisse et la France etc.
+    accord pour la double crème de la Gruyère
     convenzione sulla doppia imposizione
     patto di non aggressione
+    Convenzione tra la Svizzera e l'Italia circa
 '''
 case_completeness_int_treaties['expected_output'] = [
     'Völkerrechtliches Abkommen', 'Völkerrechtliche Abkommen', 'Völkerrechtlichen Abkommen',
@@ -151,7 +154,9 @@ case_completeness_int_treaties['expected_output'] = [
     'Patti internazionali', 'Patto', 'Patti', 'Internationales Vertragsrecht', 'Internationale Vertragsrecht',
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages', 'Doppelbesteuerungsabkommen',
-    'Doppelbesteuerungsabkommens', 'convenzione sulla doppia imposizione', 'patto di non'
+    'Doppelbesteuerungsabkommens', 'pacte entre la Suisse et la France', 'accord pour la double crème',
+    'convenzione sulla doppia imposizione',
+    'patto di non', "Convenzione tra la Svizzera e l'Italia"
 ]
 
 # keyword_completeness: for testing if all expected keywords related with international customary law are extracted.
