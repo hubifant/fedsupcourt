@@ -31,6 +31,7 @@ def scrape_rulings():
 
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
     settings.set('MONGO_DATABASE', 'fedsupcourt')
+    settings.set('MONGO_COLLECTION', 'rulings')
 
 
     # Turn off the built-in UserAgentMiddleware and add RandomUserAgentMiddleware.
