@@ -21,7 +21,8 @@ def scrape_laws():
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.JsonWriterPipeline': 100
+        'rulings.pipelines.LawHierarchyCompletionPipeline': 100,
+        'rulings.pipelines.JsonWriterPipeline': 900
     #     'rulings.pipelines.MongoSaverPipeline': 999
     })
 

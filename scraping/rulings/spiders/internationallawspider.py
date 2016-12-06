@@ -190,12 +190,12 @@ class InternationalLawSpider(scrapy.Spider):
     def _generate_law_item(self, tr_tag, parent_id, level):
         law_id = tr_tag.xpath('td/a[not(@href)]/@name').extract_first()
         law_name = tr_tag.xpath('td[a[@href]]//text()').extract()
-        for s in law_name:
-            if '15. Juni 2010' in s:
-                print(law_name)
+        # for s in law_name:
+        #     if '15. Juni 2010' in s:
+        #         print(law_name)
         url = self.base_url + tr_tag.xpath('td/a/@href').extract_first()
 
-        law_loader = ItemLoader(item=CategoryItem())
+        law_loader = ItemLoader(item=LawItem())
         law_loader.add_value('hierarchy_level', level)
         law_loader.add_value('parent', parent_id)
         law_loader.add_value('id', law_id)
