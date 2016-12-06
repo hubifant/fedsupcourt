@@ -11,7 +11,7 @@ class LawHierarchyCompletionPipeline(object):
 
     # get lists of month names in german, french and italian.
     # names are normalised: lower case + accents removed
-    locale.setlocale(locale.LC_ALL, 'de_CH.utf8')  # todo: make sure that locale exists!
+    locale.setlocale(locale.LC_ALL, 'de_CH.utf8')
     months_de = [m.lower() for m in calendar.month_name]
     locale.setlocale(locale.LC_ALL, 'fr_CH.utf8')
     months_fr = [m.lower().replace('é', 'e').replace('û', 'u') for m in calendar.month_name]
@@ -35,13 +35,17 @@ class LawHierarchyCompletionPipeline(object):
                     date = self._extract_enactment_date(item['name'], id, url)
                     if date is not None:
                         item['enactment_date'] = date
-                        print(item['enactment_date'])
 
                     name, references, url_corrected = self._extract_references(item['name'], id, url)
                     if references is not None:
                         item['name'] = name
                         item['references'] = references
                         item['url'] = url_corrected
+
+                    # mark LawItem as law
+                    item['is_law'] = True
+                else:
+                    item['is_law'] = False
             else:
                 logging.warning('No name was extracted for law ' + id + '\nLink: '+ url)
             return item
@@ -61,10 +65,7 @@ class LawHierarchyCompletionPipeline(object):
                 references.append(ref)
 
             # if the law just contains references, the extracted url is pointing to the first reference
-            print(url)
             url_corrected = re.sub('0.\d{2}.html#.*$', id[:4] + '.html#' + id, url)
-            print(url_corrected)
-            print()
 
             return name, references, url_corrected
         else:
