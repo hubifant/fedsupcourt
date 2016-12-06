@@ -31,7 +31,7 @@ class InternationalLawSpider(scrapy.Spider):
             main_category_loader.add_value('name', name)
             main_category_loader.add_value('url', url)
 
-            if url not in self.scraped_links and len(self.scraped_links) < 1:
+            if url not in self.scraped_links:
                 request = scrapy.Request(url, self.parse_main_category)
                 request.meta['main_category'] = main_category_loader
                 request.meta['parent_id'] = id
@@ -63,7 +63,7 @@ class InternationalLawSpider(scrapy.Spider):
                 request = scrapy.Request(url, self.parse_category)
                 request.meta['category'] = category_loader
                 request.meta['parent_id'] = id
-
+                self.scraped_links.append(url)
                 yield request
 
     def parse_category(self, response):
