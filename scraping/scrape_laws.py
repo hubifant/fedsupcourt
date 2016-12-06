@@ -1,7 +1,7 @@
 from twisted.internet import reactor
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
-from scraping.rulings import RulingSpider
+from scraping.rulings import InternationalLawSpider
 from scrapy.utils.project import get_project_settings
 
 
@@ -14,14 +14,15 @@ def scrape_laws():
         'LOG_FORMAT': '%8s | %s | %s\n'% ('%(levelname)s',
                                           '%(asctime)s',
                                           '%(message)s'),
-        'LOG_FILE': '../crawler.log'
+        # 'LOG_FILE': '../crawler.log'
     })
 
     # set the format of the logging messages and add pipeline(s)
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.MongoSaverPipeline': 999
+        'rulings.pipelines.JsonWriterPipeline': 100
+    #     'rulings.pipelines.MongoSaverPipeline': 999
     })
 
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
@@ -45,7 +46,7 @@ def scrape_laws():
     runner = CrawlerRunner(settings)
 
     # start the crawler
-    d = runner.crawl(RulingSpider)
+    d = runner.crawl(InternationalLawSpider)
 
     # add callback that stops the reactor after RulingSpider has finished running
     d.addBoth(lambda _: reactor.stop())
