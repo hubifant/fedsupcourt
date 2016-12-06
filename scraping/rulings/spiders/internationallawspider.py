@@ -79,14 +79,15 @@ class InternationalLawSpider(scrapy.Spider):
 
         parent_absolute_level = 1
 
-        children = self._generate_children(response.meta['parent_id'],
-                                           parent_absolute_level,
-                                           list(law_table),
-                                           response.url)
+        children_ids, successor_items = self._generate_children(response.meta['parent_id'],
+                                                                parent_absolute_level,
+                                                                list(law_table),
+                                                                response.url)
         print('=================================================================')
         print('')
-        category_loader.add_value('children', children)
+        category_loader.add_value('children', children_ids)
         yield category_loader.load_item()
+        yield from successor_items
 
     # recursive function returning list of children IDs
     def _generate_children(self, parent_id, parent_absolute_level, categories, main_cat_url):
@@ -102,15 +103,16 @@ class InternationalLawSpider(scrapy.Spider):
             sibling_rel_lvl = 99
 
         sibling_ids = []
-        attached_laws = []
+        item_hierarchy = []
 
         # find all elements on the current sibling level
         sibling_found = False
         for next_sibling, (next_id, next_lvl, next_tr) in enumerate(categories):
 
             if next_lvl is None and not sibling_found:
-                law_id = self._generate_law_item(next_tr, parent_id, sibling_abs_lvl)
-                attached_laws.append(law_id)
+                law_id, law_item = self._generate_law_item(next_tr, parent_id, sibling_abs_lvl)
+                sibling_ids.append(law_id)
+                item_hierarchy.append(law_item)
 
             elif next_lvl == sibling_rel_lvl:
                 if not sibling_found:
@@ -121,50 +123,75 @@ class InternationalLawSpider(scrapy.Spider):
                 else:
                     # another sibling detected...
                     curr_id, curr_lvl, curr_tr = categories[curr_sibling]
-                    sibling_ids.append(curr_id)
 
                     # generate the current sibling's children
-                    children = self._generate_children(curr_id,
-                                                       sibling_abs_lvl,
-                                                       categories[curr_sibling + 1:next_sibling],
-                                                       main_cat_url)
+                    children_ids, successor_items = self._generate_children(curr_id,
+                                                                            sibling_abs_lvl,
+                                                                            categories[curr_sibling + 1:next_sibling],
+                                                                            main_cat_url)
 
                     # generate a category item for the current sibling
-                    self._generate_law_category_item(curr_id, sibling_abs_lvl, curr_tr, parent_id, children, main_cat_url)
+                    law_category_item = self._generate_law_category_item(curr_id,
+                                                                         sibling_abs_lvl,
+                                                                         curr_tr,
+                                                                         parent_id,
+                                                                         children_ids,
+                                                                         main_cat_url)
+
+                    # first, insert current item into hierarchy, then its successors
+                    item_hierarchy.append(law_category_item)
+                    item_hierarchy.extend(successor_items)
+
+                    # add current item's ID to sibling list
+                    sibling_ids.append(curr_id)
+
+                    # update pointer
                     curr_sibling = next_sibling
 
         # the last sibling in the list...
         if sibling_found:
             curr_id, curr_lvl, curr_tr = categories[curr_sibling]
-            sibling_ids.append(curr_id)
 
             # generate the last sibling's children
-            children = self._generate_children(curr_id, sibling_abs_lvl, categories[curr_sibling + 1:], main_cat_url)
+            children_ids, successor_items = self._generate_children(curr_id,
+                                                                sibling_abs_lvl,
+                                                                categories[curr_sibling + 1:],
+                                                                main_cat_url)
 
             # generate a category item for the last sibling
-            self._generate_law_category_item(curr_id, sibling_abs_lvl, curr_tr, parent_id, children, main_cat_url)
+            law_category_item = self._generate_law_category_item(curr_id,
+                                                                 sibling_abs_lvl,
+                                                                 curr_tr,
+                                                                 parent_id,
+                                                                 children_ids,
+                                                                 main_cat_url)
+            # first, insert current item into hierarchy, then its successors
+            item_hierarchy.append(law_category_item)
+            item_hierarchy.extend(successor_items)
 
-        sibling_ids.extend(attached_laws)
+            # add current item's ID to sibling list
+            sibling_ids.append(curr_id)
 
-        return sibling_ids
+        return sibling_ids, item_hierarchy
 
     def _generate_law_category_item(self, category_id, level, tr_tag, parent_id, children, main_cat_url):
-        category_name = str(tr_tag.xpath('td/h2/text()').extract())
+        category_name = tr_tag.xpath('td/h2/text()').extract_first()
         url = main_cat_url + '#' + category_id
-        print(('. ' * level) + category_id + ' ' + url + ' --> ' + str(children) + ' (lvl %d)' % level)
+        print(('. ' * level) + category_id + ' ' + category_name + ' --> ' + str(children) + ' (lvl %d)' % level)
 
         category_loader = ItemLoader(item=CategoryItem())
-        category_loader.add_value('hierarchy_level', 1)
+        category_loader.add_value('hierarchy_level', level)
         category_loader.add_value('parent', parent_id)
         category_loader.add_value('id', category_id)
         category_loader.add_value('name', category_name)
+        category_loader.add_value('children', children)
         category_loader.add_value('url', url)
 
-        # yield category_loader.load_item()
+        return category_loader.load_item()
 
     def _generate_law_item(self, tr_tag, parent_id, level):
         law_id = tr_tag.xpath('td/a[not(@href)]/@name').extract_first()
         name = tr_tag.xpath('td/a[@href]/text()').extract_first()
         url = self.base_url + tr_tag.xpath('td/a/@href').extract_first()
         print(('. ' * level) + '%-8s --> %-17s ¦ %-80s ¦ %s' % (parent_id, law_id, url, name))
-        return law_id
+        return law_id, None
