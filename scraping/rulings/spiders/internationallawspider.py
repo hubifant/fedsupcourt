@@ -2,7 +2,7 @@ import logging
 
 import scrapy
 from scrapy.loader import ItemLoader
-from ..items import CategoryItem
+from ..items import CategoryItem, LawItem
 
 
 class InternationalLawSpider(scrapy.Spider):
@@ -83,8 +83,6 @@ class InternationalLawSpider(scrapy.Spider):
                                                                 parent_absolute_level,
                                                                 list(law_table),
                                                                 response.url)
-        print('=================================================================')
-        print('')
         category_loader.add_value('children', children_ids)
         yield category_loader.load_item()
         yield from successor_items
@@ -177,7 +175,7 @@ class InternationalLawSpider(scrapy.Spider):
     def _generate_law_category_item(self, category_id, level, tr_tag, parent_id, children, main_cat_url):
         category_name = tr_tag.xpath('td/h2/text()').extract_first()
         url = main_cat_url + '#' + category_id
-        print(('. ' * level) + category_id + ' ' + category_name + ' --> ' + str(children) + ' (lvl %d)' % level)
+        # print(('. ' * level) + category_id + ' ' + category_name + ' --> ' + str(children) + ' (lvl %d)' % level)
 
         category_loader = ItemLoader(item=CategoryItem())
         category_loader.add_value('hierarchy_level', level)
@@ -191,7 +189,18 @@ class InternationalLawSpider(scrapy.Spider):
 
     def _generate_law_item(self, tr_tag, parent_id, level):
         law_id = tr_tag.xpath('td/a[not(@href)]/@name').extract_first()
-        name = tr_tag.xpath('td/a[@href]/text()').extract_first()
+        law_name = tr_tag.xpath('td[a[@href]]//text()').extract()
+        for s in law_name:
+            if '15. Juni 2010' in s:
+                print(law_name)
         url = self.base_url + tr_tag.xpath('td/a/@href').extract_first()
-        print(('. ' * level) + '%-8s --> %-17s ¦ %-80s ¦ %s' % (parent_id, law_id, url, name))
-        return law_id, None
+
+        law_loader = ItemLoader(item=CategoryItem())
+        law_loader.add_value('hierarchy_level', level)
+        law_loader.add_value('parent', parent_id)
+        law_loader.add_value('id', law_id)
+        law_loader.add_value('name', law_name)
+        law_loader.add_value('url', url)
+
+        # print(('. ' * level) + '%-8s --> %-17s ¦ %-80s ¦ %s' % (parent_id, law_id, url, law_name))
+        return law_id, law_loader.load_item()

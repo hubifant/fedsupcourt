@@ -11,8 +11,9 @@ import re
 
 
 def _extract_subcat_name(raw_name):
-    raw_name = re.sub(r'^.*?- ', '', raw_name, flags=re.DOTALL)
-    return re.sub(r'[^\w]*$', '', raw_name, flags=re.DOTALL)
+    raw_name = re.sub(r'^\s*', '', raw_name, flags=re.DOTALL)
+    raw_name = re.sub(r'^.*?.\d+ - ', '', raw_name, flags=re.DOTALL)
+    return re.sub(r'\s[^\w]*$', '', raw_name, flags=re.DOTALL)
 
 
 class _HierarchyItem(Item):
@@ -24,7 +25,7 @@ class _HierarchyItem(Item):
     )
     name = Field(
         input_processor=MapCompose(_extract_subcat_name),
-        output_processor=TakeFirst()
+        output_processor=''.join
     )
     parent = Field(
         output_processor=TakeFirst()
@@ -41,3 +42,4 @@ class CategoryItem(_HierarchyItem):
 
 class LawItem(_HierarchyItem):
     references = Field()
+    enactment_date = Field()
