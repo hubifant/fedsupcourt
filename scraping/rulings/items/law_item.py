@@ -15,7 +15,7 @@ def _extract_subcat_name(raw_name):
     return re.sub(r'[^\w]*$', '', raw_name, flags=re.DOTALL)
 
 
-class CategoryItem(Item):
+class _HierarchyItem(Item):
     hierarchy_level = Field(
         output_processor=TakeFirst()
     )
@@ -29,7 +29,15 @@ class CategoryItem(Item):
     parent = Field(
         output_processor=TakeFirst()
     )
-    children = Field()
     url = Field(
         output_processor=TakeFirst()
     )
+    is_law = Field()
+
+
+class CategoryItem(_HierarchyItem):
+    children = Field()
+
+
+class LawItem(_HierarchyItem):
+    references = Field()
