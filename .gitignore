@@ -12,3 +12,6 @@ crawler.log
 
 # csv files
 *.csv
+
+# txt files
+*.txt
