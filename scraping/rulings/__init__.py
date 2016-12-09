@@ -1,2 +1,3 @@
-from .spiders import RulingSpider
-from .items import RulingItem
+from .items import RulingItem, CategoryItem
+from .spiders import RulingSpider, InternationalLawSpider
+

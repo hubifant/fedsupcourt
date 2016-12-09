@@ -1,8 +1,11 @@
+import logging
+from datetime import datetime
+
 import scrapy
 from scrapy.loader import ItemLoader
-from ..items import RulingItem
-from datetime import datetime
-import logging
+
+from scraping.rulings.items.ruling_item import RulingItem
+
 
 class RulingSpider(scrapy.Spider):
     name = 'rulings'

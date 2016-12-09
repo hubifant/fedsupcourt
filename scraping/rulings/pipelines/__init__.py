@@ -4,3 +4,4 @@ from .keyword_extractor import InternationalTreatyExtractor, InternationalCustom
 from .metadata_extractor import MetadataExtractorPipeline
 from .mongo_saver import MongoSaverPipeline
 from .text_cleaner import TextCleanerPipeline
+from .law_hierarchy_completion import LawHierarchyCompletionPipeline
