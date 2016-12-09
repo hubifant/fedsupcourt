@@ -1,5 +1,6 @@
 import re
 import pymongo
+import logging
 
 
 class SRNumberExtractor:
@@ -11,15 +12,26 @@ class SRNumberExtractor:
         self.int_laws = self.client[db_name][int_law_collection_name]
 
         self.laws = self._get_international_laws()
+        logging.info('Queried %d laws from the database.' % len(self.laws))
 
-        for l in self.laws:
-            print('%20s ¦ %2d ¦ %s' % (l['law'], l['hierarchy_level'], str(l['categories'])))
+        self.sr_pattern = r'(?:(?<=sr |rs )|'                   # sr-number is preceded by 'sr ', 'rs '
+        self.sr_pattern += r'(?<=\()|'                          # or '('
+        self.sr_pattern += r'(?<!\d\W))'                        # it is NOT preceded by a digit and e.g. a '.'
+        self.sr_pattern += r'%s(?:(?!\W\d*)|(?=\)))'            # it is followed by anything but '.123' or by ')'
 
-    def extract_sr_numbers(self):
+    def extract_sr_numbers(self, text):
+        extracted_laws = []
+        extracted_categories = []
 
-        return None
+        for law in self.laws:
+            match = re.search(self.sr_pattern % law['law'], text, re.IGNORECASE)
+            if match is not None:
+                extracted_laws.append({'law': law['law'], 'hierarchy_level': law['hierarchy_level']})
+                for category in law['categories']:
+                    if category not in extracted_categories:
+                        extracted_categories.append(category)
 
-
+        return extracted_laws, extracted_categories
 
     def _get_international_laws(self):
         """Returns all international laws with the categories they are assigned to."""
