@@ -29,8 +29,7 @@ def scrape_laws():
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
     settings.set('MONGO_DATABASE', 'fedsupcourt')
     settings.set('MONGO_COLLECTION', 'international_laws')
-    settings.set('MONGO_INDEXES', [{'field': 'id', 'idx_name': 'idx_sr_number', 'unique': True},
-                                   {'field': 'children', 'idx_name': 'idx_children'}])
+    settings.set('MONGO_INDEXES', [{'field': 'children', 'idx_name': 'idx_children'}])
 
 
     # Turn off the built-in UserAgentMiddleware and add RandomUserAgentMiddleware.

@@ -25,11 +25,11 @@ class LawHierarchyCompletionPipeline(object):
     date_pattern = r'\b\d{1,2}(?:\.\s?|\s?er |o | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}'
 
     def process_item(self, item, spider):
-        if 'id' not in item or 'url' not in item:
+        if '_id' not in item or 'url' not in item:
             logging.error('No ID or URL was extracted for item: ' + str(item))
         else:
             url = item['url']
-            id = item['id']
+            id = item['_id']
 
             if 'name' in item:
                 if type(item) is LawItem:

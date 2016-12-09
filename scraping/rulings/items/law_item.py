@@ -20,7 +20,7 @@ class _HierarchyItem(Item):
     hierarchy_level = Field(
         output_processor=TakeFirst()
     )
-    id = Field(
+    _id = Field(
         output_processor=TakeFirst()
     )
     name = Field(

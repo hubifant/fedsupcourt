@@ -27,7 +27,7 @@ class InternationalLawSpider(scrapy.Spider):
 
             main_category_loader = ItemLoader(item=CategoryItem())
             main_category_loader.add_value('hierarchy_level', 0)
-            main_category_loader.add_value('id', id)
+            main_category_loader.add_value('_id', id)
             main_category_loader.add_value('name', name)
             main_category_loader.add_value('url', url)
 
@@ -55,7 +55,7 @@ class InternationalLawSpider(scrapy.Spider):
             category_loader = ItemLoader(item=CategoryItem())
             category_loader.add_value('hierarchy_level', 1)
             category_loader.add_value('parent', response.meta['parent_id'])
-            category_loader.add_value('id', id)
+            category_loader.add_value('_id', id)
             category_loader.add_value('name', name)
             category_loader.add_value('url', url)
 
@@ -180,7 +180,7 @@ class InternationalLawSpider(scrapy.Spider):
         category_loader = ItemLoader(item=CategoryItem())
         category_loader.add_value('hierarchy_level', level)
         category_loader.add_value('parent', parent_id)
-        category_loader.add_value('id', category_id)
+        category_loader.add_value('_id', category_id)
         category_loader.add_value('name', category_name)
         category_loader.add_value('children', children)
         category_loader.add_value('url', url)
@@ -198,7 +198,7 @@ class InternationalLawSpider(scrapy.Spider):
         law_loader = ItemLoader(item=LawItem())
         law_loader.add_value('hierarchy_level', level)
         law_loader.add_value('parent', parent_id)
-        law_loader.add_value('id', law_id)
+        law_loader.add_value('_id', law_id)
         law_loader.add_value('name', law_name)
         law_loader.add_value('url', url)
 
