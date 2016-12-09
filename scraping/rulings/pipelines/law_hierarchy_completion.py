@@ -5,6 +5,7 @@ import locale
 import re
 import logging
 from scraping.rulings.items import LawItem
+from datetime import datetime
 
 
 class LawHierarchyCompletionPipeline(object):
@@ -117,11 +118,11 @@ class LawHierarchyCompletionPipeline(object):
 
             if month is None:
                 logging.warning("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
-                # date = datetime(year, 1, 1)
-                date = str(year)
+                date = datetime(year, 1, 1)
+                # date = str(year)
             else:
-                # date = datetime(year, month, day)
-                date = '%02d.%02d.%04d' % (day, month, year)
+                date = datetime(year, month, day)
+                # date = '%02d.%02d.%04d' % (day, month, year)
             return date
 
         logging.info('Could not extract date. \nLaw ' + id + ': ' + url)
