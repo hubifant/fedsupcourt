@@ -14,18 +14,23 @@ class SRNumberExtractor:
         self.laws = self._get_international_laws()
         print('Queried %d laws from the database.' % len(self.laws))
 
-        self.sr_pattern = r'(?:(?<=sr |rs )|'                   # sr-number is preceded by 'sr ', 'rs '
-        self.sr_pattern += r'(?<=\())'                          # it is NOT preceded by a digit and e.g. a '.'
-        self.sr_pattern += r'0(?:\.\d{3})*\.\d{1,3}'
-        self.sr_pattern += r'(?=\)| )'                          # it is followed by anything but '.123' or by ')'
+        self.sr_pattern = r'(?:(?:(?<=sr |rs )|'        # SR-number is preceded by 'sr ', 'rs '
+        self.sr_pattern += r'(?<=\(|\[| ))'             # or by '(', '[', ' '
+        self.sr_pattern += r'0(?:\.\d{3})*\.\d{1,3}'    # SR number format: e.g. '0.xxx.xxx.xx'
+        self.sr_pattern += r'|\b(?:EMRK|CEDH|CEDU)\b)'  # Exception: it is allowed to cite ECHR (European Convention for
+                                                        # the Protection of Human Rights and Fundamental Freedoms) by
+                                                        # its name instead of its number (which is SR 0.101)
 
     def extract_sr_numbers(self, text):
         extracted_laws = []
         extracted_categories = []
 
-        match = re.search(self.sr_pattern, text, re.IGNORECASE)
-        if match is not None:
-            potential_sr_nb = match.group()
+        for potential_sr_nb in re.findall(self.sr_pattern, text, re.IGNORECASE):
+
+            # if the ECHR-law was extracted, translate it into its sr-number.
+            if potential_sr_nb.upper() in ['EMRK', 'CEDH', 'CEDU']:
+                potential_sr_nb = '0.101'
+
             # if the matched pattern is a key in self.int_laws, it IS an existing SR number
             if potential_sr_nb in self.laws:
                 law_info = self.laws[potential_sr_nb]
