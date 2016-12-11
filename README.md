@@ -24,6 +24,7 @@ Make sure that the locales `de_CH.utf8`, `fr_CH.utf8`, `it_CH.utf8` are installe
 ### Federal Supreme Court of Switzerland
 - [The Court's Homepage](https://www.bger.ch/)
 - [Court Organisation](http://www.bger.ch/gerichtsorganisation.pdf)
+- [Jurivoc](http://www.bger.ch/index/juridiction/jurisdiction-inherit-template/jurisdiction-jurivoc-home/jurisdiction-jurivoc.htm): a trilingual thesaurus (De, Fr, It) of the Federal Supreme Court's social law department.
 
 
 ### Rulings
