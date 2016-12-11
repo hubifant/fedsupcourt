@@ -12,22 +12,25 @@ class SRNumberExtractor:
         self.int_laws = self.client[db_name][int_law_collection_name]
 
         self.laws = self._get_international_laws()
-        logging.info('Queried %d laws from the database.' % len(self.laws))
+        print('Queried %d laws from the database.' % len(self.laws))
 
         self.sr_pattern = r'(?:(?<=sr |rs )|'                   # sr-number is preceded by 'sr ', 'rs '
-        self.sr_pattern += r'(?<=\()|'                          # or '('
-        self.sr_pattern += r'(?<!\d\W))'                        # it is NOT preceded by a digit and e.g. a '.'
-        self.sr_pattern += r'%s(?:(?!\W\d*)|(?=\)))'            # it is followed by anything but '.123' or by ')'
+        self.sr_pattern += r'(?<=\())'                          # it is NOT preceded by a digit and e.g. a '.'
+        self.sr_pattern += r'0(?:\.\d{3})*\.\d{1,3}'
+        self.sr_pattern += r'(?=\)| )'                          # it is followed by anything but '.123' or by ')'
 
     def extract_sr_numbers(self, text):
         extracted_laws = []
         extracted_categories = []
 
-        for law in self.laws:
-            match = re.search(self.sr_pattern % law['law'], text, re.IGNORECASE)
-            if match is not None:
-                extracted_laws.append({'law': law['law'], 'hierarchy_level': law['hierarchy_level']})
-                for category in law['categories']:
+        match = re.search(self.sr_pattern, text, re.IGNORECASE)
+        if match is not None:
+            potential_sr_nb = match.group()
+            # if the matched pattern is a key in self.int_laws, it IS an existing SR number
+            if potential_sr_nb in self.laws:
+                law_info = self.laws[potential_sr_nb]
+                extracted_laws.append({'law': potential_sr_nb, 'hierarchy_level': law_info['hierarchy_level']})
+                for category in law_info['categories']:
                     if category not in extracted_categories:
                         extracted_categories.append(category)
 
@@ -43,7 +46,7 @@ class SRNumberExtractor:
         categories specified in parent_categories with all the categories they are assigned to (i.e. the category-path
         to the law)"""
 
-        laws_with_categories = []
+        laws_with_categories = {}
 
         for law_hierarchy_item in parent_categories:
 
@@ -53,16 +56,15 @@ class SRNumberExtractor:
                 new_ancestor_categories.append({'category': law_hierarchy_item['_id'],
                                                 'hierarchy_level': law_hierarchy_item['hierarchy_level']})
                 children = self.int_laws.find({'parent': law_hierarchy_item['_id']})
-                laws_with_categories.extend(self._get_laws_with_categories(children, new_ancestor_categories))
+                laws_with_categories.update(self._get_laws_with_categories(children, new_ancestor_categories))
 
             # law_hierarchy_item is a leaf
             else:
                 # if it is actually a law, return it together with the categories it is assigned to
                 if law_hierarchy_item['is_law']:
-                    laws_with_categories.append({'law': law_hierarchy_item['_id'],
-                                                 'hierarchy_level': law_hierarchy_item['hierarchy_level'],
-                                                 'categories': ancestor_categories})
+                    laws_with_categories[law_hierarchy_item['_id']] = {
+                            'hierarchy_level': law_hierarchy_item['hierarchy_level'],
+                            'categories': ancestor_categories
+                    }
 
         return laws_with_categories
-
-
