@@ -107,8 +107,8 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
                         '|dont|du|en|es?t'
                         '|entre(?:\s\w+){1,4}'
                         ')[\'\s][^\s\(\)\,\.]*\w'
-                        '| (?=n\'|ne )'
-                        '| (?=qu[ei\'])'             # indicates start of subclause -> doesn't make sense to match next word
+                        '| (?=n\'|ne )'              # next word is a verb -> does not make sense to match it.
+                        '| (?=qu[ei\'])'             # indicates start of subclause -> does not make sense to match next word
                         '| (?=l(?:\'|e |eurs? |a |es ))'
                         '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
                         '|(?=\W))'
@@ -143,6 +143,15 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
             'fr': {
                 'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))',
                 'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))'
+                         '(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?'
+                         '|dont|du|en|es?t'
+                         '|entre(?:\s\w+){1,4}'
+                         ')[\'\s][^\s\(\)\,\.]*\w'    # word after preposition
+                         '| (?=n\'|ne )'              # next word is a verb -> does not make sense to match it.
+                         '| (?=qu[ei\'])'             # start of subclause -> does not make sense to match next word
+                         '| (?=l(?:\'|e |eurs? |a |es ))'
+                         '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
+                         '|(?=\W))'
             },
             'it': {
                 'clear': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)|internazionale consuetudinario))',
@@ -168,11 +177,15 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
                 'clear': r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'
             },
             'fr': {
-                'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)(?: privé| public)?)',
+                'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)'
+                         r'(?! \d+| [ivx]+\b| vol)'         # do not match publications
+                         r'(?: privé| public| \w+)?)',
                 'broad': r'droit des gens'
             },
             'it': {
-                'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei](?: \w+)?)'
+                'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei]'
+                         r'(?! \d+| [ivx]+\b| vol)'         # do not match publications
+                         r'(?: \w+)?)'
             },
             'lat': {
                 'broad': r'(?:ius gentium)'

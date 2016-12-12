@@ -4,7 +4,7 @@ import unittest
 from scraping.rulings.pipelines import InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
     GeneralInternationalLawExtractor
 from testing.dummy_data import case_incomplete, case_completeness_int_treaties, case_completeness_customary_int_law, \
-    case_completeness_int_law_in_general
+    case_completeness_int_law_in_general, case_omit_kw_followed_by_number
 
 
 class TestGeneralKeywordExtractor(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
                          "Assertion failed in test_simple_extraction")
 
 
-class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
+class TestSpecificKeywordExtractor(unittest.TestCase):
     def _test_completeness(self, keyword_type, keyword_extractor, test_data):
         """
         Asserts that all expected keywords are extracted
@@ -100,6 +100,22 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         keyword_extractor = GeneralInternationalLawExtractor()
         self._test_completeness('international_law_in_general', keyword_extractor, case_completeness_int_law_in_general)
 
+    def test_omission_of_publication_parts(self):
+        """
+        Asserts that in customary international law and international law in general, results that are followed by a
+        number (e.g. xi or 3) are not considered, as this indicates that the word “international law” is probably part
+        of a publication and not a citation to international law by the court
+        """
+        keyword_extractor = GeneralInternationalLawExtractor()
+        computed_output = keyword_extractor.process_item(case_omit_kw_followed_by_number['input_item'], None)
+        if 'international_law_in_general' in computed_output:
+            if 'clear' in computed_output['international_law_in_general']:
+                self.fail('Keywords were extracted even though they are followed by a number: \n' +
+                          str(computed_output['international_law_in_general']['clear']['keywords']))
+            if 'broad' in computed_output['international_law_in_general']:
+                self.fail('Keywords were extracted even though they are followed by a number: \n' +
+                          str(computed_output['international_law_in_general']['clear']['keywords']))
+            self.fail('An Entry for "international_law_in_general" was created even though this should not happen.')
 
 if __name__ == '__main__':
     unittest.main()

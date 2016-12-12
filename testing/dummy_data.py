@@ -220,7 +220,6 @@ case_completeness_customary_int_law['expected_output']['clear'] = [
 # keyword completeness: for testing if all expected keywords related with international law in general are extracted.
 case_completeness_int_law_in_general = {'input_item': RulingItem(), 'expected_output': {}}
 case_completeness_int_law_in_general['input_item']['core_issue'] = '''
-
     ius gentium
     droit des gens
     Völkerrecht
@@ -263,6 +262,15 @@ case_completeness_int_law_in_general['expected_output']['clear'] = [
 case_completeness_int_law_in_general['expected_output']['broad'] = [
     'ius gentium', 'droit des gens'
 ]
+
+case_omit_kw_followed_by_number = {'input_item': RulingItem()}
+case_omit_kw_followed_by_number['input_item']['core_issue'] = '''
+Droit international 1988
+Droit international vol
+Droit international xxxiv
+Diritto internazionale 1981
+'''
+
 
 
 case_metadata_extraction = {'title_of_judgement': [], 'date': []}
