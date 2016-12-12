@@ -133,7 +133,7 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_customary_law = {
             'de': {
-                'clear': r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w?|'
+                'clear': r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w*|'
                          r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)))',
                 'broad': r'(?:gewohnheitsrechtlich\w*(?:\s\w+)?)'
             },
