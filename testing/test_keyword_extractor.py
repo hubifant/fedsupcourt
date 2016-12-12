@@ -56,9 +56,22 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         for type in ['clear', 'broad']:
             self.assertEqual(type in computed_output[keyword_type], type in test_data['expected_output'],
                              'Something with keywords of type "%s" did not work as expected.' % type)
-            if type in computed_output:
+
+            if type in computed_output[keyword_type]:
                 computed_keywords_and_counts = computed_output[keyword_type][type]['keywords']
                 computed_keywords = [kw_c['keyword'] for kw_c in computed_keywords_and_counts]
+
+                # sort both lists (for nicer prints)
+                computed_keywords.sort()
+                test_data['expected_output'][type].sort()
+
+                self.assertLessEqual(
+                    len(computed_keywords),
+                    len(test_data['expected_output'][type]),
+                    'Too many keywords have been extracted!\n'
+                    ' --> Extracted: %s\n'
+                    ' --> Should-be: %s' % (str(computed_keywords),
+                                            str(test_data['expected_output'][type])))
 
                 for keyword in test_data['expected_output'][type]:
                     self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')

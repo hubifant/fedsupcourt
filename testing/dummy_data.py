@@ -50,8 +50,8 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     Internationalen Übereinkommen
     Internationalen Übereinkommens
     Internationaler Übereinkommen
-    Übereinkommen (potentially too broad?)
-    Abkommen (potentially too broad?)
+    Übereinkommen
+    Abkommen
     Völkerrechtlicher Vertrag
     Völkerrechtlichen Vertrags
     Völkerrechtlichen Vertrages
@@ -80,56 +80,54 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     Völkerrechtliche Pakte
     Völkerrechtlichen Pakte
     Völkerrechtlicher Pakte
-    Pakt (too broad?)
-    Pakte (idem)
-    Pakts (idem)
+    Pakt
+    Pakte
+    Pakts
     Traité international
     Traités internationaux
     Traité
     Traités
     Accord international
     Accords internationaux
-    Accord (probably too broad)
+    Accord
     Convention internationale
     Conventions internationales
-    Convention (too broad)
-    Conventions (idem)
+    Convention
+    Conventions
     Contrat international
     Contrats internationaux
     Pacte international
     Pactes internationaux
-    Pacte (too broad?)
+    Pacte
     Trattato internazionale
     Trattati internazionali
     Trattato di stato
     Trattati di stato
-    Convenzione
     Convenzione internazionale
     Convenzioni internazionali
     Accordo internazionale
     Accordi internazionali
     Patto internazionale
     Patti internazionali
-    Patto (probably too broad)
+    Patto
     Patti
-Update 25.11.16:
     Internationales Vertragsrecht
     Internationale Vertragsrecht
     Internationalen Vertragesrecht
     Internationalen Vertragsrechts
     Internationalem Vertragsrecht
-Updatevorschläge Nicolas
     Staatsvertrag
     Staatsverträge
     Staatsvertrags
     Staatsvertrages
-    Doppelbesteuerungsabkommen (Bsp für einen bestimmten Vertrag)
+
+    Convenzione tra la Svizzera e l'Italia
+    Doppelbesteuerungsabkommen
     Doppelbesteuerungsabkommens
-    pacte entre la Suisse et la France etc.
-    accord pour la double crème de la Gruyère
+    accord pour la double crème
     convenzione sulla doppia imposizione
-    patto di non aggressione
-    Convenzione tra la Svizzera e l'Italia circa
+    pacte entre la Suisse et la France
+    patto di non
 '''
 case_completeness_int_treaties['expected_output']['clear'] = [
     'Völkerrechtliches Abkommen', 'Völkerrechtliche Abkommen', 'Völkerrechtlichen Abkommen',
@@ -222,6 +220,7 @@ case_completeness_customary_int_law['expected_output']['clear'] = [
 # keyword completeness: for testing if all expected keywords related with international law in general are extracted.
 case_completeness_int_law_in_general = {'input_item': RulingItem(), 'expected_output': {}}
 case_completeness_int_law_in_general['input_item']['core_issue'] = '''
+
     ius gentium
     droit des gens
     Völkerrecht

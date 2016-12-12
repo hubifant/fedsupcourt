@@ -42,7 +42,10 @@ class _KeywordExtractorPipeline:
                         extracted_broad = re.findall(patterns['broad'], ruling[chapter], re.IGNORECASE)
 
                         for broad_keyword in extracted_broad:
-                            if 'clear' in patterns and not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
+                            if 'clear' in patterns:
+                                if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
+                                    extracted_keywords['broad'].append(broad_keyword)
+                            else:
                                 extracted_keywords['broad'].append(broad_keyword)
 
         keywords_and_contexts = {}
@@ -146,7 +149,7 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
                 'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))'
             },
             'lat': {
-                'clear': r'(?:ius gentium|opinio [ij]uris)'
+                'clear': r'(?:opinio [ij]uris)'
             }
         }
 
@@ -165,14 +168,14 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
                 'clear': r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'
             },
             'fr': {
-                'clear': r'(?:droits? internationa(?:l|ux)(?: \w+)?)',
+                'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)(?: privé| public)?)',
                 'broad': r'droit des gens'
             },
             'it': {
-                'clear': r'(?:diritt[oi] internazional[ei](?: \w+)?)'
+                'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei](?: \w+)?)'
             },
             'lat': {
-                'broad': r'ius gentium'
+                'broad': r'(?:ius gentium)'
             }
         }
 
