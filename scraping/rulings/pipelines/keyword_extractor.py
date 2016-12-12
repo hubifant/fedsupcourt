@@ -33,6 +33,8 @@ class _KeywordExtractorPipeline:
     pattern_suffix_it += r')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
     pattern_suffix_it += r'| [^\s\(\)\,\.]*\w|(?=\W))'
 
+    pattern_publication_omission = r'(?! \d+| [ivx]+\b| vol\b)'
+
 
     def __init__(self, keyword_type, keyword_patterns):
         """
@@ -142,16 +144,23 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
         patterns_international_customary_law = {
             'de': {
                 'clear': r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w*|'
-                         r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)))',
+                         r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)))'
+                         + self.pattern_publication_omission,
                 'broad': r'(?:gewohnheitsrechtlich\w*(?:\s\w+)?)'
             },
             'fr': {
-                'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))',
-                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))' + self.pattern_suffix_fr
+                'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))'
+                         + self.pattern_publication_omission,
+                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))'
+                         + self.pattern_publication_omission
+                         + self.pattern_suffix_fr
             },
             'it': {
-                'clear': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)|internazionale consuetudinario))',
-                'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))' + self.pattern_suffix_it
+                'clear': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)|internazionale consuetudinario))'
+                         + self.pattern_publication_omission,
+                'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))'
+                         + self.pattern_publication_omission
+                         + self.pattern_suffix_it
             },
             'lat': {
                 'clear': r'(?:opinio [ij]uris)'
@@ -170,18 +179,18 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_law_in_general = {
             'de': {
-                'clear': r'(?:(?:international|völker)\w*[\s\-]?\w*recht\w*)'
+                'clear': r'(?:(?:international|völker)\w*[\s\-]?\w*recht\w*)' + self.pattern_publication_omission
             },
             'fr': {
                 'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)'
-                         r'(?! \d+| [ivx]+\b| vol)'         # do not match publications
-                         r'(?: privé| public)?)'
+                         + self.pattern_publication_omission
+                         + r'(?: privé| public)?)'
                          + self.pattern_suffix_fr,
                 'broad': r'droit des gens'
             },
             'it': {
                 'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei]'
-                         r'(?! \d+| [ivx]+\b| vol))'         # do not match publications
+                         + self.pattern_publication_omission + r')'
                          + self.pattern_suffix_it
             },
             'lat': {
