@@ -45,9 +45,12 @@ def save_keyword_list(keyword_type, path='.', verbose=False):
 
     return keyword_list
 
-international_treaties = save_keyword_list('international_treaties')
-save_keyword_list('international_law_in_general')
-save_keyword_list('international_customary_law')
+international_treaties_c = save_keyword_list('international_treaties.clear')
+international_treaties_b = save_keyword_list('international_treaties.broad')
+save_keyword_list('international_law_in_general.broad')
+save_keyword_list('international_law_in_general.clear')
+save_keyword_list('international_customary_law.broad')
+save_keyword_list('international_customary_law.clear')
 # print(len(international_treaties))
 
 
@@ -55,10 +58,13 @@ count_containing_field = lambda keyword_type: collection.find({keyword_type: {'$
 count_language = lambda language: collection.find({'language': language}).count()
 
 print('Keyword Counts: ')
-print('Total Number of Rulings:      %5d' % collection.count())
-print('International Treaties:       %5d' % count_containing_field('international_treaties'))
-print('International Customary Law:  %5d' % count_containing_field('international_customary_law'))
-print('International Law in General: %5d' % count_containing_field('international_law_in_general'))
+print('Total Number of Rulings:              %5d' % collection.count())
+print('International Treaties (clear):       %5d' % count_containing_field('international_treaties.clear'))
+print('International Treaties (broad):       %5d' % count_containing_field('international_treaties.broad'))
+print('International Customary Law (clear):  %5d' % count_containing_field('international_customary_law.clear'))
+print('International Customary Law (broad):  %5d' % count_containing_field('international_customary_law.broad'))
+print('International Law in General (clear): %5d' % count_containing_field('international_law_in_general.clear'))
+print('International Law in General (broad): %5d' % count_containing_field('international_law_in_general.broad'))
 print('===================================')
 
 print('Language:')
