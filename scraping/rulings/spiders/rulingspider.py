@@ -26,7 +26,7 @@ class RulingSpider(scrapy.Spider):
 
         for link in volume_links:
             url = 'http://relevancy.bger.ch/' + link
-            if url not in self.scraped_links:  # and len(self.scraped_links) < 2:
+            if url not in self.scraped_links and len(self.scraped_links) < 2:
                 self.scraped_links.append(url)
                 yield scrapy.Request(url, self.parse_year)
 
@@ -37,7 +37,7 @@ class RulingSpider(scrapy.Spider):
         for link, ruling_id in zip(*[iter(rulings)]*2):
             url = 'http://relevancy.bger.ch/' + link
 
-            if url not in self.scraped_links:  # and len(self.scraped_links) < 50:
+            if url not in self.scraped_links and len(self.scraped_links) < 50:
                 self.scraped_links.append(url)
                 request = scrapy.Request(url, self.parse_ruling)
                 request.meta['ruling_id'] = ruling_id

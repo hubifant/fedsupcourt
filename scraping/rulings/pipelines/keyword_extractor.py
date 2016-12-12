@@ -16,13 +16,13 @@ class _KeywordExtractorPipeline:
 
     # keyword suffix french: used for matching word(s) following the actual keyword.
     pattern_suffix_fr = r'(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
-    pattern_suffix_fr += r'|dont|du|en|es?t'
+    pattern_suffix_fr += r'|du|en|es?t'
     pattern_suffix_fr += r'|entre(?:\s\w+){1,4}'
     pattern_suffix_fr += r')[\'\s][^\s\(\)\,\.]*\w'
-    pattern_suffix_fr += r'| (?=n\'|ne )'  # next word is a verb -> does not make sense to match it.
-    pattern_suffix_fr += r'| (?=qu[ei\'])'  # indicates start of subclause -> does not make sense to match next word
+    pattern_suffix_fr += r'| (?=n\'|ne )'        # next word is a verb -> does not make sense to match it.
+    pattern_suffix_fr += r'| (?=qu[ei\']|dont)'  # indicates start of subclause -> does not make sense to match next word
     pattern_suffix_fr += r'| (?=l(?:\'|e |eurs? |a |es ))'
-    pattern_suffix_fr += r'| [^\s\(\)\,\.]+\w'  # todo: just leave this case?
+    pattern_suffix_fr += r'| [^\s\(\)\,\.]+\w'   # todo: just leave this case?
     pattern_suffix_fr += r'|(?=\W))'
 
     # keyword suffix italian
