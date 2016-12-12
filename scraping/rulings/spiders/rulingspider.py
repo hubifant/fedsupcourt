@@ -26,21 +26,27 @@ class RulingSpider(scrapy.Spider):
 
         for link in volume_links:
             url = 'http://relevancy.bger.ch/' + link
-            if url not in self.scraped_links:  # and len(self.scraped_links) < 2:
+            if url not in self.scraped_links and len(self.scraped_links) < 2:
                 self.scraped_links.append(url)
                 yield scrapy.Request(url, self.parse_year)
 
     def parse_year(self, response):
         # get ruling links and corresponding ruling ids; process them (create new request)
-        rulings = response.xpath('//li/a/@href | //li/a[@href]/text()').extract()
-        for link, ruling_id in zip(*[iter(rulings)]*2):
-            url = 'http://relevancy.bger.ch/' + link
+        ####
+        request = scrapy.Request("http://relevancy.bger.ch/php/clir/http/index.php?lang=de&type=highlight_simple_query&page=1&from_date=&to_date=&from_year=1954&to_year=2016&sort=relevance&insertion_date=&from_date_push=&top_subcollection_clir=bge&query_words=136+I+332&part=all&de_fr=&de_it=&fr_de=&fr_it=&it_de=&it_fr=&orig=&translation=&rank=1&highlight_docid=atf%3A%2F%2F136-I-332%3Ade&number_of_ranks=3&azaclir=clir", self.parse_ruling)
+        request.meta['ruling_id'] = '136 I 332'
+        yield request
+        ####
 
-            if url not in self.scraped_links:  # and len(self.scraped_links) < 50:
-                self.scraped_links.append(url)
-                request = scrapy.Request(url, self.parse_ruling)
-                request.meta['ruling_id'] = ruling_id
-                yield request
+        # rulings = response.xpath('//li/a/@href | //li/a[@href]/text()').extract()
+        # for link, ruling_id in zip(*[iter(rulings)]*2):
+        #     url = 'http://relevancy.bger.ch/' + link
+        #
+        #     if url not in self.scraped_links and len(self.scraped_links) < 50:
+        #         self.scraped_links.append(url)
+        #         request = scrapy.Request(url, self.parse_ruling)
+        #         request.meta['ruling_id'] = ruling_id
+        #         yield request
 
     def parse_ruling(self, response):
 
@@ -72,7 +78,7 @@ class RulingSpider(scrapy.Spider):
         l.add_xpath('art_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"Artikel:")]]//text()')
 
         # values that have been crawled on previous level
-        l.add_value('ruling_id', response.meta['ruling_id'])
+        l.add_value('_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
 
         self.counter += 1

@@ -23,19 +23,20 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
 
     def test_simple_extraction(self):
         """
-        Asserts that simple keyword is detected.
+        Asserts that simple 'broad' keyword is detected.
         """
 
         keyword_extractor = InternationalTreatyExtractor()
         computed_output = keyword_extractor.process_item(case_incomplete['input_item'], None)
 
         field_to_test = 'international_treaties'
+        keyword_type = 'broad'
 
-        self.assertEqual(computed_output[field_to_test]['keywords'],
-                         case_incomplete['expected_output'][field_to_test]['keywords'],
+        self.assertEqual(computed_output[field_to_test][keyword_type]['keywords'],
+                         case_incomplete['expected_output'][field_to_test][keyword_type]['keywords'],
                          "Assertion failed in test_simple_extraction")
-        self.assertEqual(computed_output[field_to_test]['contexts'],
-                         case_incomplete['expected_output'][field_to_test]['contexts'],
+        self.assertEqual(computed_output[field_to_test][keyword_type]['contexts'],
+                         case_incomplete['expected_output'][field_to_test][keyword_type]['contexts'],
                          "Assertion failed in test_simple_extraction")
 
 
@@ -50,11 +51,17 @@ class TestSpecificKeywordExtractorExtractors(unittest.TestCase):
         :type test_data: dict
         """
         computed_output = keyword_extractor.process_item(test_data['input_item'], None)
-        computed_keywords_and_counts = computed_output[keyword_type]['keywords']
-        computed_keywords = [kw_c['keyword'] for kw_c in computed_keywords_and_counts]
 
-        for keyword in test_data['expected_output']:
-            self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
+        # for 'clear' and 'broad' keywords...
+        for type in ['clear', 'broad']:
+            self.assertEqual(type in computed_output[keyword_type], type in test_data['expected_output'],
+                             'Something with keywords of type "%s" did not work as expected.' % type)
+            if type in computed_output:
+                computed_keywords_and_counts = computed_output[keyword_type][type]['keywords']
+                computed_keywords = [kw_c['keyword'] for kw_c in computed_keywords_and_counts]
+
+                for keyword in test_data['expected_output'][type]:
+                    self.assertIn(keyword, computed_keywords, 'Keyword was not extracted.')
 
     def test_completeness_international_treaties(self):
         """

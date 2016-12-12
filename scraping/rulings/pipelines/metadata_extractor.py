@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import calendar
 import locale
 import re
@@ -122,11 +123,9 @@ class MetadataExtractorPipeline(object):
 
             if month is None:
                 logging.warning("Could not extract month from '" + month_raw + "'. \nRuling: " + url)
-                # date = datetime(year, 1, 1)
-                date = str(year)
+                date = datetime(year, 1, 1)
             else:
-                # date = datetime(year, month, day)
-                date = '%02d.%02d.%04d' % (day, month, year)
+                date = datetime(year, month, day)
             return date
 
         logging.warning('Could not extract date. \nRuling: ' + url)

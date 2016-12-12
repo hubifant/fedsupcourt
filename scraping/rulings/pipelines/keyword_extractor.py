@@ -25,42 +25,63 @@ class _KeywordExtractorPipeline:
     def process_item(self, ruling, spider):
 
         # find keywords associated to international treaties
-        extracted_keywords = []
-        keyword_counts = {}
-        contexts = []
+        extracted_keywords = {
+            'clear': [],
+            'broad': []
+        }
 
         # go through all ruling chapters and extract keywords
         for chapter in self.ruling_chapters:
             if chapter in ruling:
                 for pattern_language, patterns in self.keyword_patterns.items():
-                    for pattern in patterns:
-                        extracted_keywords.extend(re.findall(pattern, ruling[chapter], re.IGNORECASE))
+                    if 'clear' in patterns:
+                        extracted_keywords['clear'].extend(re.findall(patterns['clear'], ruling[chapter], re.IGNORECASE))
 
-        # if keywords have been found, extract the entire sentences in which they occur
-        if len(extracted_keywords) > 0:
-            for keyword in set(extracted_keywords):
+                    if 'broad' in patterns:
+                        # only save a 'broad' keyword if it is not detected by the 'clear' pattern
+                        extracted_broad = re.findall(patterns['broad'], ruling[chapter], re.IGNORECASE)
 
-                # pattern matches sentences containing the keyword
-                keyword_context_pattern = self.sentence_pattern % re.escape(keyword)
+                        for broad_keyword in extracted_broad:
+                            if 'clear' in patterns and not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
+                                extracted_keywords['broad'].append(broad_keyword)
 
-                # find and save contexts in each chapter
-                for chapter in self.ruling_chapters:
-                    if chapter in ruling:
-                        sentences = re.findall(keyword_context_pattern, ruling[chapter])  # don't IGNORECASE here!
+        keywords_and_contexts = {}
 
-                        # update contexts list with each extracted sentence
-                        contexts.extend(
-                            [{'keyword': keyword, 'chapter': chapter, 'sentence': sentence} for sentence in sentences]
-                        )
+        # context extraction for 'clear' and 'broad' keywords
+        for pattern_type in ['clear', 'broad']:
+            keyword_counts = {}
+            contexts = []
 
-                        # update keyword count (difficult to do this more elegantly above)
-                        keyword_counts[keyword] = keyword_counts.get(keyword, 0) + len(sentences)
+            # if keywords have been found, extract the entire sentences in which they occur
+            if len(extracted_keywords[pattern_type]) > 0:
 
-            # keywords and counts are saved in a format that is easier to access in mongodb
-            ruling[self.keyword_type] = {
-                'keywords': [{'keyword': kw, 'count': cnt} for kw, cnt in keyword_counts.items()],
-                'contexts': contexts
-            }
+                # iterate through all unique keywords
+                for keyword in set(extracted_keywords[pattern_type]):
+
+                    # create the pattern matching sentences containing the keyword
+                    keyword_context_pattern = self.sentence_pattern % re.escape(keyword)
+
+                    # find and save contexts in each chapter
+                    for chapter in self.ruling_chapters:
+                        if chapter in ruling:
+                            sentences = re.findall(keyword_context_pattern, ruling[chapter])  # don't IGNORECASE here!
+
+                            # update contexts list with each extracted sentence
+                            contexts.extend(
+                                [{'keyword': keyword, 'chapter': chapter, 'sentence': sentence} for sentence in sentences]
+                            )
+
+                            # update keyword count (difficult to do this more elegantly above)
+                            keyword_counts[keyword] = keyword_counts.get(keyword, 0) + len(sentences)
+
+                # keywords and counts are saved in a format that is easier to access in mongodb
+                keywords_and_contexts[pattern_type] = {
+                    'keywords': [{'keyword': kw, 'count': cnt} for kw, cnt in keyword_counts.items()],
+                    'contexts': contexts
+                }
+
+        if len(keywords_and_contexts) > 0:
+            ruling[self.keyword_type] = keywords_and_contexts
 
         return ruling
 
@@ -72,28 +93,33 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
 
     def __init__(self):
         patterns_international_treaties = {
-            'de': [r'(?:international)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
-                   r'(?:völkerrecht|staat)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
-                   r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'],
-            'fr': [r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
-                   r'(?:accord|convention|pacte|traité)(?:s|es)?'
-                   '(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
-                   '|dont|du|en|es?t'
-                   '|entre(?:\s\w+){1,4}'
-                   ')[\'\s][^\s\(\)\,\.]*\w'
-                   '| (?=n\'|ne )'
-                   '| (?=qu[ei\'])'             # indicates start of subclause -> doesn't make sense to match next word
-                   '| (?=l(?:\'|e |eurs? |a |es ))'
-                   '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
-                   '|(?=\W))'],
-            'it': [r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
-                   r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])'
-                   '(?: (?:all[ao]?|d|di'
-                   '|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
-                   '|per (?:il|la|gli|i)'
-                   '|[ft]ra(?:\s\w+){1,4}'
-                   ')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
-                   '| [^\s\(\)\,\.]*\w|(?=\W))']
+            'de': {
+                'clear': r'(?:international|völkerrecht|staat)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
+                'broad': r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'
+            },
+            'fr': {
+                'clear': r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
+                'broad': r'(?:accord|convention|pacte|traité)(?:s|es)?'
+                        '(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
+                        '|dont|du|en|es?t'
+                        '|entre(?:\s\w+){1,4}'
+                        ')[\'\s][^\s\(\)\,\.]*\w'
+                        '| (?=n\'|ne )'
+                        '| (?=qu[ei\'])'             # indicates start of subclause -> doesn't make sense to match next word
+                        '| (?=l(?:\'|e |eurs? |a |es ))'
+                        '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
+                        '|(?=\W))'
+            },
+            'it': {
+                'clear': r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
+                'broad': r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])'
+                         '(?: (?:all[ao]?|d|di'
+                         '|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
+                         '|per (?:il|la|gli|i)'
+                         '|[ft]ra(?:\s\w+){1,4}'
+                         ')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
+                         '| [^\s\(\)\,\.]*\w|(?=\W))'
+            }
         }
 
         super(InternationalTreatyExtractor, self).__init__('international_treaties', patterns_international_treaties)
@@ -106,11 +132,22 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
 
     def __init__(self):
         patterns_international_customary_law = {
-            'de': [r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w?)',
-                   r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)?)'],
-            'fr': [r'(?:(?:droit )?(?:des gens|international coutumier|coutumi?er?(?: internationale?)?))'],
-            'it': [r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)?|internazionale consuetudinario))'],
-            'lat': [r'(?:ius gentium|opinio [ij]uris)']
+            'de': {
+                'clear': r'(?:(?:internationale\w?|völker(?:rechtliche)?\w?) ?gewohnheitsrecht\w?|'
+                         r'(?:gewohnheitsrechtlich\w*(?: völkerrecht\w*)))',
+                'broad': r'(?:gewohnheitsrechtlich\w*(?:\s\w+)?)'
+            },
+            'fr': {
+                'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))',
+                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))'
+            },
+            'it': {
+                'clear': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)|internazionale consuetudinario))',
+                'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))'
+            },
+            'lat': {
+                'clear': r'(?:ius gentium|opinio [ij]uris)'
+            }
         }
 
         super(InternationalCustomaryLawExtractor, self).__init__('international_customary_law',
@@ -124,9 +161,19 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
 
     def __init__(self):
         patterns_international_law_in_general = {
-            'de': [r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'],
-            'fr': [r'(?:droits? internationa(?:l|ux)(?: \w+)?)'],
-            'it': [r'(?:diritt[oi] internazional[ei](?: \w+)?)']
+            'de': {
+                'clear': r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'
+            },
+            'fr': {
+                'clear': r'(?:droits? internationa(?:l|ux)(?: \w+)?)',
+                'broad': r'droit des gens'
+            },
+            'it': {
+                'clear': r'(?:diritt[oi] internazional[ei](?: \w+)?)'
+            },
+            'lat': {
+                'broad': r'ius gentium'
+            }
         }
 
         super(GeneralInternationalLawExtractor, self).__init__('international_law_in_general',
