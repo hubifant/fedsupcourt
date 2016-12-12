@@ -4,23 +4,43 @@ import re
 
 
 class _KeywordExtractorPipeline:
+
+    # ruling chapters from which keywords will be extracted:
+    ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
+
+    # regex for extracting a keyword's context
+    sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
+    sentence_pattern += r'(?:.(?!\. [A-Z]))*'  # anything NOT followed by beginning of sentence
+    sentence_pattern += r'%s'  # keyword
+    sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # anything until end of sentence
+
+    # keyword suffix french: used for matching word(s) following the actual keyword.
+    pattern_suffix_fr = r'(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
+    pattern_suffix_fr += r'|dont|du|en|es?t'
+    pattern_suffix_fr += r'|entre(?:\s\w+){1,4}'
+    pattern_suffix_fr += r')[\'\s][^\s\(\)\,\.]*\w'
+    pattern_suffix_fr += r'| (?=n\'|ne )'  # next word is a verb -> does not make sense to match it.
+    pattern_suffix_fr += r'| (?=qu[ei\'])'  # indicates start of subclause -> does not make sense to match next word
+    pattern_suffix_fr += r'| (?=l(?:\'|e |eurs? |a |es ))'
+    pattern_suffix_fr += r'| [^\s\(\)\,\.]+\w'  # todo: just leave this case?
+    pattern_suffix_fr += r'|(?=\W))'
+
+    # keyword suffix italian
+    pattern_suffix_it = r'(?: (?:all[ao]?|d|di'
+    pattern_suffix_it += r'|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
+    pattern_suffix_it += r'|per (?:il|la|gli|i)'
+    pattern_suffix_it += r'|[ft]ra(?:\s\w+){1,4}'
+    pattern_suffix_it += r')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
+    pattern_suffix_it += r'| [^\s\(\)\,\.]*\w|(?=\W))'
+
+
     def __init__(self, keyword_type, keyword_patterns):
         """
         :param keyword_patterns: dict of format {'<LANGUAGE>': [r'<PATTERN_1>', r'<PATTERN_2>']}
         :type keyword_patterns: dict
         """
-
         self.keyword_patterns = keyword_patterns
         self.keyword_type = keyword_type
-
-        # regex for extracting a keyword's context
-        self.sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
-        self.sentence_pattern += r'(?:.(?!\. [A-Z]))*'                 # anything NOT followed by beginning of sentence
-        self.sentence_pattern += r'%s'                                 # keyword
-        self.sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'    # anything until end of sentence
-
-        # ruling chapters from which keywords will be extracted:
-        self.ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
 
     def process_item(self, ruling, spider):
 
@@ -102,26 +122,11 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
             },
             'fr': {
                 'clear': r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
-                'broad': r'(?:accord|convention|pacte|traité)(?:s|es)?'
-                        '(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
-                        '|dont|du|en|es?t'
-                        '|entre(?:\s\w+){1,4}'
-                        ')[\'\s][^\s\(\)\,\.]*\w'
-                        '| (?=n\'|ne )'              # next word is a verb -> does not make sense to match it.
-                        '| (?=qu[ei\'])'             # indicates start of subclause -> does not make sense to match next word
-                        '| (?=l(?:\'|e |eurs? |a |es ))'
-                        '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
-                        '|(?=\W))'
+                'broad': r'(?:accord|convention|pacte|traité)(?:s|es)?' + self.pattern_suffix_fr
             },
             'it': {
                 'clear': r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
-                'broad': r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])'
-                         '(?: (?:all[ao]?|d|di'
-                         '|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
-                         '|per (?:il|la|gli|i)'
-                         '|[ft]ra(?:\s\w+){1,4}'
-                         ')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
-                         '| [^\s\(\)\,\.]*\w|(?=\W))'
+                'broad': r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])' + self.pattern_suffix_it
             }
         }
 
@@ -142,20 +147,11 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
             },
             'fr': {
                 'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))',
-                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))'
-                         '(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?'
-                         '|dont|du|en|es?t'
-                         '|entre(?:\s\w+){1,4}'
-                         ')[\'\s][^\s\(\)\,\.]*\w'    # word after preposition
-                         '| (?=n\'|ne )'              # next word is a verb -> does not make sense to match it.
-                         '| (?=qu[ei\'])'             # start of subclause -> does not make sense to match next word
-                         '| (?=l(?:\'|e |eurs? |a |es ))'
-                         '| [^\s\(\)\,\.]+\w'         # todo: just leave this case?
-                         '|(?=\W))'
+                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))' + self.pattern_suffix_fr
             },
             'it': {
                 'clear': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)(?: internazionale)|internazionale consuetudinario))',
-                'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))'
+                'broad': r'(?:(?:diritto )?(?:consuetudin(?:e|ario)))' + self.pattern_suffix_it
             },
             'lat': {
                 'clear': r'(?:opinio [ij]uris)'
@@ -174,18 +170,19 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_law_in_general = {
             'de': {
-                'clear': r'(?:(?:international|Völker)\w*[\s\-]?\w*recht\w*)'
+                'clear': r'(?:(?:international|völker)\w*[\s\-]?\w*recht\w*)'
             },
             'fr': {
                 'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)'
                          r'(?! \d+| [ivx]+\b| vol)'         # do not match publications
-                         r'(?: privé| public| \w+)?)',
+                         r'(?: privé| public)?)'
+                         + self.pattern_suffix_fr,
                 'broad': r'droit des gens'
             },
             'it': {
                 'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei]'
-                         r'(?! \d+| [ivx]+\b| vol)'         # do not match publications
-                         r'(?: \w+)?)'
+                         r'(?! \d+| [ivx]+\b| vol))'         # do not match publications
+                         + self.pattern_suffix_it
             },
             'lat': {
                 'broad': r'(?:ius gentium)'
