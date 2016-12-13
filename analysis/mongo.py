@@ -109,7 +109,7 @@ def save_departments(path='.', verbose=False):
 
     return department_list
 
-# save_departments()
+save_departments()
 
 
 def count_by_year(keyword_type, path='.', verbose=False):
