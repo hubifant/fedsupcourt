@@ -15,23 +15,34 @@ class _KeywordExtractorPipeline:
     sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # anything until end of sentence
 
     # keyword suffix french: used for matching word(s) following the actual keyword.
-    pattern_suffix_fr = r'(?: (?:d|(?:à|aux?|avec|dans|des?|pour|sur)(?: ce(?:tte|s)?| la| les?)?(?: double| libre)?'
-    pattern_suffix_fr += r'|du|en|es?t'
+    pattern_suffix_fr = r'(?: (?:d(?:\'un|\'une)?'
+    pattern_suffix_fr += r'|(?:à|aux?|avec|dans|des?|en|par|pour|selon|sur)(?: ce(?:tte|s)?| la| les?| une?)?'
+    pattern_suffix_fr += r'(?: double| libre)?'
+    pattern_suffix_fr += r'|du'
     pattern_suffix_fr += r'|entre(?:\s\w+){1,4}'
     pattern_suffix_fr += r')[\'\s][^\s\(\)\,\.]*\w'
-    pattern_suffix_fr += r'| (?=n\'|ne )'        # next word is a verb -> does not make sense to match it.
-    pattern_suffix_fr += r'| (?=qu[ei\']|dont)'  # indicates start of subclause -> does not make sense to match next word
-    pattern_suffix_fr += r'| (?=l(?:\'|e |eurs? |a |es ))'
-    pattern_suffix_fr += r'| [^\s\(\)\,\.]+\w'   # todo: just leave this case?
+    pattern_suffix_fr += r'| (?=n\'|ne |s[e\'])'                # next word is a verb -> does not make sense to match it
+    pattern_suffix_fr += r'| (?=qu[ei\']|dont|auquel)'          # indicates start of subclause -> does not make sense to match next word
+    pattern_suffix_fr += r'| (?=l(?:\'|e |eurs? |a |es |ui ))'  # indicates start of subclause...
+    pattern_suffix_fr += r'| (?=il |elle |nous )'               # next word will be a verb
+    pattern_suffix_fr += r'| (?=une? )'                         # next word is unusable
+    pattern_suffix_fr += r'| (?=es?t )'                         # next word is probably an adjective part of subject
+    pattern_suffix_fr += r'| (?=du \d+)'                        # indicates a date
+    pattern_suffix_fr += r'| [^\s\(\)\,\.]+\w'
     pattern_suffix_fr += r'|(?=\W))'
 
     # keyword suffix italian
-    pattern_suffix_it = r'(?: (?:all[ao]?|d|di'
+    pattern_suffix_it = r'(?: (?:all[ao]?|ai|d|di'
     pattern_suffix_it += r'|(?:de|da|ne|su)(?:lla|lle|ll|l|i|gli)?'
-    pattern_suffix_it += r'|per (?:il|la|gli|i)'
+    pattern_suffix_it += r'|(?:per|con) (?:il|la|gli|i)'
     pattern_suffix_it += r'|[ft]ra(?:\s\w+){1,4}'
+    pattern_suffix_it += r'|qui'
     pattern_suffix_it += r')(?: doppia)?[\'\s][^\s\(\)\,\.]*\w'
-    pattern_suffix_it += r'| [^\s\(\)\,\.]*\w|(?=\W))'
+    pattern_suffix_it += r'| (?=non )'                          # next word is a verb -> does not make sense to match it
+    pattern_suffix_it += r'| (?=che |o )'                       # indicates start of subclause
+    pattern_suffix_it += r'| (?=e|sono)'                        # next word is probably an adjective part of subject
+    pattern_suffix_it += r'| [^\s\(\)\,\.]*\w'
+    pattern_suffix_it += r'|(?=\W))'
 
     pattern_publication_omission = r'(?! \d+| [ivx]+\b| vol\b)'
 
@@ -151,7 +162,7 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
             'fr': {
                 'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))'
                          + self.pattern_publication_omission,
-                'broad': r'(?:(?:droit )?(?:coutumi?er?(?: \w+)?))'
+                'broad': r'(?:(?:droit )?(?:coutumi?er?))'
                          + self.pattern_publication_omission
                          + self.pattern_suffix_fr
             },
@@ -183,8 +194,8 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
             },
             'fr': {
                 'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)'
-                         + self.pattern_publication_omission
                          + r'(?: privé| public)?)'
+                         + self.pattern_publication_omission
                          + self.pattern_suffix_fr,
                 'broad': r'droit des gens'
             },
