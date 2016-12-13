@@ -1,6 +1,7 @@
 import csv
 import pymongo
 from datetime import datetime
+from collections import OrderedDict
 
 
 mongo_uri = 'mongodb://localhost:27017'
@@ -52,6 +53,39 @@ per_year = collection.aggregate([
             'total_number_of_decisions': {
                 '$sum': 1
             },
+            'sr_nb_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$extracted_laws", False]}, 1, 0]
+                }
+            },
+            'int_treaty_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$international_treaties.clear", False]}, 1, 0]
+                }
+            },
+            'int_cust_law_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$international_customary_law.clear", False]}, 1, 0]
+                }
+            },
+            'int_law_in_gen_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$international_law_in_general.clear", False]}, 1, 0]
+                }
+            },
+            'relevant_rulings_only_kws': {
+                '$sum': {
+                    '$cond': [
+                        {
+                            "$or": [
+                                {"$ifNull": ["$international_treaties.clear", False]},
+                                {"$ifNull": ["$international_customary_law.clear", False]},
+                                {"$ifNull": ["$international_law_in_general.clear", False]}
+                            ]
+                        }, 1, 0
+                    ]
+                }
+            },
             'relevant_rulings': {
                 '$sum': {
                     '$cond': [
@@ -60,7 +94,7 @@ per_year = collection.aggregate([
                                 {"$ifNull": ["$international_treaties.clear", False]},
                                 {"$ifNull": ["$international_customary_law.clear", False]},
                                 {"$ifNull": ["$international_law_in_general.clear", False]},
-                                {"$ifNull": ["$extracted_laws", False]},
+                                {"$ifNull": ["$extracted_laws", False]}
                             ]
                         }, 1, 0
                     ]
@@ -75,35 +109,15 @@ per_year = collection.aggregate([
     }
 ])
 
-per_year_1 = collection.aggregate([
-    {
-        '$match': {
-            'date': {'$lt': date_limit},
-            '$or': [
-                {'international_treaties.clear': {'$exists': 1}},
-                {'international_customary_law.clear': {'$exists': 1}},
-                {'international_law_in_general.clear': {'$exists': 1}},
-                {'extracted_laws': {'$exists': 1}}
-            ]
-        }
-    },
-    {
-        '$group': {
-            '_id': {
-                '$year': '$date'
-            },
-            'relevant_rulings': {
-                '$sum': 1
-            }
-        }
-    },
-    {
-        '$sort': {
-            '_id': 1
-        }
-    }
-])
 
+key_mapping = OrderedDict()
+key_mapping['_id'] = 'Year'
+key_mapping['total_number_of_decisions'] = 'Total Number of Decisions'
+key_mapping['int_treaty_extracted'] = 'Rulings referring to International Treaties'
+key_mapping['int_cust_law_extracted'] = 'Rulings referring to International Customary Law'
+key_mapping['int_law_in_gen_extracted'] = 'Rulings referring to International Law in General'
+key_mapping['sr_nb_extracted'] = 'SR-Number extracted'
+key_mapping['relevant_rulings_only_kws'] = 'Total Number of Rulings referring to International Law'
+key_mapping['relevant_rulings'] = 'Total Number of Rulings referring to International Law (incl. SR-Numbers)'
 
-save_result(per_year, {'_id': 'Year', 'relevant_rulings': 'Relevant Rulings'}, 'yearwise')
-save_result(per_year_1, {'_id': 'Year', 'relevant_rulings': 'Relevant Rulings'}, 'yearwise_comparison')
+save_result(per_year, key_mapping, 'yearwise')
