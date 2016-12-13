@@ -23,7 +23,7 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
 
     with open(file_path, 'w') as csv_file:
         keyword_writer = csv.DictWriter(csv_file,
-                                        quoting=csv.QUOTE_NONNUMERIC,
+                                        quoting=csv.QUOTE_ALL,
                                         fieldnames=mongo_csv_key_mapping.values())
         keyword_writer.writeheader()
 
@@ -185,16 +185,66 @@ per_year_and_sr_nb = collection.aggregate([
         }
     }
 ])
+key_mapping_yr_sr = OrderedDict()
+key_mapping_yr_sr['year'] = 'Year'
+key_mapping_yr_sr['category'] = 'Category'
+key_mapping_yr_sr['count'] = 'Count'
+save_result(per_year_and_sr_nb, key_mapping_yr_sr, 'year_and_sr_wise')
 
+
+sr_nb_counts = collection.aggregate([
+    {
+        '$match': {
+            'date': {'$lt': date_limit}
+        }
+    },
+    {
+        '$unwind': {
+            'path': '$extracted_laws'
+        }
+    },
+    {
+        '$group': {
+            '_id': {
+                'year': {
+                    '$multiply': [
+                        {
+                            '$floor': {
+                                '$divide': [
+                                    {'$year': '$date'},
+                                    year_group_size
+                                ]
+                            }
+                        },
+                        year_group_size
+                    ],
+                },
+                'law': '$extracted_laws'
+            },
+            'count': {
+                '$sum': 1
+            }
+        }
+    },
+    {
+        '$sort': {
+            'count': -1,
+            '_id.year': 1
+        }
+    },
+    {
+        '$project': {
+            'year': '$_id.year',
+            'law': '$_id.law.law',
+            'count': '$count'
+        }
+    }
+])
 key_mapping_sr = OrderedDict()
 key_mapping_sr['year'] = 'Year'
-key_mapping_sr['category'] = 'Category'
+key_mapping_sr['law'] = 'Law'
 key_mapping_sr['count'] = 'Count'
-
-save_result(per_year_and_sr_nb, key_mapping_sr, 'year_and_sr_wise')
-
-
-
+save_result(sr_nb_counts, key_mapping_sr, 'sr_number_count')
 
 
 
