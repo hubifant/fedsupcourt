@@ -44,7 +44,8 @@ class TestMetadataExtractor(unittest.TestCase):
                 extracted_department = self.metadata_extractor._extract_department(title_of_judgement, 'no url')
 
                 if case_metadata_extraction['departments'][i] is not None:
-                    self.assertEqual(extracted_department, case_metadata_extraction['departments'][i],
+                    self.assertEqual(extracted_department['extracted_department'],
+                                     case_metadata_extraction['departments'][i],
                                      'Could not correctly extract claimant from\n"%s"' % title_of_judgement)
 
                 else:

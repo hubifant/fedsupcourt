@@ -24,19 +24,40 @@ class MetadataExtractorPipeline(object):
     date_pattern = r'\b\d{1,2}(?:\.\s?|\s?er |o | da | )(?:\d{1,2}(?:\.\s?| )|\w+ )\d{4}'
 
     # for extracting the responsible department of the Federal Supreme Court
-    department_patterns = {
+    department_extraction_patterns = {
         'de': r'(?:(?<=Urteil de\w )|(?<=Entscheid de\w )|(?<=Verfügung de\w )|(?<=Beschluss de\w )|(?<=Präsidenten de\w))'  # before dep
               r'.*?\w'                                                                                 # dep name
               r'(?= i\.\s?S\.?| in Sachen| in S\.| (?:\w{3}\s?)?\d{1,2})',                             # after dep
         'fr': r'(?:(?<=arrêt de )|(?<=arrêt rendu par ))'
               r'.*?\w'
-              r'(?= (?:dans|en) (?:la cause|les causes)| (?:du|le)?\s?\d{1,2})',
+              r'(?= (?:dans|en) (?:la cause|les causes)| (?:du|le)?\s?\d{1,2}[^r]|,)',
         'it': r'(?<=della )(?!sentenza|decisione)'
               r'.*?\w'
-              r'(?= nell[ae]| sul ricorso| in re| (?:del(?:la|l\')?\s?)?\d{1,2})',
+              r'(?= nell[ae]| sul ricorso| in re| (?:del(?:la|l\')?\s?)?\d{1,2}|, du)',
         'rr': r'(?<=sentenzia da la )'
               r'.*?\w'
               r'(?= concernent il cas)'
+    }
+
+    department_identification_patterns = {
+        'Administrative Law': r'(?:(?:schätzungs|verwaltungs|rekurs)kommission'
+                              r'|verwaltungsrechtlich'
+                              r'|administratif'
+                              r'|amministrativo)',
+        'Private Law': r'(präsident\w* des bundesgerichts'
+                       r'|z[il]v[il]l(?!.*staats(?:recht|gericht))|'
+                       r'c[il]v[il]le?(?!.*droit public))',
+        'Public Law': r'(?:staats(?:recht|gericht)'
+                      r'|instruktionsrichter'
+                      r'|öffentlich'
+                      r'|oera'
+                      r'|public'
+                      r'|pubblico)',
+        'Criminal Law': r'(?:an(?:ge)?klagekammer|straf(?:recht|gericht)|accusa|p[eé]nale?'
+                        r'|kassat[il]on|cassation|cassazione)'
+                        r'(?!.*(?:staatsrecht|droit public))',
+        'Debt Recovery and Bankruptcy': r'(?:schuldbetreibung|faillite|fallimenti)',
+        'Social Insurance Law': r'(?:sozialrecht|versicherung|droit social|diritto sociale)'
     }
 
     # type of proceeding: in title of judgement; starts with '(', ends with ')' and does not contain any '(...)'
@@ -175,10 +196,20 @@ class MetadataExtractorPipeline(object):
 
     def _extract_department(self, raw_department, url):
         # extract the responsible department if possible.
-        for language, department_pattern in self.department_patterns.items():
+        for language, department_pattern in self.department_extraction_patterns.items():
             department_match = re.search(department_pattern, raw_department, re.IGNORECASE)
             if department_match is not None:
-                return department_match.group()
+                extracted_department = department_match.group()
+
+                # try to identify the department category
+                for department_tag, identification_pattern in self.department_identification_patterns.items():
+                    if re.search(identification_pattern, extracted_department, re.IGNORECASE) is not None:
+                        return {'extracted_department': extracted_department, 'tag': department_tag}
+
+                # if we arrive here, tag could not be identified
+                logging.warning('Could not identify the department tag for: \n"%s"' % extracted_department)
+                return {'extracted_department': extracted_department}
+
         logging.warning('Could not extract responsible department. \nRuling: ' + url)
 
     def _extract_type_of_proceeding(self, raw_type_of_proceeding, url):
