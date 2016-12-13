@@ -14,6 +14,8 @@ client = pymongo.MongoClient(mongo_uri)
 db = client[database_name]
 collection = db[collection_name]
 
+# SETTINGS:
+year_group_size = 10
 
 def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=False):
     file_path = path + '/' + result_name + '.csv'
@@ -33,11 +35,7 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
 
             keyword_writer.writerow(csv_row)
 
-            # if verbose:
-            #     print('%-50s | %3d' % (mongo_row['_id'], mongo_row['occurrences']))
 
-test = collection.find_one({'date': {'$lt': date_limit}}, {'date': 1})
-print(test)
 
 per_year = collection.aggregate([
     {
@@ -48,7 +46,17 @@ per_year = collection.aggregate([
     {
         '$group': {
             '_id': {
-                '$year': '$date'
+                '$multiply': [
+                    {
+                        '$floor': {
+                            '$divide': [
+                                {'$year': '$date'},
+                                year_group_size
+                            ]
+                        }
+                    },
+                    year_group_size
+                ]
             },
             'total_number_of_decisions': {
                 '$sum': 1
