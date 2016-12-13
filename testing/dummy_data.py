@@ -1,5 +1,6 @@
 # contains dummy scrapy item for testing purposes.
 
+from datetime import datetime
 from scraping.rulings import RulingItem
 
 # case_incomplete: for testing a simple keyword extraction in the case where a ruling does not contain all 3 chapters
@@ -296,23 +297,23 @@ case_metadata_extraction['title_of_judgement'] = [
     "12. Extract da la sentenzia da la I. partiziun da dretg public concernent il cas Touring Club Svizra cunter A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun (recurs da dretg public)\n1C_160/2012 dals 10 da december 2012"
 ]
 
-case_metadata_extraction['date'] = ['18.11.1998',
-                                    '11.12.1959',
-                                    '09.12.2011',
-                                    '30.08.1957',
-                                    '31.03.2015',
+case_metadata_extraction['date'] = [datetime.strptime('18.11.1998', '%d.%m.%Y'),
+                                    datetime.strptime('11.12.1959', '%d.%m.%Y'),
+                                    datetime.strptime('09.12.2011', '%d.%m.%Y'),
+                                    datetime.strptime('30.08.1957', '%d.%m.%Y'),
+                                    datetime.strptime('31.03.2015', '%d.%m.%Y'),
 
-                                    '13.11.1998',
-                                    '01.10.2009',
-                                    '10.01.2012',
+                                    datetime.strptime('13.11.1998', '%d.%m.%Y'),
+                                    datetime.strptime('01.10.2009', '%d.%m.%Y'),
+                                    datetime.strptime('10.01.2012', '%d.%m.%Y'),
 
-                                    '10.06.1988',
-                                    '01.07.1955',
-                                    '11.11.1955',
-                                    '11.05.2012',
-                                    '29.01.1963',
+                                    datetime.strptime('10.06.1988', '%d.%m.%Y'),
+                                    datetime.strptime('01.07.1955', '%d.%m.%Y'),
+                                    datetime.strptime('11.11.1955', '%d.%m.%Y'),
+                                    datetime.strptime('11.05.2012', '%d.%m.%Y'),
+                                    datetime.strptime('29.01.1963', '%d.%m.%Y'),
 
-                                    '10.12.2012']
+                                    datetime.strptime('10.12.2012', '%d.%m.%Y')]
 case_metadata_extraction['parties'] = [
     {'claimant': 'F.'},
     None,
