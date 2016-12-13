@@ -15,7 +15,7 @@ def extract_and_save_sr_numbers(mongo_uri='mongodb://localhost:27017',
     client = pymongo.MongoClient(mongo_uri)
     ruling_collection = client[db_name][int_law_collection_name]
 
-    # ruling_cursor = ruling_collection.find({'ruling_id.bge_nb': 136}, modifiers={"$snapshot": True})
+    # ruling_cursor = ruling_collection.find({'_id.bge_nb': 136}, modifiers={"$snapshot": True})
     ruling_cursor = ruling_collection.find({}, modifiers={"$snapshot": True})
     nb_rulings = ruling_cursor.count()
     print('Extracting SR numbers from %d rulings...' % nb_rulings)
@@ -49,7 +49,7 @@ def extract_and_save_sr_numbers(mongo_uri='mongodb://localhost:27017',
             ruling['extracted_categories'] = extracted_categories
 
         ruling_collection.save(ruling)
-        logging.info('Updated ruling %s.' % str(ruling['ruling_id']))
+        logging.info('Updated ruling %s.' % str(ruling['_id']))
 
     end_time = time.clock()
 
