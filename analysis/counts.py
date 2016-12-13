@@ -2,6 +2,7 @@ import csv
 import pymongo
 from datetime import datetime
 from collections import OrderedDict
+from analysis.court_department_categories import department_mapping
 
 
 mongo_uri = 'mongodb://localhost:27017'
@@ -15,7 +16,7 @@ db = client[database_name]
 collection = db[collection_name]
 
 # SETTINGS:
-year_group_size = 10
+year_group_size = 1
 
 def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=False):
     file_path = path + '/' + result_name + '.csv'
@@ -34,7 +35,6 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
                 csv_row[csv_key] = mongo_row[mongo_key]
 
             keyword_writer.writerow(csv_row)
-
 
 
 per_year = collection.aggregate([
@@ -129,3 +129,78 @@ key_mapping['relevant_rulings_only_kws'] = 'Total Number of Rulings referring to
 key_mapping['relevant_rulings'] = 'Total Number of Rulings referring to International Law (incl. SR-Numbers)'
 
 save_result(per_year, key_mapping, 'yearwise')
+
+
+
+per_year_and_sr_nb = collection.aggregate([
+    {
+        '$match': {
+            'date': {'$lt': date_limit}
+        }
+    },
+    {
+        '$unwind': {
+            'path': '$extracted_categories'
+        }
+    },
+    {
+        '$group': {
+            '_id': {
+                'year': {
+                    '$multiply': [
+                        {
+                            '$floor': {
+                                '$divide': [
+                                    {'$year': '$date'},
+                                    year_group_size
+                                ]
+                            }
+                        }
+                    ]
+                },
+                'category': '$extracted_categories'
+            },
+            'count': {
+                '$sum': 1
+            }
+        }
+    },
+    {
+        '$project': {
+            'year': '$_id.year',
+            'category': '$_id.category.category',
+            'category_level': '$_id.category.hierarchy_level',
+            'count': '$count'
+        }
+    },
+    {
+        '$sort': {
+            'year': 1,
+            'category_level': -1,
+            'category': 1
+        }
+    }
+])
+
+key_mapping_sr = OrderedDict()
+key_mapping_sr['year'] = 'Year'
+key_mapping_sr['category'] = 'Category'
+key_mapping_sr['count'] = 'Count'
+
+save_result(per_year_and_sr_nb, key_mapping_sr, 'year_and_sr_wise')
+
+
+
+
+
+
+# per_year_and_department = collection.find({'date': {'$lt': date_limit}})
+#
+# for ruling in per_year_and_department:
+#     for dep_en, deps in department_mapping.items():
+#         if ruling['department'] in deps:
+#             ruling['department'] = dep_en
+#
+# for x in per_year_and_department:
+#     print(x)
+#     break
