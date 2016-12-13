@@ -16,7 +16,7 @@ db = client[database_name]
 collection = db[collection_name]
 
 # SETTINGS:
-year_group_size = 1
+year_group_size = 10
 
 def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=False):
     file_path = path + '/' + result_name + '.csv'
@@ -32,7 +32,10 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
             # first, build csv row from mongo row
             csv_row = {}
             for mongo_key, csv_key in mongo_csv_key_mapping.items():
-                csv_row[csv_key] = mongo_row[mongo_key]
+                if mongo_key is 'year':
+                    csv_row[csv_key] = int(mongo_row[mongo_key])
+                else:
+                    csv_row[csv_key] = mongo_row[mongo_key]
 
             keyword_writer.writerow(csv_row)
 
@@ -155,8 +158,9 @@ per_year_and_sr_nb = collection.aggregate([
                                     year_group_size
                                 ]
                             }
-                        }
-                    ]
+                        },
+                        year_group_size
+                    ],
                 },
                 'category': '$extracted_categories'
             },
@@ -166,18 +170,18 @@ per_year_and_sr_nb = collection.aggregate([
         }
     },
     {
+        '$sort': {
+            '_id.category.category': 1,
+            '_id.category.hierarchy_level': 1,
+            '_id.year': 1
+        }
+    },
+    {
         '$project': {
             'year': '$_id.year',
             'category': '$_id.category.category',
             'category_level': '$_id.category.hierarchy_level',
             'count': '$count'
-        }
-    },
-    {
-        '$sort': {
-            'year': 1,
-            'category_level': -1,
-            'category': 1
         }
     }
 ])
