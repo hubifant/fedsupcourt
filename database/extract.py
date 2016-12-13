@@ -49,11 +49,7 @@ def extract_and_save_sr_numbers(mongo_uri='mongodb://localhost:27017',
             ruling['extracted_categories'] = extracted_categories
 
         # update the processed ruling
-        ruling_to_update = {
-            '_id.bge_nb': ruling['_id']['bge_nb'],
-            '_id.volume': ruling['_id']['volume'],
-            '_id.ruling_nb': ruling['_id']['ruling_nb']
-        }
+        ruling_to_update = {'_id': ruling['_id']}
         update_result = ruling_collection.replace_one(ruling_to_update, ruling)
 
         # raise error if the ruling was not updated.
