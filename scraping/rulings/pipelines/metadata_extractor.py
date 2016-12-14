@@ -207,7 +207,7 @@ class MetadataExtractorPipeline(object):
                         return {'extracted_department': extracted_department, 'tag': department_tag}
 
                 # if we arrive here, tag could not be identified
-                logging.warning('Could not identify the department tag for: \n"%s"' % extracted_department)
+                logging.error('Could not identify the department tag for: \n"%s"' % extracted_department)
                 return {'extracted_department': extracted_department}
 
         logging.warning('Could not extract responsible department. \nRuling: ' + url)
