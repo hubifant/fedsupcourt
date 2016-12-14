@@ -91,12 +91,24 @@ class MetadataExtractorPipeline(object):
     def process_item(self, item, spider):
         if 'title_of_judgement' in item:
             url = item['url']
-            item['date'] = self._extract_date(item['title_of_judgement'], url)
-            item['dossier_number'] = self._extract_dossier_number(item['title_of_judgement'], url)
-            item['department'] = self._extract_department(item['title_of_judgement'], url)
-            item['involved_parties'] = self._extract_involved_parties(item['title_of_judgement'], url)
-            item['language'] = self._extract_language(item['title_of_judgement'], url)
-            item['type_of_proceeding'] = self._extract_type_of_proceeding(item['title_of_judgement'], url)
+            extracted_date = self._extract_date(item['title_of_judgement'], url)
+            if extracted_date is not None:
+                item['date'] = extracted_date
+            extracted_dossier_number = self._extract_dossier_number(item['title_of_judgement'], url)
+            if extracted_dossier_number is not None:
+                item['dossier_number'] = extracted_dossier_number
+            extracted_department = self._extract_department(item['title_of_judgement'], url)
+            if extracted_department is not None:
+                item['department'] = extracted_department
+            extracted_parties = self._extract_involved_parties(item['title_of_judgement'], url)
+            if extracted_parties is not None:
+                item['involved_parties'] = extracted_parties
+            extracted_language = self._extract_language(item['title_of_judgement'], url)
+            if extracted_language is not None:
+                item['language'] = extracted_language
+            extracted_type_of_proceeding = self._extract_type_of_proceeding(item['title_of_judgement'], url)
+            if extracted_type_of_proceeding is not None:
+                item['type_of_proceeding'] = extracted_type_of_proceeding
         return item
 
     def _extract_date(self, title_of_judgement, url):
