@@ -335,7 +335,7 @@ case_metadata_extraction['parties'] = [
     {'claimant': 'Touring Club Svizra',
      'defendant': 'A. e cunparticipads sco er Vischnanca da Sumvitg e Departament da giustia, segirezza e sanadad dal chantun Grischun'}
 ]
-case_metadata_extraction['departments'] = [
+case_metadata_extraction['extracted_department'] = [
     'Schuldbetreibungs- und Konkurskammer',
     None,
     'I. öffentlich-rechtlichen Abteilung',
@@ -353,4 +353,23 @@ case_metadata_extraction['departments'] = [
     'I Camera civile',
 
     'I. partiziun da dretg public'
+]
+case_metadata_extraction['department_tag'] = [
+    'Debt Recovery and Bankruptcy',
+    None,
+    'Public Law',
+    None,
+    'Social Insurance Law',
+
+    'Private Law',
+    'Public Law',
+    'Private Law',
+
+    'Debt Recovery and Bankruptcy',
+    'Criminal Law',
+    'Private Law',
+    'Social Insurance Law',
+    'Private Law',
+
+    'Public Law'
 ]
