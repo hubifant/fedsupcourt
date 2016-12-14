@@ -39,7 +39,7 @@ class MetadataExtractorPipeline(object):
               r'(?= concernent il cas)'
     }
 
-    department_identification_patterns = {
+    department_tagging_patterns = {
         'Administrative Law': r'(?:(?:schätzungs|verwaltungs|rekurs)kommission'
                               r'|verwaltungsrechtlich'
                               r'|administratif'
@@ -201,14 +201,14 @@ class MetadataExtractorPipeline(object):
             if department_match is not None:
                 extracted_department = department_match.group()
 
-                # try to identify the department category
-                for department_tag, identification_pattern in self.department_identification_patterns.items():
-                    if re.search(identification_pattern, extracted_department, re.IGNORECASE) is not None:
+                # try to tag the extracted department
+                for department_tag, tagging_pattern in self.department_tagging_patterns.items():
+                    if re.search(tagging_pattern, extracted_department, re.IGNORECASE) is not None:
                         return {'extracted_department': extracted_department, 'tag': department_tag}
 
-                # if we arrive here, tag could not be identified
-                logging.error('Could not identify the department tag for: \n"%s"' % extracted_department)
-                return {'extracted_department': extracted_department}
+                # if we arrive here, department could not be tagged. This is serious as tagging pattern must be adapted.
+                logging.error('Could not tag the department "%s". The tagging pattern must be adapted!'
+                              % extracted_department)
 
         logging.warning('Could not extract responsible department. \nRuling: ' + url)
 
