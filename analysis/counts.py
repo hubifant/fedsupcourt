@@ -248,13 +248,78 @@ save_result(sr_nb_counts, key_mapping_sr, 'sr_number_count')
 
 
 
-# per_year_and_department = collection.find({'date': {'$lt': date_limit}})
-#
-# for ruling in per_year_and_department:
-#     for dep_en, deps in department_mapping.items():
-#         if ruling['department'] in deps:
-#             ruling['department'] = dep_en
-#
-# for x in per_year_and_department:
-#     print(x)
-#     break
+per_year_and_department = collection.aggregate([
+    {
+        '$match': {
+            'date': {'$lt': date_limit},
+            'department': {'$exists': 1}
+        }
+    },
+    {
+        '$project': {
+            'date': '$date',
+            'department': '$department.tag',
+            'international_treaties.clear': '$international_treaties.clear',
+            'international_customary_law.clear': '$international_customary_law.clear',
+            'international_law_in_general.clear': '$international_law_in_general.clear',
+            'extracted_laws': '$extracted_laws'
+        }
+    },
+    {
+        '$group': {
+            '_id': {
+                'year': {
+                    '$multiply': [
+                        {
+                            '$floor': {
+                                '$divide': [
+                                    {'$year': '$date'},
+                                    year_group_size
+                                ]
+                            }
+                        },
+                        year_group_size
+                    ],
+                },
+                'department': '$department'
+            },
+            'total': {
+                '$sum': 1
+            },
+            'international_law': {
+                '$sum': {
+                    '$cond': [
+                        {
+                            "$or": [
+                                {"$ifNull": ["$international_treaties.clear", False]},
+                                {"$ifNull": ["$international_customary_law.clear", False]},
+                                {"$ifNull": ["$international_law_in_general.clear", False]},
+                                {"$ifNull": ["$extracted_laws", False]}
+                            ]
+                        }, 1, 0
+                    ]
+                }
+            }
+        }
+    },
+    {
+        '$sort': {
+            '_id.year': 1,
+            'international_law': -1
+        }
+    },
+    {
+        '$project': {
+            'year': '$_id.year',
+            'department': '$_id.department',
+            'total': '$total',
+            'international_law': '$international_law'
+        }
+    }
+])
+key_mapping_dep = OrderedDict()
+key_mapping_dep['year'] = 'Year'
+key_mapping_dep['department'] = 'Department'
+key_mapping_dep['total'] = 'Total Number of Decisions'
+key_mapping_dep['international_law'] = 'Number of Decisions referring to International Law'
+save_result(per_year_and_department, key_mapping_dep, 'counts_per_year_and_department')

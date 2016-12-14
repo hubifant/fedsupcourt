@@ -1,5 +1,5 @@
 
-
+# todo: create a unittest from this list (check that every list entry is tagged correctly)
 department_mapping = {
     'Administrative Law': [
         'Eidg. Schätzungskommission',
