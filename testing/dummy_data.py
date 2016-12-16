@@ -135,6 +135,7 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     Ablösungsabkommen
     accord avec l'allemagne
     accordi italo-svizzeri
+    diritto internazionale convenzionale
 
 
     staaten abkommen
@@ -178,7 +179,7 @@ case_completeness_int_treaties['expected_output']['clear'] = [
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages',
     'Ablösungsabkommen', "accord avec l'allemagne", "accordi italo-svizzeri", "Convenzione tra la Svizzera e l'Italia",
-    'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens'
+    'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens', 'diritto internazionale convenzionale'
 ]
 case_completeness_int_treaties['expected_output']['broad'] = [
     'Übereinkommen', 'Abkommen', 'Pakt', 'Pakte', 'Pakts', 'Traité', 'Traités', 'Accord', 'Convention', 'Conventions',
@@ -278,6 +279,9 @@ case_completeness_int_law_in_general['input_item']['core_issue'] = '''
     Diritti internazionali
     Diritto pubblico internazionale
     Diritto privato internazionale
+
+    # following cases should not be extracted...
+    Diritto internazionale convenzionale
 '''
 case_completeness_int_law_in_general['expected_output']['clear'] = [
     'Völkerrecht', 'Völkerrechts', 'Völkerrechtlich', 'Völkerrechtliche', 'Völkerrechtlichen', 'Völkerrechtliches',

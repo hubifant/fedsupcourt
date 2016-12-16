@@ -152,7 +152,8 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
                 'broad': r'(?:accord|convention|contrat|pacte|traité)(?:s|es)?' + self.pattern_suffix_fr
             },
             'it': {
-                'clear': r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
+                'clear': r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*'
+                         r'|diritto internazionale convenzionale',
                 'broad': r'(?:convenzion[ei]|(?:accord|patt|trattat)[oi])' + self.pattern_suffix_it
             }
         }
@@ -215,7 +216,9 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
                 'broad': r'droit des gens'
             },
             'it': {
-                'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?internazional[ei]'
+                'clear': r'(?:diritt[oi] (?:(?:pubblico|privato) )?'
+                         r'(?!internazionale convenzionale)'            # exception
+                         r'internazional[ei]'
                          + self.pattern_publication_omission + r')'
                          + self.pattern_suffix_it
             },
