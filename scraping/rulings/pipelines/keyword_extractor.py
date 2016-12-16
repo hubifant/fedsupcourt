@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from .int_treaties_kw_exceptions import int_treaties_broad_to_clear
 
 
 class _KeywordExtractorPipeline:
@@ -46,14 +47,15 @@ class _KeywordExtractorPipeline:
 
     pattern_publication_omission = r'(?! \d+| [ivx]+\b| vol\b)'
 
-
-    def __init__(self, keyword_type, keyword_patterns):
+    # todo: correct dirty hack (better regex instead of exception list)
+    def __init__(self, keyword_type, keyword_patterns, broad_to_clear={'de': [], 'fr':[], 'it': []}):
         """
         :param keyword_patterns: dict of format {'<LANGUAGE>': [r'<PATTERN_1>', r'<PATTERN_2>']}
         :type keyword_patterns: dict
         """
         self.keyword_patterns = keyword_patterns
         self.keyword_type = keyword_type
+        self.broad_to_clear = broad_to_clear
 
     def process_item(self, ruling, spider):
 
@@ -76,8 +78,13 @@ class _KeywordExtractorPipeline:
 
                         for broad_keyword in extracted_broad:
                             if 'clear' in patterns:
-                                if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
-                                    extracted_keywords['broad'].append(broad_keyword)
+                                # move some broad keywords to the 'clear' list.
+                                # todo: this is a dirty hack solution!
+                                if broad_keyword.lower() in self.broad_to_clear[pattern_language]:
+                                    extracted_keywords['clear'].append(broad_keyword)
+                                else:
+                                    if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
+                                        extracted_keywords['broad'].append(broad_keyword)
                             else:
                                 extracted_keywords['broad'].append(broad_keyword)
 
@@ -130,12 +137,19 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_treaties = {
             'de': {
-                'clear': r'(?:international|völkerrecht|staat)\w*[\s\-]?(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*',
-                'broad': r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen)\w*'
+                'clear': r'(?!staaten '                                           # exceptions...
+                         r'|staatliche[nrs]? (?:abkommens?|vertrag(?:srecht)?\b'
+                         r'|verträge|übereinkommens?)'
+                         r'|staatsgebiet)'
+                         r'(?:(?:international|völkerrecht|staat)'                # first word to match
+                         r'\w*[\s\-]?'                                            # end of first word, space or '-'
+                         r'(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*)',    # second word
+                'broad': r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen|vertr[aä]g)\w*'
             },
             'fr': {
-                'clear': r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
-                'broad': r'(?:accord|convention|pacte|traité)(?:s|es)?' + self.pattern_suffix_fr
+                'clear': r'(?!contrats? internationa(?:l|ux))'  # exceptions
+                         r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*',
+                'broad': r'(?:accord|convention|contrat|pacte|traité)(?:s|es)?' + self.pattern_suffix_fr
             },
             'it': {
                 'clear': r'(?:accord[oi]|convenzion|patt|trattat)\w*[\s\-](?:internazional|di stato)\w*',
@@ -143,7 +157,8 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
             }
         }
 
-        super(InternationalTreatyExtractor, self).__init__('international_treaties', patterns_international_treaties)
+        super(InternationalTreatyExtractor, self).__init__('international_treaties', patterns_international_treaties,
+                                                           int_treaties_broad_to_clear)
 
 
 class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):

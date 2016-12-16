@@ -84,6 +84,7 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     Pakt
     Pakte
     Pakts
+
     Traité international
     Traités internationaux
     Traité
@@ -129,6 +130,28 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     convenzione sulla doppia imposizione
     pacte entre la Suisse et la France
     patto di non
+
+
+    Ablösungsabkommen
+    accord avec l'allemagne
+    accordi italo-svizzeri
+
+
+    staaten abkommen
+    staaten vertragliche
+    staaten vertragspartei
+    staaten übereinkommen
+    staatliche abkommen
+    staatlichen abkommen
+    staatlichen abkommens
+    staatlichen vertragsrecht
+    staatlichen verträgen
+    staatlichen Übereinkommen
+    staatlichen Übereinkommens
+    staatlicher abkommen
+    staatlicher vertrag
+    staatliches abkommen
+    staatsgebiet verträge
 '''
 case_completeness_int_treaties['expected_output']['clear'] = [
     'Völkerrechtliches Abkommen', 'Völkerrechtliche Abkommen', 'Völkerrechtlichen Abkommen',
@@ -148,20 +171,26 @@ case_completeness_int_treaties['expected_output']['clear'] = [
     'Völkerrechtlichen Pakte', 'Völkerrechtlicher Pakte',
     'Traité international', 'Traités internationaux', 'Accord international',
     'Accords internationaux', 'Convention internationale', 'Conventions internationales',
-    'Contrat international', 'Contrats internationaux',
     'Pacte international', 'Pactes internationaux', 'Trattato internazionale',
     'Trattati internazionali', 'Trattato di stato', 'Trattati di stato', 'Convenzione internazionale',
     'Convenzioni internazionali', 'Accordo internazionale', 'Accordi internazionali', 'Patto internazionale',
     'Patti internazionali', 'Internationales Vertragsrecht', 'Internationale Vertragsrecht',
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
-    'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages'
+    'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages',
+    'Ablösungsabkommen', "accord avec l'allemagne", "accordi italo-svizzeri", "Convenzione tra la Svizzera e l'Italia",
+    'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens'
 ]
 case_completeness_int_treaties['expected_output']['broad'] = [
     'Übereinkommen', 'Abkommen', 'Pakt', 'Pakte', 'Pakts', 'Traité', 'Traités', 'Accord', 'Convention', 'Conventions',
-    'Pacte', 'Patto', 'Patti', 'Doppelbesteuerungsabkommen',
-    'Doppelbesteuerungsabkommens', 'pacte entre la Suisse et la France', 'accord pour la double crème',
+    'Contrat international', 'Contrats internationaux',
+    'Pacte', 'Patto', 'Patti', 'pacte entre la Suisse et la France', 'accord pour la double crème',
     'convenzione sulla doppia imposizione',
-    'patto di non', "Convenzione tra la Svizzera e l'Italia"
+    'patto di non',
+
+    'staaten abkommen', 'staaten vertragliche', 'staaten vertragspartei', 'staaten übereinkommen',
+    'staatliche abkommen', 'staatlichen abkommen', 'staatlichen abkommens', 'staatlichen vertragsrecht',
+    'staatlichen verträgen', 'staatlichen Übereinkommen', 'staatlichen Übereinkommens', 'staatlicher abkommen',
+    'staatlicher vertrag', 'staatliches abkommen', 'staatsgebiet verträge'
 ]
 
 # keyword_completeness: for testing if all expected keywords related with international customary law are extracted.
