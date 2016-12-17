@@ -16,7 +16,7 @@ db = client[database_name]
 collection = db[collection_name]
 
 # SETTINGS:
-year_group_size = 10
+year_group_size = 5
 
 def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=False):
     file_path = path + '/' + result_name + '.csv'
@@ -303,12 +303,6 @@ per_year_and_department = collection.aggregate([
         }
     },
     {
-        '$sort': {
-            '_id.year': 1,
-            'international_law': -1
-        }
-    },
-    {
         '$project': {
             'year': '$_id.year',
             'department': {
@@ -374,7 +368,14 @@ per_year_and_department = collection.aggregate([
                 }
             },
             'total': '$total',
-            'international_law': '$international_law'
+            'international_law': '$international_law',
+            'relevant_pcnt': {'$divide': ['$international_law', '$total']}
+        }
+    },
+    {
+        '$sort': {
+            'year': 1,
+            'relevant_pcnt': -1
         }
     }
 ])
@@ -383,4 +384,5 @@ key_mapping_dep['year'] = 'Year'
 key_mapping_dep['department'] = 'Department'
 key_mapping_dep['total'] = 'Total Number of Decisions'
 key_mapping_dep['international_law'] = 'Number of Decisions referring to International Law'
+key_mapping_dep['relevant_pcnt'] = 'Share of Decisions referring to International Law'
 save_result(per_year_and_department, key_mapping_dep, 'counts_per_year_and_department')
