@@ -251,14 +251,14 @@ save_result(sr_nb_counts, key_mapping_sr, 'sr_number_count')
 per_year_and_department = collection.aggregate([
     {
         '$match': {
-            'date': {'$lt': date_limit},
-            'department': {'$exists': 1}
+            'date': {'$lt': date_limit}
         }
     },
     {
         '$project': {
             'date': '$date',
             'department': '$department.tag',
+            'volume': '$ruling_id.volume',
             'international_treaties.clear': '$international_treaties.clear',
             'international_customary_law.clear': '$international_customary_law.clear',
             'international_law_in_general.clear': '$international_law_in_general.clear',
@@ -281,7 +281,7 @@ per_year_and_department = collection.aggregate([
                         year_group_size
                     ],
                 },
-                'department': '$department'
+                'volume': '$volume'
             },
             'total': {
                 '$sum': 1
@@ -311,7 +311,68 @@ per_year_and_department = collection.aggregate([
     {
         '$project': {
             'year': '$_id.year',
-            'department': '$_id.department',
+            'department': {
+                '$cond': {
+                    'if': {'$lt': ['$_id.year', 1995]},
+                    'then': {
+                        '$cond': {
+                            'if': {'$eq': ['$_id.volume', 'IA']},
+                            'then': 'Constitutional Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {'$eq': ['$_id.volume', 'IB']},
+                                    'then': 'Administrative  law  and  international public law',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$_id.volume', 'II']},
+                                            'then': 'Private Law',
+                                            'else': {
+                                                '$cond': {
+                                                    'if': {'$eq': ['$_id.volume', 'III']},
+                                                    'then': 'Dept Recovery and Bankruptcy',
+                                                    'else':{
+                                                        '$cond': {
+                                                            'if': {'$eq': ['$_id.volume', 'IV']},
+                                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                                            'else': 'Social Insurance Law'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ,
+                    'else': {
+                        '$cond': {
+                            'if': {'$eq': ['$_id.volume', 'I']},
+                            'then': 'Constitutional Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {'$eq': ['$_id.volume', 'II']},
+                                    'then': 'Administrative  law  and  international public law',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$_id.volume', 'III']},
+                                            'then': 'Private Law, Debt Recovery and Bankruptcy',
+                                            'else': {
+                                                '$cond': {
+                                                    'if': {'$eq': ['$_id.volume', 'IV']},
+                                                        'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                                        'else': 'Social Insurance Law'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             'total': '$total',
             'international_law': '$international_law'
         }
