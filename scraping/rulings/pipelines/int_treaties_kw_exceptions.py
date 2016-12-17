@@ -377,7 +377,6 @@ int_treaties_broad_to_clear['de'] = [
 'madrider abkommens',
 'markenabkommen',
 'markenabkommens',
-'menschenrechtsübereinkommen',
 'minderjährigenschutzabkommen',
 'minderjährigenschutzabkommens',
 'minsker abkommen',

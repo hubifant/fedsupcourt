@@ -151,7 +151,9 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
             },
             'fr': {
                 'clear': r'(?!contrats? internationa(?:l|ux))'  # exceptions
-                         r'(?:accord|contrat|convention|pacte|trait[ée])\w*[\s\-]internationa\w*'
+                         r'(?:accord|contrat|convention|pacte|trait[ée])\w*'
+                         r'[\s\-]'
+                         r'internationa\w*'                                 # international/internationals/internationaux
                          r'|droit international (?:privé )?conventionnel',  # 'positive' exception
                 'broad': r'(?:accord|convention|contrat|pacte|traité)(?:s|es)?' + self.pattern_suffix_fr
             },
