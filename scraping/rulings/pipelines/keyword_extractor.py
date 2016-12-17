@@ -177,7 +177,7 @@ class InternationalCustomaryLawExtractor(_KeywordExtractorPipeline):
                 'broad': r'(?:gewohnheitsrechtlich\w*(?:\s\w+)?)'
             },
             'fr': {
-                'clear': r'(?:(?:droit )?(?:international coutumier|coutumi?er?(?: internationale?)))'
+                'clear': r'(?:(?:droit )?(?:international (?:public )?coutumier|coutumi?er?(?: internationale?)))'
                          + self.pattern_publication_omission,
                 'broad': r'(?:(?:droit )?(?:coutumi?er?))'
                          + self.pattern_publication_omission
