@@ -206,11 +206,18 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_law_in_general = {
             'de': {
-                'clear': r'(?:(?:international|völker)\w*[\s\-]?\w*recht\w*)' + self.pattern_publication_omission
+                'clear': r'(?!völkervertrag|völkerrechtsvertr'  # exceptions
+                         r'|\w+ (?:gewohnheitsrecht|menschenrechts(?:konvention|pakte)|'
+                         r'rechtshilfe(?:abkommen|übereinkommen)|vertragsrecht))'
+                         r'(?:(?:international|völker)\w*'
+                         r'[\s\-]?'
+                         r'\w*recht\w*)' + self.pattern_publication_omission
             },
             'fr': {
-                'clear': r'(?:droits? (?:privé |public )?internationa(?:l|ux)'
-                         + r'(?: privé| public)?)'
+                'clear': r'(?:droits? (?:privé |public )?'
+                         r'(?!international\w*(?: \w+)? (?:conventionnel|coutumier))'  # exceptions
+                         r'internationa(?:l|ux)'
+                         r'(?: privé| public)?)'
                          + self.pattern_publication_omission
                          + self.pattern_suffix_fr,
                 'broad': r'droit des gens'

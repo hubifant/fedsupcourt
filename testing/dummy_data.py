@@ -282,6 +282,17 @@ case_completeness_int_law_in_general['input_item']['core_issue'] = '''
 
     # following cases should not be extracted...
     Diritto internazionale convenzionale
+    droit international conventionnel
+    droit international coutumier
+    droit international privé conventionnel
+    droit international public coutumier
+    internationalen gewohnheitsrechts
+    internationalen menschenrechtskonventionen
+    internationalen menschenrechtspakte
+    internationalen vertragsrechts
+    völkerrechtlichen gewohnheitsrecht
+    völkerrechtsverträgen
+    völkervertragsrechts
 '''
 case_completeness_int_law_in_general['expected_output']['clear'] = [
     'Völkerrecht', 'Völkerrechts', 'Völkerrechtlich', 'Völkerrechtliche', 'Völkerrechtlichen', 'Völkerrechtliches',
