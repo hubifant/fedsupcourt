@@ -9,14 +9,15 @@ mongo_uri = 'mongodb://localhost:27017'
 database_name = 'fedsupcourt'
 collection_name = 'rulings'
 
-date_limit = datetime.strptime('1.10.2016', '%d.%m.%Y')
+date_limit = datetime.strptime('1.7.2016', '%d.%m.%Y')
 
 client = pymongo.MongoClient(mongo_uri)
 db = client[database_name]
 collection = db[collection_name]
 
 # SETTINGS:
-year_group_size = 5
+first_year = 1874
+year_group_size = 1
 
 def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=False):
     file_path = path + '/' + result_name + '.csv'
@@ -32,7 +33,7 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
             # first, build csv row from mongo row
             csv_row = {}
             for mongo_key, csv_key in mongo_csv_key_mapping.items():
-                if mongo_key is 'year':
+                if csv_key is 'year':
                     csv_row[csv_key] = int(mongo_row[mongo_key])
                 else:
                     csv_row[csv_key] = mongo_row[mongo_key]
@@ -53,7 +54,7 @@ per_year = collection.aggregate([
                     {
                         '$floor': {
                             '$divide': [
-                                {'$year': '$date'},
+                                    {'$add': ['$ruling_id.bge_nb', first_year]},
                                 year_group_size
                             ]
                         }
@@ -131,7 +132,7 @@ key_mapping['sr_nb_extracted'] = 'SR-Number extracted'
 key_mapping['relevant_rulings_only_kws'] = 'Total Number of Rulings referring to International Law'
 key_mapping['relevant_rulings'] = 'Total Number of Rulings referring to International Law (incl. SR-Numbers)'
 
-save_result(per_year, key_mapping, 'yearwise')
+save_result(per_year, key_mapping, 'counts_per_year')
 
 
 
@@ -154,7 +155,7 @@ per_year_and_sr_nb = collection.aggregate([
                         {
                             '$floor': {
                                 '$divide': [
-                                    {'$year': '$date'},
+                                    {'$add': ['$ruling_id.bge_nb', first_year]},
                                     year_group_size
                                 ]
                             }
@@ -211,7 +212,7 @@ sr_nb_counts = collection.aggregate([
                         {
                             '$floor': {
                                 '$divide': [
-                                    {'$year': '$date'},
+                                    {'$add': ['$ruling_id.bge_nb', first_year]},
                                     year_group_size
                                 ]
                             }
@@ -273,7 +274,7 @@ per_year_and_department = collection.aggregate([
                         {
                             '$floor': {
                                 '$divide': [
-                                    {'$year': '$date'},
+                                    {'$add': ['$ruling_id.bge_nb', first_year]},
                                     year_group_size
                                 ]
                             }

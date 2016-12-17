@@ -2,6 +2,7 @@
 
 import csv
 import pymongo
+from datetime import datetime
 
 
 mongo_uri = 'mongodb://localhost:27017'
@@ -11,6 +12,8 @@ collection_name = 'rulings'
 client = pymongo.MongoClient(mongo_uri)
 db = client[database_name]
 collection = db[collection_name]
+
+date_limit = datetime.strptime('1.7.2016', '%d.%m.%Y')
 
 
 def save_keyword_list(keyword_type, path='.', verbose=False):
@@ -53,12 +56,11 @@ save_keyword_list('international_customary_law.broad')
 save_keyword_list('international_customary_law.clear')
 # print(len(international_treaties))
 
-
-count_containing_field = lambda keyword_type: collection.find({keyword_type: {'$exists': 1}}).count()
+count_containing_field = lambda keyword_type: collection.find({'date': {'$lt': date_limit}, keyword_type: {'$exists': 1}}).count()
 count_language = lambda language: collection.find({'language': language}).count()
 
 print('Keyword Counts: ')
-print('Total Number of Rulings:              %5d' % collection.count())
+print('Total Number of Rulings:              %5d' % collection.find({'date': {'$lt': date_limit}}).count())
 print('International Treaties (clear):       %5d' % count_containing_field('international_treaties.clear'))
 print('International Treaties (broad):       %5d' % count_containing_field('international_treaties.broad'))
 print('International Customary Law (clear):  %5d' % count_containing_field('international_customary_law.clear'))
