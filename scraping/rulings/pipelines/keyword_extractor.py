@@ -210,7 +210,7 @@ class GeneralInternationalLawExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_law_in_general = {
             'de': {
-                'clear': r'(?!völkervertrag|völkerrechtsvertr'  # exceptions
+                'clear': r'(?!völkervertrag|völkerrechtsvertr|völkergewohnheitsrecht'  # exceptions
                          r'|\w+ (?:gewohnheitsrecht|menschenrechts(?:konvention|pakte)|'
                          r'rechtshilfe(?:abkommen|übereinkommen)|vertragsrecht))'
                          r'(?:(?:international|völker)\w*'

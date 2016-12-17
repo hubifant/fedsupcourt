@@ -307,6 +307,7 @@ case_completeness_int_law_in_general['input_item']['core_issue'] = '''
     völkerrechtlichen gewohnheitsrecht
     völkerrechtsverträgen
     völkervertragsrechts
+    Völkergewohnheitsrecht
 '''
 case_completeness_int_law_in_general['expected_output']['clear'] = [
     'Völkerrecht', 'Völkerrechts', 'Völkerrechtlich', 'Völkerrechtliche', 'Völkerrechtlichen', 'Völkerrechtliches',
