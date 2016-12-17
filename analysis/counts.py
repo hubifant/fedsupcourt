@@ -144,7 +144,7 @@ per_year_and_sr_nb = collection.aggregate([
     },
     {
         '$unwind': {
-            'path': '$extracted_categories'
+            'path': '$extracted_laws'
         }
     },
     {
@@ -163,7 +163,7 @@ per_year_and_sr_nb = collection.aggregate([
                         year_group_size
                     ],
                 },
-                'category': '$extracted_categories'
+                'sr_number': '$extracted_laws.law'
             },
             'count': {
                 '$sum': 1
@@ -171,26 +171,24 @@ per_year_and_sr_nb = collection.aggregate([
         }
     },
     {
-        '$sort': {
-            '_id.category.category': 1,
-            '_id.category.hierarchy_level': 1,
-            '_id.year': 1
+        '$project': {
+            'year': '$_id.year',
+            'sr_number': '$_id.sr_number',
+            'count': '$count'
         }
     },
     {
-        '$project': {
-            'year': '$_id.year',
-            'category': '$_id.category.category',
-            'category_level': '$_id.category.hierarchy_level',
-            'count': '$count'
+        '$sort': {
+            '_id.year': 1,
+            '_id.sr_number': 1
         }
     }
 ])
 key_mapping_yr_sr = OrderedDict()
 key_mapping_yr_sr['year'] = 'Year'
-key_mapping_yr_sr['category'] = 'Category'
+key_mapping_yr_sr['sr_number'] = 'Law (SR-Number)'
 key_mapping_yr_sr['count'] = 'Count'
-save_result(per_year_and_sr_nb, key_mapping_yr_sr, 'year_and_sr_wise')
+save_result(per_year_and_sr_nb, key_mapping_yr_sr, 'counts_per_year_and_sr_number')
 
 
 sr_nb_counts = collection.aggregate([
@@ -263,7 +261,8 @@ per_year_and_department = collection.aggregate([
             'international_treaties.clear': '$international_treaties.clear',
             'international_customary_law.clear': '$international_customary_law.clear',
             'international_law_in_general.clear': '$international_law_in_general.clear',
-            'extracted_laws': '$extracted_laws'
+            'extracted_laws': '$extracted_laws',
+            'bge_nb': '$ruling_id.bge_nb'
         }
     },
     {
@@ -274,7 +273,7 @@ per_year_and_department = collection.aggregate([
                         {
                             '$floor': {
                                 '$divide': [
-                                    {'$add': ['$ruling_id.bge_nb', first_year]},
+                                    {'$add': ['$bge_nb', first_year]},
                                     year_group_size
                                 ]
                             }
@@ -299,6 +298,16 @@ per_year_and_department = collection.aggregate([
                             ]
                         }, 1, 0
                     ]
+                }
+            },
+            'int_treaty_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$international_treaties.clear", False]}, 1, 0]
+                }
+            },
+            'int_cust_law_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$international_customary_law.clear", False]}, 1, 0]
                 }
             }
         }
@@ -370,7 +379,9 @@ per_year_and_department = collection.aggregate([
             },
             'total': '$total',
             'international_law': '$international_law',
-            'relevant_pcnt': {'$divide': ['$international_law', '$total']}
+            'relevant_pcnt': {'$divide': ['$international_law', '$total']},
+            'int_treaty_extracted': '$int_treaty_extracted',
+            'int_cust_law_extracted': '$int_cust_law_extracted'
         }
     },
     {
@@ -386,4 +397,6 @@ key_mapping_dep['department'] = 'Department'
 key_mapping_dep['total'] = 'Total Number of Decisions'
 key_mapping_dep['international_law'] = 'Number of Decisions referring to International Law'
 key_mapping_dep['relevant_pcnt'] = 'Share of Decisions referring to International Law'
+key_mapping_dep['int_treaty_extracted'] = 'Rulings referring to International Treaties'
+key_mapping_dep['int_cust_law_extracted'] = 'Rulings referring to International Customary Law'
 save_result(per_year_and_department, key_mapping_dep, 'counts_per_year_and_department')
