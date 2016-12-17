@@ -153,6 +153,9 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     staatlicher vertrag
     staatliches abkommen
     staatsgebiet verträge
+
+    droit international conventionnel
+    droit international privé conventionnel
 '''
 case_completeness_int_treaties['expected_output']['clear'] = [
     'Völkerrechtliches Abkommen', 'Völkerrechtliche Abkommen', 'Völkerrechtlichen Abkommen',
@@ -179,7 +182,8 @@ case_completeness_int_treaties['expected_output']['clear'] = [
     'Internationalen Vertragesrecht', 'Internationalen Vertragsrechts', 'Internationalem Vertragsrecht',
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages',
     'Ablösungsabkommen', "accord avec l'allemagne", "accordi italo-svizzeri", "Convenzione tra la Svizzera e l'Italia",
-    'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens', 'diritto internazionale convenzionale'
+    'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens', 'diritto internazionale convenzionale',
+    'droit international conventionnel', 'droit international privé conventionnel'
 ]
 case_completeness_int_treaties['expected_output']['broad'] = [
     'Übereinkommen', 'Abkommen', 'Pakt', 'Pakte', 'Pakts', 'Traité', 'Traités', 'Accord', 'Convention', 'Conventions',
@@ -315,6 +319,7 @@ Droit international vol
 Droit international xxxiv
 Diritto internazionale 1981
 accordo 13
+Internationales Recht XIV
 '''
 
 
