@@ -191,7 +191,7 @@ key_mapping_yr_sr['count'] = 'Count'
 save_result(per_year_and_sr_nb, key_mapping_yr_sr, 'counts_per_year_and_sr_number')
 
 
-sr_nb_counts = collection.aggregate([
+per_year_dep_and_sr_nb = collection.aggregate([
     {
         '$match': {
             'date': {'$lt': date_limit}
@@ -218,7 +218,8 @@ sr_nb_counts = collection.aggregate([
                         year_group_size
                     ],
                 },
-                'law': '$extracted_laws'
+                'sr_number': '$extracted_laws.law',
+                'volume': '$ruling_id.volume'
             },
             'count': {
                 '$sum': 1
@@ -226,24 +227,87 @@ sr_nb_counts = collection.aggregate([
         }
     },
     {
-        '$sort': {
-            'count': -1,
-            '_id.year': 1
+        '$project': {
+            'year': '$_id.year',
+            'sr_number': '$_id.sr_number',
+            'count': '$count',
+            'department': {
+                '$cond': {
+                    'if': {'$lt': ['$_id.year', 1995]},
+                    'then': {
+                        '$cond': {
+                            'if': {'$eq': ['$_id.volume', 'IA']},
+                            'then': 'Constitutional Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {'$eq': ['$_id.volume', 'IB']},
+                                    'then': 'Administrative  law  and  international public law',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$_id.volume', 'II']},
+                                            'then': 'Private Law',
+                                            'else': {
+                                                '$cond': {
+                                                    'if': {'$eq': ['$_id.volume', 'III']},
+                                                    'then': 'Dept Recovery and Bankruptcy',
+                                                    'else':{
+                                                        '$cond': {
+                                                            'if': {'$eq': ['$_id.volume', 'IV']},
+                                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                                            'else': 'Social Insurance Law'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'else': {
+                        '$cond': {
+                            'if': {'$eq': ['$_id.volume', 'I']},
+                            'then': 'Constitutional Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {'$eq': ['$_id.volume', 'II']},
+                                    'then': 'Administrative  law  and  international public law',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$_id.volume', 'III']},
+                                            'then': 'Private Law, Debt Recovery and Bankruptcy',
+                                            'else': {
+                                                '$cond': {
+                                                    'if': {'$eq': ['$_id.volume', 'IV']},
+                                                        'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                                        'else': 'Social Insurance Law'
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     {
-        '$project': {
-            'year': '$_id.year',
-            'law': '$_id.law.law',
-            'count': '$count'
+        '$sort': {
+            '_id.year': 1,
+            'department': 1,
+            '_id.sr_number': 1
         }
     }
 ])
-key_mapping_sr = OrderedDict()
-key_mapping_sr['year'] = 'Year'
-key_mapping_sr['law'] = 'Law'
-key_mapping_sr['count'] = 'Count'
-save_result(sr_nb_counts, key_mapping_sr, 'sr_number_count')
+key_mapping_yr_dep_sr = OrderedDict()
+key_mapping_yr_dep_sr['year'] = 'Year'
+key_mapping_yr_dep_sr['department'] = 'Department'
+key_mapping_yr_dep_sr['sr_number'] = 'Law (SR-Number)'
+key_mapping_yr_dep_sr['count'] = 'Count'
+save_result(per_year_dep_and_sr_nb, key_mapping_yr_dep_sr, 'counts_per_year_dep_and_sr_number')
 
 
 
