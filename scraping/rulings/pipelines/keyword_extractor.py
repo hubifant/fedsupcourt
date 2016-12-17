@@ -81,7 +81,8 @@ class _KeywordExtractorPipeline:
                                 # move some broad keywords to the 'clear' list.
                                 # todo: this is a dirty hack solution!
                                 if broad_keyword.lower() in self.broad_to_clear[pattern_language]:
-                                    extracted_keywords['clear'].append(broad_keyword)
+                                    if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
+                                        extracted_keywords['clear'].append(broad_keyword)
                                 else:
                                     if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
                                         extracted_keywords['broad'].append(broad_keyword)
@@ -137,13 +138,15 @@ class InternationalTreatyExtractor(_KeywordExtractorPipeline):
     def __init__(self):
         patterns_international_treaties = {
             'de': {
-                'clear': r'(?!staaten '                                           # exceptions...
+                'clear': r'(?!staaten '                                               # exceptions...
                          r'|staatliche[nrs]? (?:abkommens?|vertrag(?:srecht)?\b'
                          r'|verträge|übereinkommens?)'
                          r'|staatsgebiet)'
-                         r'(?:(?:international|völkerrecht|staat)'                # first word to match
-                         r'\w*[\s\-]?'                                            # end of first word, space or '-'
-                         r'(?:abkommen|p[aä]kt|übereinkommen|vertr[aä]g)\w*)',    # second word
+                         r'(?:(?:international|menschenrechts|rechtshilfe|völkerrecht|staat)\w*'  # first word to match
+                         r'[\s\-]?'                                                   # space or '-'
+                         r'(?:menschenrechts|rechtshilfe)?'                           # optional words
+                         r'(?:abkommen|konvention|p[aä]kt|übereinkommen|vertr[aä]g)'  # second word
+                         r'|völkervertrag)\w*',                                       # (positive) exception
                 'broad': r'(?:\w[^\s\(\)\,\.]+\s?)?(?:abkommen|pakt|übereinkommen|vertr[aä]g)\w*'
             },
             'fr': {

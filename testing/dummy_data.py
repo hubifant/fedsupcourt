@@ -136,6 +136,12 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     accord avec l'allemagne
     accordi italo-svizzeri
     diritto internazionale convenzionale
+    internationalen menschenrechtskonventionen
+    internationalen menschenrechtspakte
+    Menschenrechtspakten
+    internationalen rechtshilfeabkommens
+    völkervertragsrechtlich
+    Rechtshilfe-Übereinkommen
 
 
     staaten abkommen
@@ -183,7 +189,9 @@ case_completeness_int_treaties['expected_output']['clear'] = [
     'Staatsvertrag', 'Staatsverträge', 'Staatsvertrags', 'Staatsvertrages',
     'Ablösungsabkommen', "accord avec l'allemagne", "accordi italo-svizzeri", "Convenzione tra la Svizzera e l'Italia",
     'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens', 'diritto internazionale convenzionale',
-    'droit international conventionnel', 'droit international privé conventionnel'
+    'droit international conventionnel', 'droit international privé conventionnel',
+    'internationalen menschenrechtskonventionen', 'internationalen menschenrechtspakte',
+    'internationalen rechtshilfeabkommens', 'völkervertragsrechtlich', 'Menschenrechtspakten', 'Rechtshilfe-Übereinkommen'
 ]
 case_completeness_int_treaties['expected_output']['broad'] = [
     'Übereinkommen', 'Abkommen', 'Pakt', 'Pakte', 'Pakts', 'Traité', 'Traités', 'Accord', 'Convention', 'Conventions',
