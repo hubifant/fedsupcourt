@@ -31,15 +31,19 @@ positive_samples = []
 with open(negative_samples_path, 'r') as csv_file:
     negative_reader = csv.reader(csv_file)
     for row in negative_reader:
-        negative_samples.append(row[0].replace('BGE ', ''))
+        negative_samples.append(row[0].replace('BGE ', '').upper())
 
 with open(positive_samples_path, 'r') as csv_file:
     positive_reader = csv.reader(csv_file)
     for row in positive_reader:
-        positive_samples.append(row[0].replace('BGE ', ''))
+        positive_samples.append(row[0].replace('BGE ', '').upper())
 
-print(negative_samples)
-print(positive_samples)
+
+nb_negative_samples = len(negative_samples)
+nb_positive_samples = len(positive_samples)
+print('Positive Samples: %3d' % nb_negative_samples)
+print('Negative Samples: %3d' % nb_positive_samples)
+print('----------------------------------')
 
 
 true_positives_list = collection.find({
@@ -53,10 +57,6 @@ true_positives_list = collection.find({
         {'extracted_laws': {'$exists': 1}},
     ]
 })
-
-true_positive_count = true_positives_list.count()
-print(true_positive_count)
-
 false_negatives_list = collection.find({
     '_id': {
         '$in': positive_samples
@@ -66,15 +66,6 @@ false_negatives_list = collection.find({
     'international_law_in_general.clear': {'$exists': 0},
     'extracted_laws': {'$exists': 0}
 })
-
-false_negative_count = false_negatives_list.count()
-print(false_negative_count)
-
-false_negative_pcnt = (100 * false_negative_count / (false_negative_count + true_positive_count))
-true_positive_pcnt = 100 - false_negative_pcnt
-print(false_negative_pcnt)
-
-
 false_positives_list = collection.find({
     '_id': {
         '$in': negative_samples
@@ -86,10 +77,6 @@ false_positives_list = collection.find({
         {'extracted_laws': {'$exists': 1}},
     ]
 })
-
-false_positive_count = false_positives_list.count()
-print(false_positive_count)
-
 true_negatives_list = collection.find({
     '_id': {
         '$in': negative_samples
@@ -100,10 +87,26 @@ true_negatives_list = collection.find({
     'extracted_laws': {'$exists': 0}
 })
 
+
+true_positive_count = true_positives_list.count()
 true_negative_count = true_negatives_list.count()
-print(true_negative_count)
+false_positive_count = false_positives_list.count()
+false_negative_count = false_negatives_list.count()
 
-true_negative_pcnt = (100 * true_negative_count / (true_negative_count + true_positive_count))
+true_positive_pcnt = (100 * true_positive_count / nb_positive_samples)
+false_negative_pcnt = 100 - true_positive_pcnt
+true_negative_pcnt = (100 * true_negative_count / nb_negative_samples)
 false_positive_pcnt = 100 - true_negative_pcnt
-print(false_positive_pcnt)
+print('%3d true positives:  %6.2f%%' % (true_positive_count, true_positive_pcnt))
+print('%3d false positives: %6.2f%%' % (false_positive_count, false_positive_pcnt))
+print('%3d true negatives:  %6.2f%%' % (true_negative_count, true_negative_pcnt))
+print('%3d false negatives: %6.2f%%' % (false_negative_count, false_negative_pcnt))
+print('==================================')
 
+
+true_count = true_positive_count + true_negative_count
+false_count = false_positive_count + false_negative_count
+true_pcnt = 100 * true_count / (true_count + false_count)
+false_pcnt = 100 * false_count / (true_count + false_count)
+print('%3d correctly classified : %6.2f%%' % (true_count, true_pcnt))
+print('%3d wrongly classified:    %6.2f%%' % (false_count, false_pcnt))
