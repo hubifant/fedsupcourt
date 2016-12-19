@@ -160,6 +160,7 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     staatlicher vertrag
     staatliches abkommen
     staatsgebiet verträge
+    Vertragsratifizierungsübereinkommen
 
     droit international conventionnel
     droit international privé conventionnel
@@ -205,7 +206,7 @@ case_completeness_int_treaties['expected_output']['broad'] = [
     'staaten abkommen', 'staaten vertragliche', 'staaten vertragspartei', 'staaten übereinkommen',
     'staatliche abkommen', 'staatlichen abkommen', 'staatlichen abkommens', 'staatlichen vertragsrecht',
     'staatlichen verträgen', 'staatlichen Übereinkommen', 'staatlichen Übereinkommens', 'staatlicher abkommen',
-    'staatlicher vertrag', 'staatliches abkommen', 'staatsgebiet verträge'
+    'staatlicher vertrag', 'staatliches abkommen', 'staatsgebiet verträge', 'Vertragsratifizierungsübereinkommen'
 ]
 
 # keyword_completeness: for testing if all expected keywords related with international customary law are extracted.

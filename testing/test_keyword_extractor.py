@@ -1,7 +1,7 @@
 # pycharm testing tuto: https://confluence.jetbrains.com/display/PYH/Creating+and+running+a+Python+unit+test
 
 import unittest
-from scraping.rulings.pipelines import InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
+from extraction.keyword_extraction import InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
     GeneralInternationalLawExtractor
 from testing.dummy_data import case_incomplete, case_completeness_int_treaties, case_completeness_customary_int_law, \
     case_completeness_int_law_in_general, case_omit_kw_followed_by_number
@@ -16,7 +16,7 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
         keyword_extractor = InternationalTreatyExtractor()
 
         try:
-            keyword_extractor.process_item(case_incomplete['input_item'], None)
+            keyword_extractor.extract(case_incomplete['input_item'])
 
         except Exception:
             self.fail("Exception raised in test_incomplete_item")
@@ -27,7 +27,7 @@ class TestGeneralKeywordExtractor(unittest.TestCase):
         """
 
         keyword_extractor = InternationalTreatyExtractor()
-        computed_output = keyword_extractor.process_item(case_incomplete['input_item'], None)
+        computed_output = keyword_extractor.extract(case_incomplete['input_item'])
 
         field_to_test = 'international_treaties'
         keyword_type = 'broad'
@@ -50,7 +50,7 @@ class TestSpecificKeywordExtractor(unittest.TestCase):
         :type keyword_extractor: KeywordExtractorPipeline
         :type test_data: dict
         """
-        computed_output = keyword_extractor.process_item(test_data['input_item'], None)
+        computed_output = keyword_extractor.extract(test_data['input_item'])
 
         # for 'clear' and 'broad' keywords...
         for type in ['clear', 'broad']:
@@ -107,7 +107,7 @@ class TestSpecificKeywordExtractor(unittest.TestCase):
         of a publication and not a citation to international law by the court
         """
         keyword_extractor = GeneralInternationalLawExtractor()
-        computed_output = keyword_extractor.process_item(case_omit_kw_followed_by_number['input_item'], None)
+        computed_output = keyword_extractor.extract(case_omit_kw_followed_by_number['input_item'])
         if 'international_law_in_general' in computed_output:
             if 'clear' in computed_output['international_law_in_general']:
                 self.fail('Keywords were extracted even though they are followed by a number: \n' +
