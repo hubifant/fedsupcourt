@@ -28,16 +28,27 @@ negative_samples = []
 positive_samples_path = '../data/manual_coding_positive_samples.csv'
 positive_samples = []
 
+print('\n\nReading manual results...')
+
 with open(negative_samples_path, 'r') as csv_file:
     negative_reader = csv.reader(csv_file)
     for row in negative_reader:
-        negative_samples.append(row[0].replace('BGE ', '').upper())
+        id = row[0].replace('BGE ', '').upper()
+        if id not in negative_samples:
+            negative_samples.append(id)
+        else:
+            print("\tDouble negative sample: " + row[0])
 
 with open(positive_samples_path, 'r') as csv_file:
     positive_reader = csv.reader(csv_file)
     for row in positive_reader:
-        positive_samples.append(row[0].replace('BGE ', '').upper())
+        id = row[0].replace('BGE ', '').upper()
+        if id not in positive_samples:
+            positive_samples.append(id)
+        else:
+            print("\tDouble positive sample: " + row[0])
 
+print('\n')
 
 nb_negative_samples = len(negative_samples)
 nb_positive_samples = len(positive_samples)
@@ -46,7 +57,7 @@ print('Negative Samples: %3d' % nb_positive_samples)
 print('---------------------------------')
 
 
-true_positives_list = collection.find({
+true_positives = collection.find({
     '_id': {
         '$in': positive_samples
     },
@@ -57,7 +68,7 @@ true_positives_list = collection.find({
         {'extracted_laws': {'$exists': 1}},
     ]
 })
-false_negatives_list = collection.find({
+false_negatives = collection.find({
     '_id': {
         '$in': positive_samples
     },
@@ -66,7 +77,7 @@ false_negatives_list = collection.find({
     'international_law_in_general.clear': {'$exists': 0},
     'extracted_laws': {'$exists': 0}
 })
-false_positives_list = collection.find({
+false_positives = collection.find({
     '_id': {
         '$in': negative_samples
     },
@@ -77,7 +88,7 @@ false_positives_list = collection.find({
         {'extracted_laws': {'$exists': 1}},
     ]
 })
-true_negatives_list = collection.find({
+true_negatives = collection.find({
     '_id': {
         '$in': negative_samples
     },
@@ -88,10 +99,10 @@ true_negatives_list = collection.find({
 })
 
 
-true_positive_count = true_positives_list.count()
-true_negative_count = true_negatives_list.count()
-false_positive_count = false_positives_list.count()
-false_negative_count = false_negatives_list.count()
+true_positive_count = true_positives.count()
+true_negative_count = true_negatives.count()
+false_positive_count = false_positives.count()
+false_negative_count = false_negatives.count()
 
 true_positive_pcnt = (100 * true_positive_count / nb_positive_samples)
 false_negative_pcnt = 100 - true_positive_pcnt
@@ -113,11 +124,11 @@ print('%3d wrongly classified:   %6.2f%%' % (false_count, false_pcnt))
 
 
 print('\nFalse Positives:')
-for ruling in false_positives_list:
+for ruling in false_positives:
     print(" - " + ruling['_id'])
 
 print('\nFalse Negatives:')
-for ruling in false_negatives_list:
+for ruling in false_negatives:
     print(" - " + ruling['_id'])
 print('\n\n')
 
