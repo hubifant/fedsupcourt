@@ -43,7 +43,7 @@ nb_negative_samples = len(negative_samples)
 nb_positive_samples = len(positive_samples)
 print('Positive Samples: %3d' % nb_negative_samples)
 print('Negative Samples: %3d' % nb_positive_samples)
-print('----------------------------------')
+print('---------------------------------')
 
 
 true_positives_list = collection.find({
@@ -101,12 +101,33 @@ print('%3d true positives:  %6.2f%%' % (true_positive_count, true_positive_pcnt)
 print('%3d false positives: %6.2f%%' % (false_positive_count, false_positive_pcnt))
 print('%3d true negatives:  %6.2f%%' % (true_negative_count, true_negative_pcnt))
 print('%3d false negatives: %6.2f%%' % (false_negative_count, false_negative_pcnt))
-print('==================================')
+print('=================================')
 
 
 true_count = true_positive_count + true_negative_count
 false_count = false_positive_count + false_negative_count
 true_pcnt = 100 * true_count / (true_count + false_count)
 false_pcnt = 100 * false_count / (true_count + false_count)
-print('%3d correctly classified : %6.2f%%' % (true_count, true_pcnt))
-print('%3d wrongly classified:    %6.2f%%' % (false_count, false_pcnt))
+print('%3d correctly classified: %6.2f%%' % (true_count, true_pcnt))
+print('%3d wrongly classified:   %6.2f%%' % (false_count, false_pcnt))
+
+
+print('\nFalse Positives:')
+for ruling in false_positives_list:
+    print(" - " + ruling['_id'])
+
+print('\nFalse Negatives:')
+for ruling in false_negatives_list:
+    print(" - " + ruling['_id'])
+print('\n\n')
+
+
+for id in negative_samples:
+    result = collection.find_one({'_id': id})
+    if result is None:
+        print('Could not find negative sample %s in database.' % id)
+
+for id in positive_samples:
+    result = collection.find_one({'_id': id})
+    if result is None:
+        print('Could not find positive sample %s in database.' % id)
