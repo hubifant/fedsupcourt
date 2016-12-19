@@ -243,7 +243,7 @@ int_treaties_broad_to_clear['de'] = [
 'amtshilfeabkommen',
 'assoziationsabkommen',
 'assoziierungsabkommen',
-'auslieferungs- übereinkunft'
+'auslieferungs- übereinkunft',
 'auslieferungs-übereinkommen',
 'auslieferungs-übereinkommens',
 'auslieferungs-übereinkunft',
@@ -285,7 +285,7 @@ int_treaties_broad_to_clear['de'] = [
 'dublin-assoziierungsabkommens',
 'dubliner übereinkommen',
 'durchführungsübereinkommen',
-'durchführungsübereinkommens'
+'durchführungsübereinkommens',
 'efta- übereinkommens',
 'efta-abkommen',
 'efta-abkommens',
