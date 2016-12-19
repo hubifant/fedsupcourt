@@ -52,8 +52,8 @@ print('\n')
 
 nb_negative_samples = len(negative_samples)
 nb_positive_samples = len(positive_samples)
-print('Positive Samples: %3d' % nb_negative_samples)
-print('Negative Samples: %3d' % nb_positive_samples)
+print('Negative Samples: %3d' % nb_negative_samples)
+print('Positive Samples: %3d' % nb_positive_samples)
 print('---------------------------------')
 
 
