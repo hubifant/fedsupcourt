@@ -40,8 +40,9 @@ def save_keyword_list(keyword_type, path='.', verbose=False):
         keyword_writer.writeheader()
 
         for row in result:
-            keyword_list.append(row)
-            keyword_writer.writerow({"Keyword": row['_id'], "Occurrences": row["occurrences"]})
+            if 'übereinkunft' in row['_id'].lower() or 'übereinkommen' in row['_id'].lower():
+                keyword_list.append(row)
+                keyword_writer.writerow({"Keyword": row['_id'], "Occurrences": row["occurrences"]})
 
             if verbose:
                 print('%-50s | %3d' % (row['_id'], row['occurrences']))
