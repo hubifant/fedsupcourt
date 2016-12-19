@@ -141,7 +141,7 @@ class InternationalTreatyExtractor(_KeywordExtractor):
                 'clear': r'(?!staaten '                                               # exceptions...
                          r'|staatliche[nrs]? (?:abkommens?|vertrag(?:srecht)?\b'
                          r'|verträge|übereinkommens?)'
-                         r'|staatsgebiet)'
+                         r'|staatsgebiet|vertragsratifizierung)'
                          r'(?:(?:international|menschenrechts|rechtshilfe|völkerrecht|staat)\w*'  # first word to match
                          r'[\s\-]?'                                                   # space or '-'
                          r'(?:menschenrechts|rechtshilfe)?'                           # optional words
