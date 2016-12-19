@@ -142,6 +142,7 @@ case_completeness_int_treaties['input_item']['core_issue'] = '''
     internationalen rechtshilfeabkommens
     völkervertragsrechtlich
     Rechtshilfe-Übereinkommen
+    basler Übereinkommen
 
 
     staaten abkommen
@@ -191,7 +192,8 @@ case_completeness_int_treaties['expected_output']['clear'] = [
     'Doppelbesteuerungsabkommen', 'Doppelbesteuerungsabkommens', 'diritto internazionale convenzionale',
     'droit international conventionnel', 'droit international privé conventionnel',
     'internationalen menschenrechtskonventionen', 'internationalen menschenrechtspakte',
-    'internationalen rechtshilfeabkommens', 'völkervertragsrechtlich', 'Menschenrechtspakten', 'Rechtshilfe-Übereinkommen'
+    'internationalen rechtshilfeabkommens', 'völkervertragsrechtlich', 'Menschenrechtspakten',
+    'Rechtshilfe-Übereinkommen', 'basler Übereinkommen'
 ]
 case_completeness_int_treaties['expected_output']['broad'] = [
     'Übereinkommen', 'Abkommen', 'Pakt', 'Pakte', 'Pakts', 'Traité', 'Traités', 'Accord', 'Convention', 'Conventions',
