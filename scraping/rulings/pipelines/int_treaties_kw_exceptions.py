@@ -260,6 +260,7 @@ int_treaties_broad_to_clear['de'] = [
 'berner übereinkunft',
 'betäubungsmittel-übereinkommen',
 'beweisübereinkommens',
+'bregenzer-Übereinkunft',
 'brüsseler abkommen',
 'brüsseler übereinkommen',
 'brüsseler übereinkommens',
