@@ -197,7 +197,6 @@ int_treaties_broad_to_clear['fr'] = [
     'traité avec le brésil',
     'traité avec les etats-unis',
     'traité belgo-néerlandais',
-    'traité ce',
     'traité cee',
     "traité d'entraide",
     "traité d'extradition",
