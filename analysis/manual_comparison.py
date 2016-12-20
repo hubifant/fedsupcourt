@@ -3,8 +3,6 @@
 import csv
 import pymongo
 from datetime import datetime
-from collections import OrderedDict
-from analysis.court_department_categories import department_mapping
 
 
 mongo_uri = 'mongodb://localhost:27017'
