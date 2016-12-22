@@ -33,7 +33,7 @@ def save_result(result, mongo_csv_key_mapping, result_name, path='.', verbose=Fa
             # first, build csv row from mongo row
             csv_row = {}
             for mongo_key, csv_key in mongo_csv_key_mapping.items():
-                if csv_key is 'year':
+                if csv_key is 'Year':
                     csv_row[csv_key] = int(mongo_row[mongo_key])
                 else:
                     csv_row[csv_key] = mongo_row[mongo_key]
