@@ -203,9 +203,9 @@ per_year_dep_and_sr_nb = collection.aggregate([
         }
     },
     {
-        '$group': {
-            '_id': {
-                'year': {
+        '$project': {
+            'extracted_laws': '$extracted_laws',
+            'year': {
                     '$multiply': [
                         {
                             '$floor': {
@@ -218,47 +218,34 @@ per_year_dep_and_sr_nb = collection.aggregate([
                         year_group_size
                     ],
                 },
-                'sr_number': '$extracted_laws.law',
-                'volume': '$ruling_id.volume'
-            },
-            'count': {
-                '$sum': 1
-            }
-        }
-    },
-    {
-        '$project': {
-            'year': '$_id.year',
-            'sr_number': '$_id.sr_number',
-            'count': '$count',
             'department': {
                 '$cond': {
                     'if': {'$lt': ['$_id.year', 1995]},
                     'then': {
                         '$cond': {
-                            'if': {'$eq': ['$_id.volume', 'IA']},
-                            'then': 'Constitutional Law',
+                            'if': {
+                                '$or': [
+                                    {'$eq': ['$ruling_id.volume', 'I']},
+                                    {'$eq': ['$ruling_id.volume', 'IA']},
+                                    {'$eq': ['$ruling_id.volume', 'IB']},
+                                ]
+
+                            },
+                            'then': 'Constitutional, Administrative and International Public Law',
                             'else': {
                                 '$cond': {
-                                    'if': {'$eq': ['$_id.volume', 'IB']},
-                                    'then': 'Administrative  law  and  international public law',
+                                    'if': {
+                                        '$or': [
+                                            {'$eq': ['$ruling_id.volume', 'II']},
+                                            {'$eq': ['$ruling_id.volume', 'III']}
+                                        ]
+                                    },
+                                    'then': 'Private Law (including Debt Recovery and Bankruptcy)',
                                     'else': {
                                         '$cond': {
-                                            'if': {'$eq': ['$_id.volume', 'II']},
-                                            'then': 'Private Law',
-                                            'else': {
-                                                '$cond': {
-                                                    'if': {'$eq': ['$_id.volume', 'III']},
-                                                    'then': 'Dept Recovery and Bankruptcy',
-                                                    'else':{
-                                                        '$cond': {
-                                                            'if': {'$eq': ['$_id.volume', 'IV']},
-                                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
-                                                            'else': 'Social Insurance Law'
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            'if': {'$eq': ['$ruling_id.volume', 'IV']},
+                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                            'else': 'Social Insurance Law'
                                         }
                                     }
                                 }
@@ -267,23 +254,22 @@ per_year_dep_and_sr_nb = collection.aggregate([
                     },
                     'else': {
                         '$cond': {
-                            'if': {'$eq': ['$_id.volume', 'I']},
-                            'then': 'Constitutional Law',
+                            'if': {
+                                '$or': [
+                                    {'$eq': ['$ruling_id.volume', 'I']},
+                                    {'$eq': ['$ruling_id.volume', 'II']}
+                                ]
+                            },
+                            'then': 'Constitutional, Administrative and International Public Law',
                             'else': {
                                 '$cond': {
-                                    'if': {'$eq': ['$_id.volume', 'II']},
-                                    'then': 'Administrative  law  and  international public law',
+                                    'if': {'$eq': ['$ruling_id.volume', 'III']},
+                                    'then': 'Private Law (including Debt Recovery and Bankruptcy)',
                                     'else': {
                                         '$cond': {
-                                            'if': {'$eq': ['$_id.volume', 'III']},
-                                            'then': 'Private Law, Debt Recovery and Bankruptcy',
-                                            'else': {
-                                                '$cond': {
-                                                    'if': {'$eq': ['$_id.volume', 'IV']},
-                                                        'then': 'Criminal  Law  and  Criminal  Enforcement Law',
-                                                        'else': 'Social Insurance Law'
-                                                }
-                                            }
+                                            'if': {'$eq': ['$ruling_id.volume', 'IV']},
+                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                            'else': 'Social Insurance Law'
                                         }
                                     }
                                 }
@@ -295,8 +281,28 @@ per_year_dep_and_sr_nb = collection.aggregate([
         }
     },
     {
+        '$group': {
+            '_id': {
+                'year': '$year',
+                'sr_number': '$extracted_laws.law',
+                'department': '$department'
+            },
+            'count': {
+                '$sum': 1
+            }
+        }
+    },
+    {
+        '$project': {
+            'year': '$_id.year',
+            'sr_number': '$_id.sr_number',
+            'count': '$count',
+            'department': '$_id.department'
+        }
+    },
+    {
         '$sort': {
-            '_id.year': 1,
+            'year': 1,
             'department': 1,
             '_id.sr_number': 1
         }
@@ -310,7 +316,6 @@ key_mapping_yr_dep_sr['count'] = 'Count'
 save_result(per_year_dep_and_sr_nb, key_mapping_yr_dep_sr, 'counts_per_year_dep_and_sr_number')
 
 
-
 per_year_and_department = collection.aggregate([
     {
         '$match': {
@@ -319,25 +324,16 @@ per_year_and_department = collection.aggregate([
     },
     {
         '$project': {
-            'date': '$date',
-            'department': '$department.tag',
-            'volume': '$ruling_id.volume',
             'international_treaties.clear': '$international_treaties.clear',
             'international_customary_law.clear': '$international_customary_law.clear',
             'international_law_in_general.clear': '$international_law_in_general.clear',
             'extracted_laws': '$extracted_laws',
-            'bge_nb': '$ruling_id.bge_nb'
-        }
-    },
-    {
-        '$group': {
-            '_id': {
-                'year': {
+            'year': {
                     '$multiply': [
                         {
                             '$floor': {
                                 '$divide': [
-                                    {'$add': ['$bge_nb', first_year]},
+                                    {'$add': ['$ruling_id.bge_nb', first_year]},
                                     year_group_size
                                 ]
                             }
@@ -345,7 +341,73 @@ per_year_and_department = collection.aggregate([
                         year_group_size
                     ],
                 },
-                'volume': '$volume'
+            'department': {
+                '$cond': {
+                    'if': {'$lt': ['$_id.year', 1995]},
+                    'then': {
+                        '$cond': {
+                            'if': {
+                                '$or': [
+                                    {'$eq': ['$ruling_id.volume', 'I']},
+                                    {'$eq': ['$ruling_id.volume', 'IA']},
+                                    {'$eq': ['$ruling_id.volume', 'IB']},
+                                ]
+
+                            },
+                            'then': 'Constitutional, Administrative and International Public Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {
+                                        '$or': [
+                                            {'$eq': ['$ruling_id.volume', 'II']},
+                                            {'$eq': ['$ruling_id.volume', 'III']}
+                                        ]
+                                    },
+                                    'then': 'Private Law (including Debt Recovery and Bankruptcy)',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$ruling_id.volume', 'IV']},
+                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                            'else': 'Social Insurance Law'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'else': {
+                        '$cond': {
+                            'if': {
+                                '$or': [
+                                    {'$eq': ['$ruling_id.volume', 'I']},
+                                    {'$eq': ['$ruling_id.volume', 'II']}
+                                ]
+                            },
+                            'then': 'Constitutional, Administrative and International Public Law',
+                            'else': {
+                                '$cond': {
+                                    'if': {'$eq': ['$ruling_id.volume', 'III']},
+                                    'then': 'Private Law (including Debt Recovery and Bankruptcy)',
+                                    'else': {
+                                        '$cond': {
+                                            'if': {'$eq': ['$ruling_id.volume', 'IV']},
+                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
+                                            'else': 'Social Insurance Law'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        '$group': {
+            '_id': {
+                'year': '$year',
+                'department': '$department'
             },
             'total': {
                 '$sum': 1
@@ -379,68 +441,7 @@ per_year_and_department = collection.aggregate([
     {
         '$project': {
             'year': '$_id.year',
-            'department': {
-                '$cond': {
-                    'if': {'$lt': ['$_id.year', 1995]},
-                    'then': {
-                        '$cond': {
-                            'if': {'$eq': ['$_id.volume', 'IA']},
-                            'then': 'Constitutional Law',
-                            'else': {
-                                '$cond': {
-                                    'if': {'$eq': ['$_id.volume', 'IB']},
-                                    'then': 'Administrative  law  and  international public law',
-                                    'else': {
-                                        '$cond': {
-                                            'if': {'$eq': ['$_id.volume', 'II']},
-                                            'then': 'Private Law',
-                                            'else': {
-                                                '$cond': {
-                                                    'if': {'$eq': ['$_id.volume', 'III']},
-                                                    'then': 'Dept Recovery and Bankruptcy',
-                                                    'else':{
-                                                        '$cond': {
-                                                            'if': {'$eq': ['$_id.volume', 'IV']},
-                                                            'then': 'Criminal  Law  and  Criminal  Enforcement Law',
-                                                            'else': 'Social Insurance Law'
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    ,
-                    'else': {
-                        '$cond': {
-                            'if': {'$eq': ['$_id.volume', 'I']},
-                            'then': 'Constitutional Law',
-                            'else': {
-                                '$cond': {
-                                    'if': {'$eq': ['$_id.volume', 'II']},
-                                    'then': 'Administrative  law  and  international public law',
-                                    'else': {
-                                        '$cond': {
-                                            'if': {'$eq': ['$_id.volume', 'III']},
-                                            'then': 'Private Law, Debt Recovery and Bankruptcy',
-                                            'else': {
-                                                '$cond': {
-                                                    'if': {'$eq': ['$_id.volume', 'IV']},
-                                                        'then': 'Criminal  Law  and  Criminal  Enforcement Law',
-                                                        'else': 'Social Insurance Law'
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+            'department': '$_id.department',
             'total': '$total',
             'international_law': '$international_law',
             'relevant_pcnt': {'$divide': ['$international_law', '$total']},
