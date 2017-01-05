@@ -17,7 +17,14 @@ Install [Anaconda or Miniconda](https://www.continuum.io/downloads) and use Cond
 
 
 ### Further...
-Make sure that the locales `de_CH.utf8`, `fr_CH.utf8`, `it_CH.utf8` are installed.
+Make sure that the locales `de_CH.utf8`, `fr_CH.utf8` and `it_CH.utf8` are installed.
+
+
+## Analysis
+For analysing the rulings published by the _Federal Supreme Court of Switzerland_ after 1954, proceed as follows:
+ 1. Run `scraping/scrape_rulings.py`: this script downloads all rulings, extractes metadata and keywords, and saves them in the database.
+ 2. Run `scraping/scrape_laws.py`: this script collects information about all international treaties concerning Switzerland and saves it in the database.
+ 3. Now you can either run the scripts in the `analysis` directory or write your own database queries.
 
 
 ## References
