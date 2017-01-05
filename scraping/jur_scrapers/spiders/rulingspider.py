@@ -4,11 +4,11 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
-from scraping.rulings.items.ruling_item import RulingItem
+from scraping.jur_scrapers.items.ruling_item import RulingItem
 
 
 class RulingSpider(scrapy.Spider):
-    name = 'rulings'
+    name = 'jur_scrapers'
     start_urls = ["http://relevancy.bger.ch/cgi-bin/IndexCGI?lang=de"]
     scraped_links = []
     allowed_domains =["relevancy.bger.ch"]

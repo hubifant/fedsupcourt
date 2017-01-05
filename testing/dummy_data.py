@@ -1,7 +1,7 @@
 # contains dummy scrapy item for testing purposes.
 
 from datetime import datetime
-from scraping.rulings import RulingItem
+from scraping.jur_scrapers import RulingItem
 
 # case_incomplete: for testing a simple keyword extraction in the case where a ruling does not contain all 3 chapters
 case_incomplete = {'input_item': RulingItem(), 'expected_output': RulingItem()}

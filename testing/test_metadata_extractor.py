@@ -1,7 +1,7 @@
 # pycharm testing tuto: https://confluence.jetbrains.com/display/PYH/Creating+and+running+a+Python+unit+test
 
 import unittest
-from scraping.rulings.pipelines import MetadataExtractorPipeline
+from scraping.jur_scrapers.pipelines import MetadataExtractorPipeline
 from testing.dummy_data import case_metadata_extraction
 
 

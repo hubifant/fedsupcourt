@@ -1,7 +1,7 @@
 from twisted.internet import reactor
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
-from scraping.rulings import RulingSpider
+from scraping.jur_scrapers import RulingSpider
 from scrapy.utils.project import get_project_settings
 
 
@@ -21,10 +21,10 @@ def scrape_rulings():
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.TextCleanerPipeline': 100,
-        'rulings.pipelines.MetadataExtractorPipeline': 200,
-        'rulings.pipelines.KeywordExtractorPipeline': 302,
-        'rulings.pipelines.MongoSaverPipeline': 999
+        'jur_scrapers.pipelines.TextCleanerPipeline': 100,
+        'jur_scrapers.pipelines.MetadataExtractorPipeline': 200,
+        'jur_scrapers.pipelines.KeywordExtractorPipeline': 302,
+        'jur_scrapers.pipelines.MongoSaverPipeline': 999
     })
 
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
