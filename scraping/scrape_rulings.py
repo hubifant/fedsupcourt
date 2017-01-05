@@ -21,12 +21,10 @@ def scrape_rulings():
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.TextCleanerPipeline': 100,
-        'rulings.pipelines.MetadataExtractorPipeline': 200,
-        'rulings.pipelines.InternationalTreatyExtractor': 300,
-        'rulings.pipelines.InternationalCustomaryLawExtractor': 301,
-        'rulings.pipelines.GeneralInternationalLawExtractor': 302,
-        'rulings.pipelines.MongoSaverPipeline': 999
+        'scraping.rulings.pipelines.TextCleanerPipeline': 100,
+        'scraping.rulings.pipelines.MetadataExtractorPipeline': 200,
+        'scraping.rulings.pipelines.KeywordExtractorPipeline': 302,
+        'scraping.rulings.pipelines.MongoSaverPipeline': 999
     })
 
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
