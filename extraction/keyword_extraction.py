@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from scraping.rulings.pipelines.int_treaties_kw_exceptions import int_treaties_broad_to_clear
+from extraction.int_treaties_kw_exceptions import int_treaties_broad_to_clear
 
 
 class _KeywordExtractor:
