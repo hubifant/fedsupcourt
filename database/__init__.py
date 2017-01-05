@@ -1,1 +1,1 @@
-from .extract import extract_and_save_sr_numbers, extract_and_save_keywords
+from .extract import extract_and_save_metadata, extract_and_save_sr_numbers, extract_and_save_keywords
