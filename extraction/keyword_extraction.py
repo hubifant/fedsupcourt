@@ -242,3 +242,28 @@ class GeneralInternationalLawExtractor(_KeywordExtractor):
 
         super(GeneralInternationalLawExtractor, self).__init__('international_law_in_general',
                                                                patterns_international_law_in_general)
+
+
+class GeneralPrinciplesOfInternationalLawExtractor(_KeywordExtractor):
+    """
+    Implements KeywordExtractorPipeline for keywords indicating the use of general principles of international law.
+    """
+
+    def __init__(self):
+        patterns_gen_principles_of_international_law = {
+            'de': {
+                'clear': r'(?:allgemein\w* (?:rechts)?grunds[aä]tz\w* de\w* Völkerrecht\w*)',
+                'broad': r'(?:allgemein\w* (?:rechts)?grunds[aä]tz\w*(?: \w*){1,4})'
+            },
+            'fr': {
+                'clear': r'(?:principes? g[eé]n[eé]ra\w* du droit (?:des gens|international))',
+                'broad': r'(?:principes? g[eé]n[eé]ra\w*(?: \w*){1,4})'
+            },
+            'it': {
+                'clear': r'(?:princip\w* giuridic\w* (?:general|fondamental)\w* di diritto internazionale)',
+                'broad': r'(?:princip\w* giuridic\w* (?:(?:di portata )?general|fondamental)\w* (?: \w*){1,4})'
+            }
+        }
+
+        super(GeneralPrinciplesOfInternationalLawExtractor, self).__init__('general_principles_of_international_law',
+                                                                           patterns_gen_principles_of_international_law)
