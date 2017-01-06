@@ -1,36 +1,53 @@
 import pymongo
 from extraction import SRNumberExtractor, InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
-    GeneralInternationalLawExtractor, MetadataExtractor
+    GeneralInternationalLawExtractor, GeneralPrinciplesOfInternationalLawExtractor, MetadataExtractor
 import logging
 import time
 
 
-ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
-
-def extract_and_save_sr_numbers(mongo_uri='mongodb://localhost:27017',
-                                db_name='fedsupcourt',
-                                int_law_collection_name='rulings'):
-
+def map_rulings(map_function,
+                mongo_uri='mongodb://localhost:27017',
+                db_name='fedsupcourt',
+                ruling_collection_name='rulings'):
+    """
+    Iterates over ruling database and applies map_function to each ruling. The processed ruling is then saved in the
+    database.
+    """
     start_time = time.clock()
 
     client = pymongo.MongoClient(mongo_uri)
-    ruling_collection = client[db_name][int_law_collection_name]
+    ruling_collection = client[db_name][ruling_collection_name]
 
     # ruling_cursor = ruling_collection.find({'ruling_id.bge_nb': 136}, modifiers={"$snapshot": True})
     ruling_cursor = ruling_collection.find({}, modifiers={"$snapshot": True})
     nb_rulings = ruling_cursor.count()
-    print('Extracting SR numbers from %d rulings...' % nb_rulings)
-
-    extractor = SRNumberExtractor()
+    print('%d rulings will be processed...' % nb_rulings)
 
     percentage_to_print = 0
     percentage_to_print_stepsize = 5
 
     for i, ruling in enumerate(ruling_cursor):
-        if i/nb_rulings * 100 > percentage_to_print:
-            print('%2d%% of the rulings processed. (%d/%d)' % (percentage_to_print, i, nb_rulings))
+        if i / nb_rulings * 100 > percentage_to_print:
+            print('\t%2d%% of the rulings processed. (%d/%d)' % (percentage_to_print, i, nb_rulings))
             percentage_to_print += percentage_to_print_stepsize
 
+        ruling = map_function(ruling)
+
+        ruling_collection.save(ruling)
+        logging.info('Updated ruling %s.' % str(ruling['ruling_id']))
+
+    end_time = time.clock()
+    print('Running Time: %.3fs = %.2fm' % (end_time - start_time, (end_time - start_time) / 60))
+
+
+def extract_and_save_sr_numbers():
+    """
+    Extracts SR numbers from each ruling and saves them in the database
+    """
+    extractor = SRNumberExtractor()
+    ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
+
+    def extract_sr_numbers(ruling):
         extracted_laws = []
         extracted_categories = []
         for chapter in ruling_chapters:
@@ -49,77 +66,33 @@ def extract_and_save_sr_numbers(mongo_uri='mongodb://localhost:27017',
         if len(extracted_categories) > 0:
             ruling['extracted_categories'] = extracted_categories
 
-        ruling_collection.save(ruling)
-        logging.info('Updated ruling %s.' % str(ruling['ruling_id']))
+        return ruling
 
-    end_time = time.clock()
-
-    print('Running Time: %.3f' % (end_time - start_time))
+    map_rulings(extract_sr_numbers)
 
 
-def extract_and_save_keywords(mongo_uri='mongodb://localhost:27017',
-                              db_name='fedsupcourt',
-                              int_law_collection_name='rulings'):
-    start_time = time.clock()
-
-    client = pymongo.MongoClient(mongo_uri)
-    ruling_collection = client[db_name][int_law_collection_name]
-
-    # ruling_cursor = ruling_collection.find({'ruling_id.bge_nb': 136}, modifiers={"$snapshot": True})
-    ruling_cursor = ruling_collection.find({}, modifiers={"$snapshot": True})
-    nb_rulings = ruling_cursor.count()
-    print('Extracting SR numbers from %d rulings...' % nb_rulings)
-
+def extract_and_save_keywords():
+    """
+    Extracts keywords from each ruling and saves them in the database
+    """
     int_treaty_extractor = InternationalTreatyExtractor()
     int_cust_law_extractor = InternationalCustomaryLawExtractor()
     int_law_in_gen_extractor = GeneralInternationalLawExtractor()
+    gen_principles_int_law = GeneralPrinciplesOfInternationalLawExtractor()
 
-    percentage_to_print = 0
-    percentage_to_print_stepsize = 5
-
-    for i, ruling in enumerate(ruling_cursor):
-        if i/nb_rulings * 100 > percentage_to_print:
-            print('%2d%% of the rulings processed. (%d/%d)' % (percentage_to_print, i, nb_rulings))
-            percentage_to_print += percentage_to_print_stepsize
-
+    def extract_kws(ruling):
         ruling = int_treaty_extractor.extract(ruling)
         ruling = int_cust_law_extractor.extract(ruling)
         ruling = int_law_in_gen_extractor.extract(ruling)
+        ruling = gen_principles_int_law.extract(ruling)
+        return ruling
 
-        ruling_collection.save(ruling)
-        logging.info('Updated ruling %s.' % str(ruling['ruling_id']))
-
-    end_time = time.clock()
-    print('Running Time: %.3fs = %.2fm' % (end_time - start_time, (end_time - start_time)/60))
+    map_rulings(extract_kws)
 
 
-def extract_and_save_metadata(mongo_uri='mongodb://localhost:27017',
-                              db_name='fedsupcourt',
-                              int_law_collection_name='rulings'):
-    start_time = time.clock()
-
-    client = pymongo.MongoClient(mongo_uri)
-    ruling_collection = client[db_name][int_law_collection_name]
-
-    # ruling_cursor = ruling_collection.find({'ruling_id.bge_nb': 136}, modifiers={"$snapshot": True})
-    ruling_cursor = ruling_collection.find({}, modifiers={"$snapshot": True})
-    nb_rulings = ruling_cursor.count()
-    print('Extracting SR numbers from %d rulings...' % nb_rulings)
-
+def extract_and_save_metadata():
+    """
+    Extracts metadata from each ruling and saves it in the database
+    """
     metadata_extractor = MetadataExtractor()
-
-    percentage_to_print = 0
-    percentage_to_print_stepsize = 5
-
-    for i, ruling in enumerate(ruling_cursor):
-        if i/nb_rulings * 100 > percentage_to_print:
-            print('%2d%% of the rulings processed. (%d/%d)' % (percentage_to_print, i, nb_rulings))
-            percentage_to_print += percentage_to_print_stepsize
-
-        ruling = metadata_extractor.extract(ruling)
-
-        ruling_collection.save(ruling)
-        logging.info('Updated ruling %s.' % str(ruling['ruling_id']))
-
-    end_time = time.clock()
-    print('Running Time: %.3fs = %.2fm' % (end_time - start_time, (end_time - start_time)/60))
+    map_rulings(metadata_extractor.extract)
