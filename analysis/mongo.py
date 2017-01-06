@@ -54,6 +54,8 @@ save_keyword_list('international_law_in_general.broad')
 save_keyword_list('international_law_in_general.clear')
 save_keyword_list('international_customary_law.broad')
 save_keyword_list('international_customary_law.clear')
+save_keyword_list('general_principles_of_international_law.clear')
+save_keyword_list('general_principles_of_international_law.broad')
 # print(len(international_treaties))
 
 count_containing_field = lambda keyword_type: collection.find({'date': {'$lt': date_limit}, keyword_type: {'$exists': 1}}).count()
