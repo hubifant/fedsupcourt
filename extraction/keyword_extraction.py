@@ -267,3 +267,20 @@ class GeneralPrinciplesOfInternationalLawExtractor(_KeywordExtractor):
 
         super(GeneralPrinciplesOfInternationalLawExtractor, self).__init__('general_principles_of_international_law',
                                                                            patterns_gen_principles_of_international_law)
+
+
+class CombinedKeywordExtractor:
+    """
+    Extracts all types of keywords from a ruling.
+    """
+    int_treaty_extractor = InternationalTreatyExtractor()
+    int_cust_law_extractor = InternationalCustomaryLawExtractor()
+    int_law_in_gen_extractor = GeneralInternationalLawExtractor()
+    gen_principles_int_law = GeneralPrinciplesOfInternationalLawExtractor()
+
+    def extract(self, ruling):
+        ruling = self.int_treaty_extractor.extract(ruling)
+        ruling = self.int_cust_law_extractor.extract(ruling)
+        ruling = self.int_law_in_gen_extractor.extract(ruling)
+        ruling = self.gen_principles_int_law.extract(ruling)
+        return ruling

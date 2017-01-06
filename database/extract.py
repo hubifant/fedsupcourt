@@ -1,6 +1,5 @@
 import pymongo
-from extraction import SRNumberExtractor, InternationalTreatyExtractor, InternationalCustomaryLawExtractor, \
-    GeneralInternationalLawExtractor, GeneralPrinciplesOfInternationalLawExtractor, MetadataExtractor
+from extraction import SRNumberExtractor, CombinedKeywordExtractor, MetadataExtractor
 import logging
 import time
 
@@ -75,19 +74,8 @@ def extract_and_save_keywords():
     """
     Extracts keywords from each ruling and saves them in the database
     """
-    int_treaty_extractor = InternationalTreatyExtractor()
-    int_cust_law_extractor = InternationalCustomaryLawExtractor()
-    int_law_in_gen_extractor = GeneralInternationalLawExtractor()
-    gen_principles_int_law = GeneralPrinciplesOfInternationalLawExtractor()
-
-    def extract_kws(ruling):
-        ruling = int_treaty_extractor.extract(ruling)
-        ruling = int_cust_law_extractor.extract(ruling)
-        ruling = int_law_in_gen_extractor.extract(ruling)
-        ruling = gen_principles_int_law.extract(ruling)
-        return ruling
-
-    map_rulings(extract_kws)
+    kw_extractor = CombinedKeywordExtractor()
+    map_rulings(kw_extractor.extract)
 
 
 def extract_and_save_metadata():
