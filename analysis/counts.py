@@ -85,6 +85,11 @@ per_year = collection.aggregate([
                     '$cond': [{"$ifNull": ["$international_law_in_general.clear", False]}, 1, 0]
                 }
             },
+            'gen_princ_int_law_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$general_principles_of_international_law.clear", False]}, 1, 0]
+                }
+            },
             'relevant_rulings_only_kws': {
                 '$sum': {
                     '$cond': [
@@ -92,7 +97,8 @@ per_year = collection.aggregate([
                             "$or": [
                                 {"$ifNull": ["$international_treaties.clear", False]},
                                 {"$ifNull": ["$international_customary_law.clear", False]},
-                                {"$ifNull": ["$international_law_in_general.clear", False]}
+                                {"$ifNull": ["$international_law_in_general.clear", False]},
+                                {"$ifNull": ["$general_principles_of_international_law.clear", False]}
                             ]
                         }, 1, 0
                     ]
@@ -106,6 +112,7 @@ per_year = collection.aggregate([
                                 {"$ifNull": ["$international_treaties.clear", False]},
                                 {"$ifNull": ["$international_customary_law.clear", False]},
                                 {"$ifNull": ["$international_law_in_general.clear", False]},
+                                {"$ifNull": ["$general_principles_of_international_law.clear", False]},
                                 {"$ifNull": ["$extracted_laws", False]}
                             ]
                         }, 1, 0
@@ -128,6 +135,7 @@ key_mapping['total_number_of_decisions'] = 'Total Number of Decisions'
 key_mapping['int_treaty_extracted'] = 'Rulings referring to International Treaties'
 key_mapping['int_cust_law_extracted'] = 'Rulings referring to International Customary Law'
 key_mapping['int_law_in_gen_extracted'] = 'Rulings referring to International Law in General'
+key_mapping['gen_princ_int_law_extracted'] = 'Rulings referring to General Principles of International Law'
 key_mapping['sr_nb_extracted'] = 'SR-Number extracted'
 key_mapping['relevant_rulings_only_kws'] = 'Total Number of Rulings referring to International Law'
 key_mapping['relevant_rulings'] = 'Total Number of Rulings referring to International Law (incl. SR-Numbers)'
@@ -327,6 +335,7 @@ per_year_and_department = collection.aggregate([
             'international_treaties.clear': '$international_treaties.clear',
             'international_customary_law.clear': '$international_customary_law.clear',
             'international_law_in_general.clear': '$international_law_in_general.clear',
+            'general_principles_of_international_law.clear': '$general_principles_of_international_law.clear',
             'extracted_laws': '$extracted_laws',
             'year': {
                     '$multiply': [
@@ -420,6 +429,7 @@ per_year_and_department = collection.aggregate([
                                 {"$ifNull": ["$international_treaties.clear", False]},
                                 {"$ifNull": ["$international_customary_law.clear", False]},
                                 {"$ifNull": ["$international_law_in_general.clear", False]},
+                                {"$ifNull": ["$general_principles_of_international_law.clear", False]},
                                 {"$ifNull": ["$extracted_laws", False]}
                             ]
                         }, 1, 0
@@ -435,6 +445,11 @@ per_year_and_department = collection.aggregate([
                 '$sum': {
                     '$cond': [{"$ifNull": ["$international_customary_law.clear", False]}, 1, 0]
                 }
+            },
+            'gen_princ_of_int_law_extracted': {
+                '$sum': {
+                    '$cond': [{"$ifNull": ["$general_principles_of_international_law.clear", False]}, 1, 0]
+                }
             }
         }
     },
@@ -446,7 +461,8 @@ per_year_and_department = collection.aggregate([
             'international_law': '$international_law',
             'relevant_pcnt': {'$divide': ['$international_law', '$total']},
             'int_treaty_extracted': '$int_treaty_extracted',
-            'int_cust_law_extracted': '$int_cust_law_extracted'
+            'int_cust_law_extracted': '$int_cust_law_extracted',
+            'gen_princ_of_int_law_extracted': '$gen_princ_of_int_law_extracted'
         }
     },
     {
@@ -464,4 +480,5 @@ key_mapping_dep['international_law'] = 'Number of Decisions referring to Interna
 key_mapping_dep['relevant_pcnt'] = 'Share of Decisions referring to International Law'
 key_mapping_dep['int_treaty_extracted'] = 'Rulings referring to International Treaties'
 key_mapping_dep['int_cust_law_extracted'] = 'Rulings referring to International Customary Law'
+key_mapping_dep['gen_princ_of_int_law_extracted'] = 'Rulings referring to General Principles of International Law'
 save_result(per_year_and_department, key_mapping_dep, 'counts_per_year_and_department')
