@@ -1,7 +1,7 @@
 from twisted.internet import reactor
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
-from scraping.rulings import InternationalLawSpider
+from scraping.jur_scrapers import InternationalLawSpider
 from scrapy.utils.project import get_project_settings
 
 
@@ -21,9 +21,9 @@ def scrape_laws():
     settings = get_project_settings()
 
     settings.set('ITEM_PIPELINES', {
-        'rulings.pipelines.LawHierarchyCompletionPipeline': 100,
-        # 'rulings.pipelines.JsonWriterPipeline': 900
-        'rulings.pipelines.MongoSaverPipeline': 999
+        'jur_scrapers.pipelines.LawHierarchyCompletionPipeline': 100,
+        # 'jur_scrapers.pipelines.JsonWriterPipeline': 900
+        'jur_scrapers.pipelines.MongoSaverPipeline': 999
     })
 
     settings.set('MONGO_URI', 'mongodb://localhost:27017')
@@ -50,7 +50,7 @@ def scrape_laws():
     # start the crawler
     d = runner.crawl(InternationalLawSpider)
 
-    # add callback that stops the reactor after RulingSpider has finished running
+    # add callback that stops the reactor after InternationalLawSpider has finished running
     d.addBoth(lambda _: reactor.stop())
 
     # the script will be blocked at the following line until the crawling is finished

@@ -4,11 +4,11 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
-from scraping.rulings.items.ruling_item import RulingItem
+from scraping.jur_scrapers.items.ruling_item import RulingItem
 
 
 class RulingSpider(scrapy.Spider):
-    name = 'rulings'
+    name = 'jur_scrapers'
     start_urls = ["http://relevancy.bger.ch/cgi-bin/IndexCGI?lang=de"]
     scraped_links = []
     allowed_domains =["relevancy.bger.ch"]
@@ -32,6 +32,7 @@ class RulingSpider(scrapy.Spider):
 
     def parse_year(self, response):
         # get ruling links and corresponding ruling ids; process them (create new request)
+
         rulings = response.xpath('//li/a/@href | //li/a[@href]/text()').extract()
         for link, ruling_id in zip(*[iter(rulings)]*2):
             url = 'http://relevancy.bger.ch/' + link
@@ -72,6 +73,7 @@ class RulingSpider(scrapy.Spider):
         l.add_xpath('art_refs', '//div[@id="highlight_references"]//p[text()[contains(.,"Artikel:")]]//text()')
 
         # values that have been crawled on previous level
+        l.add_value('_id', response.meta['ruling_id'])
         l.add_value('ruling_id', response.meta['ruling_id'])
         l.add_value('url', response.url)
 

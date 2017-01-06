@@ -6,7 +6,7 @@ from ..items import CategoryItem, LawItem
 
 
 class InternationalLawSpider(scrapy.Spider):
-    name = 'rulings'
+    name = 'jur_scrapers'
     start_urls = ["https://www.admin.ch/opc/de/classified-compilation/international.html"]
     scraped_links = []
     # allowed_domains =["relevancy.bger.ch"]

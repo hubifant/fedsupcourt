@@ -4,7 +4,7 @@ import calendar
 import locale
 import re
 import logging
-from scraping.rulings.items import LawItem
+from scraping.jur_scrapers.items import LawItem
 from datetime import datetime
 
 

@@ -62,6 +62,9 @@ def filter_empty_a(html_string):
 
 
 class RulingItem(scrapy.Item):
+    _id = scrapy.Field(
+        output_processor=TakeFirst()
+    )
     ruling_id = scrapy.Field(
         input_processor=MapCompose(_extract_ruling_id),
         output_processor=TakeFirst()

@@ -1,7 +1,7 @@
 # pycharm testing tuto: https://confluence.jetbrains.com/display/PYH/Creating+and+running+a+Python+unit+test
 
 import unittest
-from scraping.rulings.pipelines import MetadataExtractorPipeline
+from scraping.jur_scrapers.pipelines import MetadataExtractorPipeline
 from testing.dummy_data import case_metadata_extraction
 
 
@@ -43,9 +43,20 @@ class TestMetadataExtractor(unittest.TestCase):
             try:
                 extracted_department = self.metadata_extractor._extract_department(title_of_judgement, 'no url')
 
-                if case_metadata_extraction['departments'][i] is not None:
-                    self.assertEqual(extracted_department, case_metadata_extraction['departments'][i],
+                if case_metadata_extraction['extracted_department'][i] is not None:
+                    self.assertEqual(extracted_department['extracted_department'],
+                                     case_metadata_extraction['extracted_department'][i],
                                      'Could not correctly extract claimant from\n"%s"' % title_of_judgement)
+
+                else:
+                    if extracted_department is not None:
+                        self.fail('Extracted department even though this should not be possible from\n"%s"'
+                                  % title_of_judgement)
+
+                if case_metadata_extraction['department_tag'][i] is not None:
+                    self.assertEqual(extracted_department['tag'],
+                                     case_metadata_extraction['department_tag'][i],
+                                     'Could not correctly extract department tag from\n"%s"' % title_of_judgement)
 
                 else:
                     if extracted_department is not None:
