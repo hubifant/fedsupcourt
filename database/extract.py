@@ -5,12 +5,15 @@ import time
 
 
 def map_rulings(map_function,
+                updated_fields=None,
                 mongo_uri='mongodb://localhost:27017',
                 db_name='fedsupcourt',
                 ruling_collection_name='rulings'):
     """
     Iterates over ruling database and applies map_function to each ruling. The processed ruling is then saved in the
     database.
+    :param map_function: function that is applied to process a ruling
+    :param updated_fields: list of fields that need to be deleted before they are updated
     """
     start_time = time.clock()
 
@@ -30,6 +33,10 @@ def map_rulings(map_function,
             print('\t%2d%% of the rulings processed. (%d/%d)' % (percentage_to_print, i, nb_rulings))
             percentage_to_print += percentage_to_print_stepsize
 
+        # delete old values if required. to avoid the case that an old value stays in the database.
+        for field in updated_fields:
+            ruling.pop(field, None)
+
         ruling = map_function(ruling)
 
         ruling_collection.save(ruling)
@@ -47,10 +54,6 @@ def extract_and_save_sr_numbers():
     ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
 
     def extract_sr_numbers(ruling):
-        # first, remove the currently saved SR numbers
-        ruling.pop('extracted_laws', None)
-        ruling.pop('extracted_categories', None)
-
         extracted_laws = []
         extracted_categories = []
         for chapter in ruling_chapters:
@@ -71,7 +74,7 @@ def extract_and_save_sr_numbers():
 
         return ruling
 
-    map_rulings(extract_sr_numbers)
+    map_rulings(extract_sr_numbers, ['extracted_laws', 'extracted_categories'])
 
 
 def extract_and_save_keywords():
@@ -79,7 +82,10 @@ def extract_and_save_keywords():
     Extracts keywords from each ruling and saves them in the database
     """
     kw_extractor = CombinedKeywordExtractor()
-    map_rulings(kw_extractor.extract)
+    map_rulings(kw_extractor.extract, ['international_treaties',
+                                       'international_customary_law',
+                                       'international_law_in_general',
+                                       'general_principles_of_international_law'])
 
 
 def extract_and_save_metadata():
