@@ -196,7 +196,7 @@ class InternationalCustomaryLawExtractor(_KeywordExtractor):
                          + self.pattern_suffix_it
             },
             'lat': {
-                'clear': r'(?:opinio [ij]uris)'
+                'broad': r'(?:opinio [ij]uris)'
             }
         }
 

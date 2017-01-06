@@ -251,7 +251,7 @@ case_completeness_customary_int_law['input_item']['core_issue'] = '''
 case_completeness_customary_int_law['expected_output']['broad'] = [
     'Droit coutumier', 'Coutumier', 'Coutume', 'Droit coutumier','Coutumier',
     'gewohnheitsrechtlich', 'gewohnheitsrechtliche', 'gewohnheitsrechtlichem', 'gewohnheitsrechtlichen',
-    'gewohnheitsrechtlicher', 'diritto consuetudinario', 'consuetudinario'
+    'gewohnheitsrechtlicher', 'diritto consuetudinario', 'consuetudinario', 'opinio juris', 'opinio iuris'
 ]
 case_completeness_customary_int_law['expected_output']['clear'] = [
     'Droit international coutumier', 'Droit international public coutumier', 'Droit coutumier international',
@@ -261,7 +261,7 @@ case_completeness_customary_int_law['expected_output']['clear'] = [
     'internationalem Gewohnheitsrecht', 'völkerrechtliches Gewohnheitsrecht', 'völkerrechtliche Gewohnheitsrecht',
     'völkerrechtlichen Gewohnheitsrechts', 'völkerrechtlichem Gewohnheitsrecht', 'gewohnheitsrechtliches Völkerrecht',
     'gewohnheitsrechtliche Völkerrecht', 'gewohnheitsrechtlichen Völkerrecht', 'gewohnheitsrechtlichen Völkerrechts',
-    'gewohnheitsrechtlichem Völkerrecht', 'opinio juris', 'opinio iuris', 'diritto internazionale consuetudinario',
+    'gewohnheitsrechtlichem Völkerrecht', 'diritto internazionale consuetudinario',
     'diritto consuetudinario internazionale', 'consuetudine internazionale'
 ]
 
