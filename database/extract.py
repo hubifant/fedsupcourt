@@ -47,6 +47,10 @@ def extract_and_save_sr_numbers():
     ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
 
     def extract_sr_numbers(ruling):
+        # first, remove the currently saved SR numbers
+        ruling.pop('extracted_laws', None)
+        ruling.pop('extracted_categories', None)
+
         extracted_laws = []
         extracted_categories = []
         for chapter in ruling_chapters:
