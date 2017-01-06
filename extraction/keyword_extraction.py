@@ -253,15 +253,15 @@ class GeneralPrinciplesOfInternationalLawExtractor(_KeywordExtractor):
         patterns_gen_principles_of_international_law = {
             'de': {
                 'clear': r'(?:allgemein\w* (?:rechts)?grunds[aä]tz\w* de\w* Völkerrecht\w*)',
-                'broad': r'(?:allgemein\w* (?:rechts)?grunds[aä]tz\w*(?: \w*){1,4})'
+                'broad': r'(?:allgemein\w* (?:rechts)?grunds[aä]tz\w*(?: \S*){1,4})'
             },
             'fr': {
                 'clear': r'(?:principes? g[eé]n[eé]ra\w* du droit (?:des gens|international))',
-                'broad': r'(?:principes? g[eé]n[eé]ra\w*(?: \w*){1,4})'
+                'broad': r'(?:principes? g[eé]n[eé]ra\w*(?: \S*){1,4})'
             },
             'it': {
                 'clear': r'(?:princip\w* giuridic\w* (?:general|fondamental)\w* di diritto internazionale)',
-                'broad': r'(?:princip\w* giuridic\w* (?:(?:di portata )?general|fondamental)\w* (?: \w*){1,4})'
+                'broad': r'(?:princip\w* giuridic\w* (?:(?:di portata )?general|fondamental)\w* (?: \S*){1,4})'
             }
         }
 
