@@ -21,11 +21,12 @@ class SRNumberExtractor:
         # Exception: it is allowed to cite ECHR (European Convention for
         # the Protection of Human Rights and Fundamental Freedoms) by
         # its name instead of its number (which is SR 0.101)
-        self.echr_pattern = r'\b(?:EMRK|europäische\w menschenrechtskonvention'
+        self.echr_pattern = r'\b(?:EMRK|CEDH|CEDU'
+        self.echr_pattern += r'|europäische\w? menschenrechtskonvention'
         self.echr_pattern += r'|konvention zum schutz der menschenrechte und grundfreiheiten'
-        self.echr_pattern += r'|CEDH|convention européenne des droits de l\'homme'
+        self.echr_pattern += r'|convention européenne des droits de l\'homme'
         self.echr_pattern += r'|convention de sauvegarde des droits de l’homme et des libertés fondamentales'
-        self.echr_pattern += r'|CEDU|convenzione europea dei diritti dell\'uomo'
+        self.echr_pattern += r'|convenzione europea dei diritti dell\'uomo'
         self.echr_pattern += r'|convenzione per la salvaguardia dei diritti dell\'uomo e delle libertà fondamentali)\b'
 
         # include special ECHR cases in the SR pattern
@@ -39,7 +40,7 @@ class SRNumberExtractor:
 
             # if the ECHR-law was extracted, translate it into its sr-number.
             # if potential_sr_nb.upper() in ['EMRK', 'CEDH', 'CEDU']:
-            if re.match(self.echr_pattern, potential_sr_nb):
+            if re.match(self.echr_pattern, potential_sr_nb, re.IGNORECASE):
                 potential_sr_nb = '0.101'
 
             # if the matched pattern is a key in self.int_laws, it IS an existing SR number
