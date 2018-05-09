@@ -1,6 +1,9 @@
 # idea stuff
 .idea/
 
+# pycache
+*__pycache__/
+
 # crawled data
 .data/
 

@@ -1,4 +1,4 @@
-from analysis.counts import save_result
+from analysis.keyword_statistics import save_result
 from collections import OrderedDict
 from datetime import datetime
 import pymongo

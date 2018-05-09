@@ -1,4 +1,4 @@
-# this script is for comparing a manual ruling evaluations with the automatic evaluations
+# this script is for comparing manual ruling evaluations with automatic evaluations
 
 import csv
 import pymongo

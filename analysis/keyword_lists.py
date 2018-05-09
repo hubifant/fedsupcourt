@@ -81,7 +81,6 @@ print('Rhaeto-Romance:                             %5d' % count_language('rr'))
 print('=================================================')
 
 
-
 def save_departments(path='.', verbose=False):
     departments = collection.aggregate([
         {'$group': {
@@ -151,7 +150,6 @@ count_by_year('international_law_in_general')
 count_by_year('extracted_laws')
 
 
-
 # result = collection.find({'ruling_id.bge_nb': 95, 'ruling_id.volume': 'III', 'ruling_id.ruling_nb': 76},
 #                          {'title_of_judgement': 1, 'date': 1, 'type_of_proceeding': 1, 'language': 1, 'department': 1,
 #                           'dossier_number': 1, 'involved_parties': 1, 'url': 1})
@@ -160,8 +158,6 @@ count_by_year('extracted_laws')
 #     pprint(r, width=300)
 #     if i > 1:
 #         break
-
-
 
 
 client.close()

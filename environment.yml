@@ -41,7 +41,7 @@ dependencies:
 - pip:
   - fake-useragent==0.1.3
   - html2text==2016.9.19
-  - scrapy-fake-useragent==1.0.2
+  - scrapy-fake-useragent==1.0.2.1
   - service-identity==16.0.0
 prefix: /usr/local/anaconda3/envs/fedsupcourt_env
 

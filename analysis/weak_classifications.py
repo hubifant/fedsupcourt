@@ -3,7 +3,7 @@
 
 import pymongo
 from datetime import datetime
-from analysis.counts import save_result
+from analysis.keyword_statistics import save_result
 from collections import OrderedDict
 
 
