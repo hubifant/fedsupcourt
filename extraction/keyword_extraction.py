@@ -5,9 +5,12 @@ from extraction.int_treaties_kw_exceptions import int_treaties_broad_to_clear
 
 
 class _KeywordExtractor:
+    """
+    Superclass for specialised keyword extraction classes
+    """
 
-    # ruling chapters from which keywords will be extracted:
-    ruling_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
+    # ruling chapters from which keywords are to be extracted:
+    analysed_chapters = ['core_issue', 'statement_of_affairs', 'paragraph']
 
     # regex for extracting a keyword's context
     sentence_pattern = r'(?:^|(?<=\. )(?=[A-Z])|(?<=\n|\t))'  # beginning of a sentence
@@ -15,6 +18,7 @@ class _KeywordExtractor:
     sentence_pattern += r'%s'  # keyword
     sentence_pattern += r'.*?(?:\.(?= [A-Z])|$|(?=\n|\t))'  # anything until end of sentence
 
+    # pattern suffixes used for broad keyword extraction in french and italian
     # keyword suffix french: used for matching word(s) following the actual keyword.
     pattern_suffix_fr = r'(?: (?:d(?:\'un|\'une)?'
     pattern_suffix_fr += r'|(?:à|aux?|avec|dans|des?|en|par|pour|selon|sur)(?: ce(?:tte|s)?| la| les?| une?)?'
@@ -66,24 +70,26 @@ class _KeywordExtractor:
         }
 
         # go through all ruling chapters and extract keywords
-        for chapter in self.ruling_chapters:
+        for chapter in self.analysed_chapters:
             if chapter in ruling:
                 for pattern_language, patterns in self.keyword_patterns.items():
                     if 'clear' in patterns:
                         extracted_keywords['clear'].extend(re.findall(patterns['clear'], ruling[chapter], re.IGNORECASE))
 
                     if 'broad' in patterns:
-                        # only save a 'broad' keyword if it is not detected by the 'clear' pattern
                         extracted_broad = re.findall(patterns['broad'], ruling[chapter], re.IGNORECASE)
 
+                        # only save a 'broad' keyword if it is not detected by the 'clear' pattern
                         for broad_keyword in extracted_broad:
                             if 'clear' in patterns:
                                 # move some broad keywords to the 'clear' list.
-                                # todo: this is a dirty hack solution!
+                                # todo: this is a dirty hack!
                                 if broad_keyword.lower() in self.broad_to_clear[pattern_language]:
+                                    # if not yet detected by 'clear' pattern, add it to 'CLEAR' list
                                     if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
                                         extracted_keywords['clear'].append(broad_keyword)
                                 else:
+                                    # if not yet detected by 'clear' pattern, add it to 'BROAD' list
                                     if not re.search(patterns['clear'], broad_keyword, re.IGNORECASE):
                                         extracted_keywords['broad'].append(broad_keyword)
                             else:
@@ -92,34 +98,35 @@ class _KeywordExtractor:
         keywords_and_contexts = {}
 
         # context extraction for 'clear' and 'broad' keywords
-        for pattern_type in ['clear', 'broad']:
+        for kw_type in ['clear', 'broad']:
             keyword_counts = {}
             contexts = []
 
             # if keywords have been found, extract the entire sentences in which they occur
-            if len(extracted_keywords[pattern_type]) > 0:
+            if len(extracted_keywords[kw_type]) > 0:
 
                 # iterate through all unique keywords
-                for keyword in set(extracted_keywords[pattern_type]):
+                for keyword in set(extracted_keywords[kw_type]):
 
                     # create the pattern matching sentences containing the keyword
                     keyword_context_pattern = self.sentence_pattern % re.escape(keyword)
 
                     # find and save contexts in each chapter
-                    for chapter in self.ruling_chapters:
+                    for chapter in self.analysed_chapters:
                         if chapter in ruling:
                             sentences = re.findall(keyword_context_pattern, ruling[chapter])  # don't IGNORECASE here!
 
-                            # update contexts list with each extracted sentence
+                            # update context list with each extracted sentence
                             contexts.extend(
                                 [{'keyword': keyword, 'chapter': chapter, 'sentence': sentence} for sentence in sentences]
                             )
 
-                            # update keyword count (difficult to do this more elegantly above)
-                            keyword_counts[keyword] = keyword_counts.get(keyword, 0) + len(sentences)
+                            # update keyword count
+                            nb_occurrences = len(sentences)
+                            keyword_counts[keyword] = keyword_counts.get(keyword, 0) + nb_occurrences
 
-                # keywords and counts are saved in a format that is easier to access in mongodb
-                keywords_and_contexts[pattern_type] = {
+                # save keywords and counts in a format that is easier to access in mongodb
+                keywords_and_contexts[kw_type] = {
                     'keywords': [{'keyword': kw, 'count': cnt} for kw, cnt in keyword_counts.items()],
                     'contexts': contexts
                 }

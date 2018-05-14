@@ -4,11 +4,11 @@ import logging
 import time
 
 
-def map_rulings(map_function,
-                updated_fields=None,
-                mongo_uri='mongodb://localhost:27017',
-                db_name='fedsupcourt',
-                ruling_collection_name='rulings'):
+def _map_rulings(map_function,
+                 updated_fields=None,
+                 mongo_uri='mongodb://localhost:27017',
+                 db_name='fedsupcourt',
+                 ruling_collection_name='rulings'):
     """
     Iterates over ruling database and applies map_function to each ruling. The processed ruling is then saved in the
     database.
@@ -74,7 +74,7 @@ def extract_and_save_sr_numbers():
 
         return ruling
 
-    map_rulings(extract_sr_numbers, ['extracted_laws', 'extracted_categories'])
+    _map_rulings(extract_sr_numbers, ['extracted_laws', 'extracted_categories'])
 
 
 def extract_and_save_keywords():
@@ -82,7 +82,7 @@ def extract_and_save_keywords():
     Extracts keywords from each ruling and saves them in the database
     """
     kw_extractor = CombinedKeywordExtractor()
-    map_rulings(kw_extractor.extract, ['international_treaties',
+    _map_rulings(kw_extractor.extract, ['international_treaties',
                                        'international_customary_law',
                                        'international_law_in_general',
                                        'general_principles_of_international_law'])
@@ -93,4 +93,4 @@ def extract_and_save_metadata():
     Extracts metadata from each ruling and saves it in the database
     """
     metadata_extractor = MetadataExtractor()
-    map_rulings(metadata_extractor.extract)
+    _map_rulings(metadata_extractor.extract)

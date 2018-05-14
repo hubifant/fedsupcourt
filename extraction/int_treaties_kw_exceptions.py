@@ -1,5 +1,5 @@
 # the keywords defined in the following lists should be added to the list 'clear' keywords instead of the 'broad' list.
-# todo: this is a dirty hack!
+# todo: this is a super dirty hack!
 
 int_treaties_broad_to_clear = {}
 
